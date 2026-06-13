@@ -29,13 +29,13 @@
 
 | Section | Status | Last Updated | Notes |
 |---------|--------|-------------|-------|
-| 2.1 Digital Mental Health Landscape | ⬜ | | |
-| 2.2 Conversational Agents | ⬜ | | |
-| 2.3 Emotion Recognition | ⬜ | | |
-| 2.4 Gamification for Health | ⬜ | | |
-| 2.5 Retrieval-Augmented Generation | ⬜ | | |
-| 2.6 Gap Analysis | ⬜ | | |
-| References | ⬜ | | |
+| 2.1 Digital Mental Health Landscape | ✅ Draft | 2026-06-13 | WHO, Baumeister review, MENA context |
+| 2.2 Conversational Agents | ✅ Draft | 2026-06-13 | Woebot, Wysa, Replika, Kumar review |
+| 2.3 Emotion Recognition | ✅ Draft | 2026-06-13 | BERT, Whisper, mental health datasets |
+| 2.4 Gamification for Health | ✅ Draft | 2026-06-13 | Hamari meta-analysis, 20-40% boost |
+| 2.5 Retrieval-Augmented Generation | ✅ Draft | 2026-06-13 | Lewis et al., medical RAG applications |
+| 2.6 Gap Analysis | ✅ Draft | 2026-06-13 | Table comparing Woebot/Wysa/Replika/UpHeal |
+| References | ✅ | 2026-06-13 | 10 IEEE references |
 | Supervisor review | ⬜ | | |
 | Final revision | ⬜ | | |
 
@@ -46,17 +46,17 @@
 
 | Section | Status | Last Updated | Notes |
 |---------|--------|-------------|-------|
-| 3.1 Functional Requirements | ⬜ | | |
-| 3.2 Non-Functional Requirements | ⬜ | | |
-| 3.3 Use Case Diagram | ⬜ | | Mermaid |
-| 3.4 Sequence Diagram | ⬜ | | Mermaid |
-| 3.5 Functional Flow Diagram | ⬜ | | Mermaid |
-| 3.6 System Architecture Diagram | ⬜ | | Mermaid or draw.io |
-| 3.7 AI/ML Pipeline Design | ⬜ | | |
-| 3.8 Data Models | ⬜ | | |
-| 3.9 Gamification System Design | ⬜ | | |
-| 3.10 Security Considerations | ⬜ | | Devide + Malak |
-| 3.11 Hardware Specifications | ⬜ | | |
+| 3.1 Functional Requirements | ✅ Draft | 2026-06-13 | 10 FRs (FR-01 to FR-10) |
+| 3.2 Non-Functional Requirements | ✅ Draft | 2026-06-13 | 7 NFRs (latency, compliance, uptime, etc.) |
+| 3.3 Use Case Diagram | ✅ Draft | 2026-06-13 | Mermaid diagram with 8 user + 6 system use cases |
+| 3.4 Sequence Diagram | ✅ Draft | 2026-06-13 | Mermaid: User → Flutter → FastAPI → ChromaDB → LLM → Auditor |
+| 3.5 Functional Flow Diagram | ✅ Draft | 2026-06-13 | Mermaid: Home → Chat → Mood → Assessment → Roadmap |
+| 3.6 System Architecture Diagram | ✅ Draft | 2026-06-13 | Mermaid: Frontend → Gateway → Microservices → AI Pipeline → Data |
+| 3.7 AI/ML Pipeline Design | ✅ Draft | 2026-06-13 | 5 stages: Input → Emotion → RAG → LLM → Audit |
+| 3.8 Data Models | ✅ Draft | 2026-06-13 | 12 Supabase tables + ChromaDB collections |
+| 3.9 Gamification System Design | ✅ Draft | 2026-06-13 | XP, levels, badges (10), achievements (12), challenges (10) |
+| 3.10 Security Considerations | ✅ Draft | 2026-06-13 | 3-tier JWT, TLS 1.3, AES-256, RLS, crisis detection, compliance |
+| 3.11 Hardware Specifications | ✅ Draft | 2026-06-13 | DigitalOcean, RunPod, Supabase, client specs |
 | Supervisor review | ⬜ | | |
 | Final revision | ⬜ | | |
 
@@ -67,12 +67,12 @@
 
 | Section | Status | Last Updated | Notes |
 |---------|--------|-------------|-------|
-| 4.1 Technology Stack | ⬜ | | |
-| 4.2 Frontend Implementation | ⬜ | | Abdalrahman + Ahmed Z. |
-| 4.3 Backend Implementation | ⬜ | | Hozaifa + Yahya |
-| 4.4 Chat LLM Integration | ⬜ | | Ahmed Osama |
-| 4.5 Testing | ⬜ | | |
-| 4.6 Results with Charts | ⬜ | | Needs real test data |
+| 4.1 Technology Stack | ✅ Draft | 2026-06-13 | 20+ technologies with versions and purposes |
+| 4.2 Frontend Implementation | ✅ Draft | 2026-06-13 | 40+ screens, Provider state mgmt, native integration |
+| 4.3 Backend Implementation | ✅ Draft | 2026-06-13 | 10 microservices, RAG pipeline, assessment engine |
+| 4.4 Chat LLM Integration | ✅ Draft | 2026-06-13 | Groq (current), Ollama/Gemma (planned), migration path |
+| 4.5 Testing | ✅ Draft | 2026-06-13 | 25+ test files, unit + integration + frontend |
+| 4.6 Results with Charts | ✅ Draft | 2026-06-13 | 4 placeholder charts (needs real data) |
 | Supervisor review | ⬜ | | |
 | Final revision | ⬜ | | |
 
@@ -83,10 +83,10 @@
 
 | Section | Status | Last Updated | Notes |
 |---------|--------|-------------|-------|
-| 5.1 Conclusions | ⬜ | | |
-| 5.2 Future Work | ⬜ | | |
-| 5.3 Ethics Considerations | ⬜ | | |
-| Acknowledgements | ⬜ | | |
+| 5.1 Conclusions | ✅ Draft | 2026-06-13 | 4 key contributions summarized |
+| 5.2 Future Work | ✅ Draft | 2026-06-13 | 8 directions (LLM, emotion, Whisper, multilingual, dashboard, etc.) |
+| 5.3 Ethics Considerations | ✅ Draft | 2026-06-13 | 8 ethical principles (consent, privacy, crisis, bias, transparency) |
+| Acknowledgements | ✅ Draft | 2026-06-13 | Dr. Sahar Ghanem + team + families + open source |
 | Supervisor review | ⬜ | | |
 | Final revision | ⬜ | | |
 
@@ -110,6 +110,7 @@
 | Update _quarto.yml with team names | ✅ | 2026-06-13 | System |
 | Update index.qmd cover page | ✅ | 2026-06-13 | System |
 | Rebuild PDF | ✅ | 2026-06-13 | System |
+| Write all 5 chapter drafts | ✅ | 2026-06-13 | System |
 | Push to GitHub | ⬜ | | |
 | Add real test data to Ch4 | ⬜ | | |
 | Review all references | ⬜ | | |
