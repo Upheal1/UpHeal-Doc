@@ -1,0 +1,107 @@
+# Implementation & Results {#sec-implementation-results}
+
+This chapter details the implementation of the UpHeal system and presents the evaluation results.
+
+## Technology Stack {#sec-tech-stack}
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| Frontend | Flutter (Dart) | Cross-platform mobile application |
+| Backend | Python FastAPI | RESTful API server |
+| Authentication | Supabase Auth | User registration, login, JWT tokens |
+| Database | Supabase PostgreSQL | User data, conversations, gamification state |
+| Object Storage | Supabase Storage | Audio files, profile images |
+| LLM | Gemma (via Ollama on RunPod) | Conversational response generation |
+| STT | OpenAI Whisper | Speech-to-text transcription |
+| Emotion | Fine-tuned classifier | Emotion detection from text |
+| RAG | LangChain + ChromaDB | Context retrieval for grounded responses |
+| Hosting | DigitalOcean + RunPod | Backend server + GPU inference |
+
+Table: Complete technology stack used in UpHeal. {#tbl-tech-stack}
+
+## Frontend Implementation {#sec-frontend-impl}
+
+The Flutter application provides the user-facing interface with the following screens:
+
+-   **Onboarding & Authentication**: Registration, login, and profile setup.
+-   **Home Dashboard**: Quick access to chat, mood logging, and progress overview.
+-   **Chat Interface**: Real-time conversational UI with typing indicators and emotion badge display.
+-   **Mood Logger**: Daily mood entry with emoji selection and optional journaling.
+-   **Progress & Badges**: Visualization of streaks, earned badges, and mood trends.
+-   **Emergency Resources**: Crisis helpline information and safety plan.
+
+## Backend Implementation {#sec-backend-impl}
+
+The FastAPI backend exposes RESTful endpoints organized as follows:
+
+-   `/auth/*` — User registration and login (delegated to Supabase).
+-   `/chat/*` — Message submission, response generation, and conversation history.
+-   `/mood/*` — Mood logging and historical retrieval.
+-   `/gamification/*` — Badge awarding, streak tracking, and progress queries.
+-   `/emergency/*` — Emergency resource retrieval.
+
+## AI Pipeline Implementation {#sec-ai-pipeline-impl}
+
+### Emotion Classifier
+
+The emotion classifier is fine-tuned on a mental health dialogue dataset to recognize the following categories: *anxious, sad, angry, neutral, hopeful,* and *distressed*. The model processes each user message and returns a probability distribution over emotion labels, with the top label used to adapt the response strategy.
+
+### RAG Pipeline
+
+The retrieval-augmented generation pipeline operates as follows:
+
+1.  The user message and detected emotion are embedded using the same vectorizer as the knowledge base.
+2.  The top-k relevant passages are retrieved from ChromaDB.
+3.  A structured prompt is constructed containing: system instructions, retrieved context, conversation history, and the current user message.
+4.  Gemma LLM generates a response conditioned on this prompt.
+5.  The response is post-processed to ensure safety and appended to the conversation.
+
+### Whisper Integration
+
+Voice messages are recorded in the Flutter app, uploaded to Supabase Storage, and asynchronously transcribed using Whisper. The transcription is then fed into the emotion classifier and RAG pipeline as described above.
+
+## Testing {#sec-testing}
+
+### Unit Testing
+
+Each backend endpoint and utility function is covered by unit tests using `pytest`, with a minimum target coverage of 80%.
+
+### Integration Testing
+
+End-to-end tests verify the complete chat flow: user message → emotion classification → RAG retrieval → LLM response → frontend display.
+
+### User Acceptance Testing
+
+A pool of target users will evaluate the application on usability, response quality, and engagement metrics using the System Usability Scale (SUS).
+
+## Results {#sec-results}
+
+*This section will be populated with evaluation results once the system is deployed and user testing is complete. Planned metrics include:*
+
+-   Emotion classification accuracy (F1 score)
+-   LLM response relevance (human evaluation on a 1–5 scale)
+-   RAG retrieval precision (top-k relevance)
+-   User retention rate over 4 weeks
+-   System Usability Scale (SUS) score
+-   Average response latency
+
+```{python}
+#| label: fig-architecture-overview
+#| fig-cap: "Planned evaluation metrics for the UpHeal system"
+#| echo: false
+import matplotlib.pyplot as plt
+import numpy as np
+
+metrics = ["Emotion\nF1", "Response\nRelevance", "RAG\nPrecision", "4-Week\nRetention", "SUS\nScore /10", "Latency\n(s)"]
+values = [0.82, 0.78, 0.85, 0.65, 7.5, 3.2]
+
+fig, ax = plt.subplots(figsize=(8, 4))
+bars = ax.bar(metrics, values, color=["#4C8BF5", "#34A853", "#FBBC05", "#EA4335", "#4C8BF5", "#34A853"])
+ax.set_ylabel("Score / Value")
+ax.set_title("Planned Evaluation Metrics (Target Values)")
+ax.set_ylim(0, 1.1)
+for bar, val in zip(bars, values):
+    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.03, f"{val:.2f}", ha="center", fontsize=9)
+plt.tight_layout()
+plt.show()
+```

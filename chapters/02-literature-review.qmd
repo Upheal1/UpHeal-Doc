@@ -1,0 +1,35 @@
+# Literature Review {#sec-literature-review}
+
+## Overview of Digital Mental Health Solutions {#sec-digital-mh-overview}
+
+The landscape of digital mental health has evolved significantly over the past decade, moving from simple self-help applications to sophisticated AI-driven platforms. Early interventions relied primarily on static content delivery, such as mood logs and psychoeducation modules, while modern systems leverage natural language processing and machine learning to offer dynamic, personalized support.
+
+## Conversational Agents in Mental Health {#sec-conversational-agents}
+
+Conversational agents, or chatbots, have been widely explored as scalable mental health tools. Woebot, Wysa, and Replika represent notable commercial products that employ rule-based or hybrid approaches to deliver therapeutic content.Woebot, for example, uses structured CBT exercises through a scripted dialogue, while Wysa combines rule-based logic with NLP to handle a broader range of user inputs.
+
+Recent academic work has begun integrating large language models into mental health chatbots. Studies such as those by @lewis2020rag on retrieval-augmented generation have demonstrated that grounding LLM responses in curated knowledge bases can significantly reduce hallucinations and improve factual accuracy—critical requirements in a clinical setting.
+
+## Emotion Recognition in Text and Speech {#sec-emotion-recognition}
+
+Emotion classification from user input enables adaptive system responses. Pre-trained models such as BERT-based classifiers and Whisper for speech-to-text transcription have shown strong performance in detecting emotional cues [@devlin2019bert; @radford2022whisper]. Fine-tuning these models on mental health-specific datasets allows for more nuanced emotional categorization relevant to therapeutic contexts.
+
+## Gamification for Health Engagement {#sec-gamification}
+
+Gamification strategies including points, badges, streaks, and progress tracking have been validated across multiple health domains as effective mechanisms for sustaining user engagement. @hamari2016gamification provide a meta-analysis showing that gamification elements, when thoughtfully designed, increase retention rates in health applications by 20–40%.
+
+## Retrieval-Augmented Generation {#sec-rag}
+
+Retrieval-augmented generation (RAG) combines a retrieval component with a generative model, allowing the system to fetch relevant passages from a knowledge base before producing a response. This approach mitigates hallucination and ensures that generated content is grounded in verified clinical sources. @lewis2020rag introduced the formal framework, and subsequent work has applied RAG to domain-specific tasks with promising results.
+
+## Gap Analysis {#sec-gap-analysis}
+
+| Gap | Current Solutions | UpHeal's Approach |
+|-----|---|---|
+| Personalization | Generic scripted responses | Emotion-adaptive LLM with RAG |
+| Clinical grounding | Limited or no evidence base | CBT/DBT-informed RAG knowledge base |
+| User retention | Low engagement over time | Gamification with streaks and achievements |
+| Privacy | Varies; often unclear | Encryption, RBAC, data minimization |
+| Multimodal input | Mostly text-only | Text + speech (Whisper) + emotion signals |
+
+Table: Gap analysis comparing existing digital mental health solutions with UpHeal's proposed approach. {#tbl-gap-analysis}

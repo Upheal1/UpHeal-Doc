@@ -1,0 +1,63 @@
+# Preface {.unnumbered}
+
+::: {.center}
+**UpHeal: An AI-Powered, Data-Driven and Gamified Mental Health Companion**
+
+**Graduation Project Thesis**
+
+Submitted to
+
+**Department of Computer Science & AI**
+
+Faculty of Computer Science & Artificial Intelligence
+
+Pharos University in Alexandria
+
+June 2026
+:::
+
+::: {.center}
+**UpHeal: An AI-Powered, Data-Driven and Gamified Mental Health Companion**
+
+By
+
+Hozaifa Moustafa
+
+Ahmed Osama
+
+Devide Hany
+
+Malak Yasser
+
+Abdalrahman Osama
+
+Yahya Amr
+
+Ahmed Zakaria
+:::
+
+::: {.center}
+**Supervisor**
+
+Dr. Sahar Ghanem
+:::
+
+\newpage
+
+# Abstract {.unnumbered}
+
+The project introduces UpHeal, an AI-powered, data-driven, and gamified mental health companion designed to provide accessible, empathetic, and evidence-based mental health support through a mobile application. By integrating large language models with emotion classification and retrieval-augmented generation, the system delivers contextually relevant therapeutic responses while maintaining user engagement through gamification elements. The application leverages a Flutter-based cross-platform frontend, a Python FastAPI backend, Supabase for authentication and data management, and GPU-powered AI inference on RunPod.
+
+The aim is to practice applying the full spectrum of software engineering, artificial intelligence, and user experience design skills acquired throughout the undergraduate program. This includes requirements engineering, system architecture, machine learning pipeline design, backend and frontend development, testing, and evaluation within a real-world healthcare domain that demands ethical responsibility, data privacy, and clinical sensitivity.
+
+The thesis is organized as follows:
+
+Chapter 1 gives an introduction about the problem. Then moves to the necessary background. The chapter moves to the problem definition and proposed solution in brief.
+
+Chapter 2 represents the literature review with recent publications related to the project topic. From those, the existing solution comes as an emerging technology to fill in the gaps. A detailed gap analysis is presented as well.
+
+Chapter 3 represents the most comprehensive chapter. This moves to the system design and diagrams (Sequence Diagram, Use Case Diagram, Functional Flow). The model architecture is then described with necessary hardware considerations. Finally, security considerations are explained.
+
+Chapter 4 presents the system implementation and the obtained results. All curves, charts, and comparisons are shown.
+
+Chapter 5 gives the conclusions and future work. Finally, the adopted ethics considerations are explained in brief.

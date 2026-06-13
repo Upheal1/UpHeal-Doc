@@ -1,0 +1,5 @@
+# Acknowledgements {.unnumbered}
+
+We would like to express our sincere gratitude to our project supervisors for their guidance and support throughout this project. We also extend our appreciation to the Faculty of Computer Science & Artificial Intelligence at Pharos University in Alexandria for providing the resources and environment that made this work possible.
+
+Special thanks to our families and friends for their unwavering encouragement during the development of this graduation project.

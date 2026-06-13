@@ -1,0 +1,1145 @@
+% Options for packages loaded elsewhere
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  letterpaper,
+  12pt,
+  a4paper]{report}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{5}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+% Make \paragraph and \subparagraph free-standing
+\makeatletter
+\ifx\paragraph\undefined\else
+  \let\oldparagraph\paragraph
+  \renewcommand{\paragraph}{
+    \@ifstar
+      \xxxParagraphStar
+      \xxxParagraphNoStar
+  }
+  \newcommand{\xxxParagraphStar}[1]{\oldparagraph*{#1}\mbox{}}
+  \newcommand{\xxxParagraphNoStar}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+  \let\oldsubparagraph\subparagraph
+  \renewcommand{\subparagraph}{
+    \@ifstar
+      \xxxSubParagraphStar
+      \xxxSubParagraphNoStar
+  }
+  \newcommand{\xxxSubParagraphStar}[1]{\oldsubparagraph*{#1}\mbox{}}
+  \newcommand{\xxxSubParagraphNoStar}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\makeatother
+
+
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+
+
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
+  \fi
+  % set entry spacing
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+
+
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+
+
+ 
+
+
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\onehalfspacing
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\makeatletter
+\@ifpackageloaded{bookmark}{}{\usepackage{bookmark}}
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={UpHeal: An AI-Powered{,} Data-Driven and Gamified Mental Health Companion},
+  pdfauthor={Hozaifa Moustafa; Ahmed Osama; Devide Hany; Malak Yasser; Abdalrahman Osama; Yahya Amr; Ahmed Zakaria},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+
+\title{UpHeal: An AI-Powered, Data-Driven and Gamified Mental Health
+Companion}
+\author{Hozaifa Moustafa \and Ahmed Osama \and Devide Hany \and Malak
+Yasser \and Abdalrahman Osama \and Yahya Amr \and Ahmed Zakaria}
+\date{2026-06-01}
+\begin{document}
+\maketitle
+
+\thispagestyle{empty}
+
+\renewcommand*\contentsname{Table of contents}
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\listoffigures
+\listoftables
+
+\bookmarksetup{startatroot}
+
+\chapter*{Preface}\label{preface}
+\addcontentsline{toc}{chapter}{Preface}
+
+\markboth{Preface}{Preface}
+
+\textbf{UpHeal: An AI-Powered, Data-Driven and Gamified Mental Health
+Companion}
+
+\textbf{Graduation Project Thesis}
+
+Submitted to
+
+\textbf{Department of Computer Science \& AI}
+
+Faculty of Computer Science \& Artificial Intelligence
+
+Pharos University in Alexandria
+
+June 2026
+
+\textbf{UpHeal: An AI-Powered, Data-Driven and Gamified Mental Health
+Companion}
+
+By
+
+Hozaifa Moustafa
+
+Ahmed Osama
+
+Devide Hany
+
+Malak Yasser
+
+Abdalrahman Osama
+
+Yahya Amr
+
+Ahmed Zakaria
+
+\textbf{Supervisor}
+
+Dr.~Sahar Ghanem
+
+\newpage
+
+\bookmarksetup{startatroot}
+
+\chapter*{Abstract}\label{abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+\markboth{Abstract}{Abstract}
+
+The project introduces UpHeal, an AI-powered, data-driven, and gamified
+mental health companion designed to provide accessible, empathetic, and
+evidence-based mental health support through a mobile application. By
+integrating large language models with emotion classification and
+retrieval-augmented generation, the system delivers contextually
+relevant therapeutic responses while maintaining user engagement through
+gamification elements. The application leverages a Flutter-based
+cross-platform frontend, a Python FastAPI backend, Supabase for
+authentication and data management, and GPU-powered AI inference on
+RunPod.
+
+The aim is to practice applying the full spectrum of software
+engineering, artificial intelligence, and user experience design skills
+acquired throughout the undergraduate program. This includes
+requirements engineering, system architecture, machine learning pipeline
+design, backend and frontend development, testing, and evaluation within
+a real-world healthcare domain that demands ethical responsibility, data
+privacy, and clinical sensitivity.
+
+The thesis is organized as follows:
+
+Chapter 1 gives an introduction about the problem. Then moves to the
+necessary background. The chapter moves to the problem definition and
+proposed solution in brief.
+
+Chapter 2 represents the literature review with recent publications
+related to the project topic. From those, the existing solution comes as
+an emerging technology to fill in the gaps. A detailed gap analysis is
+presented as well.
+
+Chapter 3 represents the most comprehensive chapter. This moves to the
+system design and diagrams (Sequence Diagram, Use Case Diagram,
+Functional Flow). The model architecture is then described with
+necessary hardware considerations. Finally, security considerations are
+explained.
+
+Chapter 4 presents the system implementation and the obtained results.
+All curves, charts, and comparisons are shown.
+
+Chapter 5 gives the conclusions and future work. Finally, the adopted
+ethics considerations are explained in brief.
+
+\bookmarksetup{startatroot}
+
+\chapter*{Acknowledgements}\label{acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+
+\markboth{Acknowledgements}{Acknowledgements}
+
+We would like to express our sincere gratitude to our project
+supervisors for their guidance and support throughout this project. We
+also extend our appreciation to the Faculty of Computer Science \&
+Artificial Intelligence at Pharos University in Alexandria for providing
+the resources and environment that made this work possible.
+
+Special thanks to our families and friends for their unwavering
+encouragement during the development of this graduation project.
+
+\bookmarksetup{startatroot}
+
+\chapter{Introduction}\label{sec-introduction}
+
+\section{Background and Motivation}\label{sec-background}
+
+Mental health disorders represent one of the leading causes of
+disability worldwide. The World Health Organization estimates that one
+in every eight people globally lives with a mental health condition, yet
+the median coverage of mental health services in low- and middle-income
+countries remains below 25\% {[}1{]}. In Egypt and the broader MENA
+region, cultural stigma, a shortage of trained professionals, and
+financial barriers compound the treatment gap, leaving millions without
+adequate support.
+
+The rapid proliferation of smartphones --- global penetration exceeded
+6.8 billion devices in 2023 --- combined with advances in artificial
+intelligence creates a unique opportunity to bridge this gap. Digital
+mental health interventions can provide immediate, stigma-free, and
+scalable assistance that complements traditional face-to-face therapy.
+Over the past decade, the field has evolved from simple self-help
+journals and static psychoeducation modules to sophisticated platforms
+that leverage natural language processing, emotion recognition, and
+behavioral gamification to deliver personalized support at scale.
+
+Recent developments in large language models (LLMs) have further
+transformed the landscape. Models such as LLaMA, Gemma, and GPT-4 have
+demonstrated the ability to generate contextually relevant, empathetic
+text that can be grounded in curated knowledge bases through
+retrieval-augmented generation (RAG) {[}2{]}. When combined with
+evidence-based therapeutic frameworks --- Cognitive Behavioral Therapy
+(CBT), Dialectical Behavior Therapy (DBT), and structured clinical
+assessments such as the Generalized Anxiety Disorder 7-item scale
+(GAD-7) and the Patient Health Questionnaire-9 (PHQ-9) --- these models
+can produce responses that are not merely conversational but clinically
+informed.
+
+Simultaneously, gamification --- the application of game-design elements
+to non-game contexts --- has proven effective at sustaining user
+engagement in health applications. Meta-analyses indicate that
+well-designed gamification elements, including points, badges, streaks,
+and adaptive difficulty, can increase retention rates by 20--40\%
+compared to ungameified counterparts {[}3{]}.
+
+Despite these advances, a significant gap remains between the promise of
+AI-assisted mental health tools and their practical deployment. Existing
+solutions tend to address only one or two dimensions of the problem ---
+either providing conversational support without clinical grounding, or
+offering structured programs without personalization, or engaging users
+initially without sustaining long-term adherence. A holistic solution
+that integrates all of these dimensions within a privacy-first,
+culturally sensitive framework does not yet exist at scale.
+
+\section{Problem Definition}\label{sec-problem-definition}
+
+Despite the growing number of digital mental health applications, four
+fundamental challenges persist:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Lack of personalization}. Many chatbot-based tools provide
+  generic, template-driven responses that fail to adapt to a user's
+  current emotional state, clinical profile, or behavioral patterns. A
+  person reporting mild anxiety on Monday and severe anxiety on Thursday
+  may receive identical therapeutic suggestions, undermining both trust
+  and clinical efficacy.
+\item
+  \textbf{Low user retention}. Without engaging design, users tend to
+  abandon mental health applications within two to four weeks. A
+  systematic review of mobile health app usage found that 77\% of users
+  who download a health app discontinue use within the first three days,
+  and fewer than 5\% remain active after 90 days {[}3{]}, {[}4{]}. The
+  absence of progressive reward systems, social accountability, and
+  adaptive difficulty curves contributes to this attrition.
+\item
+  \textbf{Limited clinical grounding}. Few applications integrate
+  evidence-based therapeutic frameworks with AI-generated responses.
+  Most commercial mental health chatbots operate as closed-domain
+  retrieval systems, returning pre-authored scripts from a fixed
+  response bank. Those that employ LLMs often do so without grounding
+  the model's output in verified clinical literature, increasing the
+  risk of hallucination --- generating plausible-sounding but factually
+  incorrect or even harmful advice.
+\item
+  \textbf{Inadequate privacy and safety mechanisms}. Handling sensitive
+  mental health data requires robust encryption, access controls, and
+  ethical practices. Many commercial applications lack transparent data
+  governance, do not implement crisis detection protocols, and fail to
+  provide emergency resource redirection when users express suicidal
+  ideation or self-harm intent. The absence of culturally localized
+  crisis resources further limits the utility of these tools in
+  non-Western markets.
+\end{enumerate}
+
+These challenges are not independent. Low personalization reduces
+perceived value, which accelerates attrition. Attrition starves the
+system of the longitudinal data needed to personalize effectively. And
+without clinical grounding, even personalized responses can be
+dangerous. Addressing these challenges requires an integrated approach.
+
+\section{Proposed Solution}\label{sec-proposed-solution}
+
+UpHeal is an AI-powered, data-driven, and gamified mental health
+companion designed to address all four challenges simultaneously through
+an integrated system architecture. The system combines four
+complementary pillars:
+
+\textbf{Pillar 1: RAG-augmented conversational AI.} UpHeal's chat
+service does not rely on a standalone language model generating
+responses in isolation. Instead, each user message triggers a
+multi-stage pipeline: (a) an emotion classifier detects the user's
+affective state from the input text, (b) a retrieval-augmented
+generation pipeline queries a vector database of curated clinical
+literature --- including the DSM-5-TR, CBT workbooks, and evidence-based
+therapeutic protocols --- to identify passages relevant to the user's
+emotional context and clinical profile, (c) the retrieved passages,
+conversation history, and detected emotion label are assembled into a
+structured prompt for a large language model (LLM), and (d) a clinical
+auditor validates the generated response for safety, crisis indicators,
+and therapeutic tone before delivery. This architecture ensures that
+responses are both contextually personalized and clinically grounded.
+
+\textbf{Pillar 2: Real-time emotion-adaptive interaction.} The system
+continuously adapts its behavior based on the user's detected emotional
+state. When a user's messages indicate elevated anxiety or sadness, the
+system adjusts task difficulty, modifies response tone, and prioritizes
+calming interventions such as guided breathing exercises. When the
+system detects crisis keywords --- in both English and Arabic --- it
+triggers a mandatory redirection to emergency resources with localized
+hotline numbers. Emotion classification is powered by a fine-tuned model
+that processes text input, with future support for voice-based detection
+via Whisper speech-to-text transcription.
+
+\textbf{Pillar 3: Comprehensive gamification engine.} UpHeal implements
+a multi-layered gamification system designed to sustain engagement over
+weeks and months rather than days. The engine includes: an experience
+point (XP) system with eight activity types and streak-based multipliers
+(up to 5× for 365-day streaks); a leveling system with progressive
+thresholds; ten badges across streak, task completion, and
+addiction-free categories; twelve achievements with multi-condition
+unlock criteria; daily, weekly, and special challenges with time-based
+expiration; and animated reward overlays that provide immediate positive
+reinforcement. The gamification design draws on self-determination
+theory, targeting autonomy, competence, and relatedness.
+
+\textbf{Pillar 4: Privacy-first, safety-augmented architecture.} UpHeal
+enforces encryption in transit (TLS 1.3) and at rest (AES-256 via
+Supabase), row-level security (RLS) policies that isolate user data, and
+a three-tier JWT authentication system (HS256, ES256/JWKS, development
+fallback). The clinical auditor operates as a mandatory safety gate:
+every generated response is screened for crisis keywords, robotic tone,
+safety risks, and frustration indicators before delivery. The auditor
+supports bilingual crisis detection (English and Arabic) and provides
+locale-specific emergency hotlines.
+
+The system architecture comprises a Flutter cross-platform mobile
+application serving as the primary user interface, a Python FastAPI
+backend orchestrating the AI pipeline through a microservices gateway,
+Supabase providing authentication, PostgreSQL database persistence,
+real-time subscriptions, and object storage, a ChromaDB vector store
+indexed with sentence-transformer embeddings
+(\texttt{all-mpnet-base-v2}, 768 dimensions) housing the clinical
+knowledge base, and GPU-hosted inference services for the LLM, emotion
+classifier, and speech-to-text components.
+
+\section{Thesis Organization}\label{sec-thesis-organization}
+
+The remainder of this thesis is organized as follows:
+
+\begin{itemize}
+\tightlist
+\item
+  Chapter~\ref{sec-literature-review} surveys related work in digital
+  mental health, conversational agents, emotion recognition,
+  gamification, and retrieval-augmented generation, and presents a
+  detailed gap analysis.
+\item
+  Chapter~\ref{sec-system-design} presents the system requirements, use
+  cases, sequence diagrams, and architectural decisions, including the
+  AI pipeline design, data models, gamification system, and security
+  considerations.
+\item
+  Chapter~\ref{sec-implementation-results} details the technology stack,
+  frontend and backend implementation, testing methodology, and
+  evaluation results.
+\item
+  Chapter~\ref{sec-conclusion} summarizes the contributions, outlines
+  future work directions, and discusses ethical considerations.
+\end{itemize}
+
+\bookmarksetup{startatroot}
+
+\chapter{Literature Review}\label{sec-literature-review}
+
+\section{Overview of Digital Mental Health
+Solutions}\label{sec-digital-mh-overview}
+
+The landscape of digital mental health has evolved significantly over
+the past decade, moving from simple self-help applications to
+sophisticated AI-driven platforms. Early interventions relied primarily
+on static content delivery, such as mood logs and psychoeducation
+modules, while modern systems leverage natural language processing and
+machine learning to offer dynamic, personalized support.
+
+\section{Conversational Agents in Mental
+Health}\label{sec-conversational-agents}
+
+Conversational agents, or chatbots, have been widely explored as
+scalable mental health tools. Woebot, Wysa, and Replika represent
+notable commercial products that employ rule-based or hybrid approaches
+to deliver therapeutic content.Woebot, for example, uses structured CBT
+exercises through a scripted dialogue, while Wysa combines rule-based
+logic with NLP to handle a broader range of user inputs.
+
+Recent academic work has begun integrating large language models into
+mental health chatbots. Studies such as those by {[}2{]} on
+retrieval-augmented generation have demonstrated that grounding LLM
+responses in curated knowledge bases can significantly reduce
+hallucinations and improve factual accuracy---critical requirements in a
+clinical setting.
+
+\section{Emotion Recognition in Text and
+Speech}\label{sec-emotion-recognition}
+
+Emotion classification from user input enables adaptive system
+responses. Pre-trained models such as BERT-based classifiers and Whisper
+for speech-to-text transcription have shown strong performance in
+detecting emotional cues {[}5{]}, {[}6{]}. Fine-tuning these models on
+mental health-specific datasets allows for more nuanced emotional
+categorization relevant to therapeutic contexts.
+
+\section{Gamification for Health Engagement}\label{sec-gamification}
+
+Gamification strategies including points, badges, streaks, and progress
+tracking have been validated across multiple health domains as effective
+mechanisms for sustaining user engagement. {[}3{]} provide a
+meta-analysis showing that gamification elements, when thoughtfully
+designed, increase retention rates in health applications by 20--40\%.
+
+\section{Retrieval-Augmented Generation}\label{sec-rag}
+
+Retrieval-augmented generation (RAG) combines a retrieval component with
+a generative model, allowing the system to fetch relevant passages from
+a knowledge base before producing a response. This approach mitigates
+hallucination and ensures that generated content is grounded in verified
+clinical sources. {[}2{]} introduced the formal framework, and
+subsequent work has applied RAG to domain-specific tasks with promising
+results.
+
+\section{Gap Analysis}\label{sec-gap-analysis}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4545}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2727}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2727}}@{}}
+\caption{Gap analysis comparing existing digital mental health solutions
+with UpHeal's proposed approach.}\label{tbl-gap-analysis}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Gap
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Current Solutions
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+UpHeal's Approach
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Gap
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Current Solutions
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+UpHeal's Approach
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Personalization & Generic scripted responses & Emotion-adaptive LLM with
+RAG \\
+Clinical grounding & Limited or no evidence base & CBT/DBT-informed RAG
+knowledge base \\
+User retention & Low engagement over time & Gamification with streaks
+and achievements \\
+Privacy & Varies; often unclear & Encryption, RBAC, data minimization \\
+Multimodal input & Mostly text-only & Text + speech (Whisper) + emotion
+signals \\
+\end{longtable}
+
+\bookmarksetup{startatroot}
+
+\chapter{System Design}\label{sec-system-design}
+
+This chapter presents the comprehensive system design of UpHeal,
+covering requirements analysis, architectural decisions, detailed
+diagrams, and security considerations.
+
+\section{Functional Requirements}\label{sec-functional-requirements}
+
+The following functional requirements define the core capabilities of
+the UpHeal system:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{FR-01}: The system shall allow users to register and
+  authenticate securely.
+\item
+  \textbf{FR-02}: The system shall provide an AI-powered conversational
+  interface that responds to the user's mental health concerns.
+\item
+  \textbf{FR-03}: The system shall detect the user's emotional state
+  from text and voice input.
+\item
+  \textbf{FR-04}: The system shall adapt its response style based on the
+  detected emotion.
+\item
+  \textbf{FR-05}: The system shall allow users to log their mood on a
+  daily basis.
+\item
+  \textbf{FR-06}: The system shall provide gamification elements
+  including streaks, badges, and progress tracking.
+\item
+  \textbf{FR-07}: The system shall integrate a retrieval-augmented
+  generation pipeline that grounds LLM responses in curated clinical
+  knowledge.
+\item
+  \textbf{FR-08}: The system shall support speech-to-text input via the
+  Whisper model.
+\item
+  \textbf{FR-09}: The system shall store conversation history securely
+  for user review.
+\item
+  \textbf{FR-10}: The system shall provide an emergency resources page
+  with crisis helpline information.
+\end{itemize}
+
+\section{Non-Functional
+Requirements}\label{sec-non-functional-requirements}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{NFR-01}: Response latency for chat interactions shall not
+  exceed 5 seconds under normal conditions.
+\item
+  \textbf{NFR-02}: The system shall comply with data protection
+  regulations (GDPR/Egyptian DPL).
+\item
+  \textbf{NFR-03}: The application shall be cross-platform (Android and
+  iOS).
+\item
+  \textbf{NFR-04}: The system shall maintain 99.5\% uptime for backend
+  services.
+\item
+  \textbf{NFR-05}: All sensitive data shall be encrypted at rest and in
+  transit.
+\end{itemize}
+
+\section{Use Case Diagram}\label{sec-use-case}
+
+\includegraphics[width=25.93in,height=2.06in]{chapters/03-system-design_files/figure-latex/mermaid-figure-1.png}
+
+\section{Sequence Diagram --- Chat
+Interaction}\label{sec-sequence-diagram}
+
+\includegraphics[width=14.31in,height=6.82in]{chapters/03-system-design_files/figure-latex/mermaid-figure-4.png}
+
+\section{Functional Flow Diagram}\label{sec-functional-flow}
+
+\includegraphics[width=9.1in,height=14.02in]{chapters/03-system-design_files/figure-latex/mermaid-figure-3.png}
+
+\section{System Architecture}\label{sec-architecture}
+
+The UpHeal system follows a layered microservices architecture:
+
+\includegraphics[width=16.87in,height=5.23in]{chapters/03-system-design_files/figure-latex/mermaid-figure-2.png}
+
+\section{AI/ML Pipeline Design}\label{sec-ai-pipeline}
+
+The AI pipeline processes user input through three stages:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Input Processing}: Text is received directly; voice input is
+  transcribed using Whisper.
+\item
+  \textbf{Emotion Classification}: The transcribed or typed text is
+  passed through a fine-tuned emotion classifier to detect labels such
+  as \emph{anxious}, \emph{sad}, \emph{angry}, \emph{neutral}, and
+  \emph{hopeful}.
+\item
+  \textbf{Response Generation}: The classified emotion and user message
+  are used to retrieve relevant clinical passages from the vector
+  database. These passages, along with the conversation context, are fed
+  into Gemma LLM via a structured prompt to generate a grounded,
+  empathetic response.
+\end{enumerate}
+
+\section{Hardware Considerations}\label{sec-hardware}
+
+\begin{longtable}[]{@{}ll@{}}
+\caption{Hardware and infrastructure
+specifications.}\label{tbl-hardware}\tabularnewline
+\toprule\noalign{}
+Component & Specification \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Component & Specification \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+GPU (AI Inference) & NVIDIA A100 80GB --- RunPod Cloud \\
+Backend Server & DigitalOcean Droplet --- 4 vCPU, 8GB RAM \\
+Database & Supabase managed PostgreSQL \\
+Client Device & Android 10+ / iOS 15+ with 4GB RAM minimum \\
+\end{longtable}
+
+\section{Security Considerations}\label{sec-security}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Authentication}: Supabase Auth with JWT tokens and OAuth2
+  support.
+\item
+  \textbf{Data encryption}: TLS 1.3 in transit; AES-256 at rest.
+\item
+  \textbf{Access control}: Role-based access control (RBAC) with
+  Row-Level Security (RLS) in Supabase.
+\item
+  \textbf{Data minimization}: Only necessary user data is collected;
+  conversation logs are anonymized for analytics.
+\item
+  \textbf{Emergency protocol}: Crisis keywords trigger a mandatory
+  redirect to emergency resources page with helpline numbers.
+\item
+  \textbf{Compliance}: Designed with GDPR and Egyptian Data Protection
+  Law principles in mind.
+\end{itemize}
+
+\bookmarksetup{startatroot}
+
+\chapter{Implementation \& Results}\label{sec-implementation-results}
+
+This chapter details the implementation of the UpHeal system and
+presents the evaluation results.
+
+\section{Technology Stack}\label{sec-tech-stack}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2593}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4074}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Complete technology stack used in
+UpHeal.}\label{tbl-tech-stack}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Layer
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Technology
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Purpose
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Layer
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Technology
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Purpose
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Frontend & Flutter (Dart) & Cross-platform mobile application \\
+Backend & Python FastAPI & RESTful API server \\
+Authentication & Supabase Auth & User registration, login, JWT tokens \\
+Database & Supabase PostgreSQL & User data, conversations, gamification
+state \\
+Object Storage & Supabase Storage & Audio files, profile images \\
+LLM & Gemma (via Ollama on RunPod) & Conversational response
+generation \\
+STT & OpenAI Whisper & Speech-to-text transcription \\
+Emotion & Fine-tuned classifier & Emotion detection from text \\
+RAG & LangChain + ChromaDB & Context retrieval for grounded responses \\
+Hosting & DigitalOcean + RunPod & Backend server + GPU inference \\
+\end{longtable}
+
+\section{Frontend Implementation}\label{sec-frontend-impl}
+
+The Flutter application provides the user-facing interface with the
+following screens:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Onboarding \& Authentication}: Registration, login, and
+  profile setup.
+\item
+  \textbf{Home Dashboard}: Quick access to chat, mood logging, and
+  progress overview.
+\item
+  \textbf{Chat Interface}: Real-time conversational UI with typing
+  indicators and emotion badge display.
+\item
+  \textbf{Mood Logger}: Daily mood entry with emoji selection and
+  optional journaling.
+\item
+  \textbf{Progress \& Badges}: Visualization of streaks, earned badges,
+  and mood trends.
+\item
+  \textbf{Emergency Resources}: Crisis helpline information and safety
+  plan.
+\end{itemize}
+
+\section{Backend Implementation}\label{sec-backend-impl}
+
+The FastAPI backend exposes RESTful endpoints organized as follows:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{/auth/*} --- User registration and login (delegated to
+  Supabase).
+\item
+  \texttt{/chat/*} --- Message submission, response generation, and
+  conversation history.
+\item
+  \texttt{/mood/*} --- Mood logging and historical retrieval.
+\item
+  \texttt{/gamification/*} --- Badge awarding, streak tracking, and
+  progress queries.
+\item
+  \texttt{/emergency/*} --- Emergency resource retrieval.
+\end{itemize}
+
+\section{AI Pipeline Implementation}\label{sec-ai-pipeline-impl}
+
+\subsection{Emotion Classifier}\label{emotion-classifier}
+
+The emotion classifier is fine-tuned on a mental health dialogue dataset
+to recognize the following categories: \emph{anxious, sad, angry,
+neutral, hopeful,} and \emph{distressed}. The model processes each user
+message and returns a probability distribution over emotion labels, with
+the top label used to adapt the response strategy.
+
+\subsection{RAG Pipeline}\label{rag-pipeline}
+
+The retrieval-augmented generation pipeline operates as follows:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  The user message and detected emotion are embedded using the same
+  vectorizer as the knowledge base.
+\item
+  The top-k relevant passages are retrieved from ChromaDB.
+\item
+  A structured prompt is constructed containing: system instructions,
+  retrieved context, conversation history, and the current user message.
+\item
+  Gemma LLM generates a response conditioned on this prompt.
+\item
+  The response is post-processed to ensure safety and appended to the
+  conversation.
+\end{enumerate}
+
+\subsection{Whisper Integration}\label{whisper-integration}
+
+Voice messages are recorded in the Flutter app, uploaded to Supabase
+Storage, and asynchronously transcribed using Whisper. The transcription
+is then fed into the emotion classifier and RAG pipeline as described
+above.
+
+\section{Testing}\label{sec-testing}
+
+\subsection{Unit Testing}\label{unit-testing}
+
+Each backend endpoint and utility function is covered by unit tests
+using \texttt{pytest}, with a minimum target coverage of 80\%.
+
+\subsection{Integration Testing}\label{integration-testing}
+
+End-to-end tests verify the complete chat flow: user message → emotion
+classification → RAG retrieval → LLM response → frontend display.
+
+\subsection{User Acceptance Testing}\label{user-acceptance-testing}
+
+A pool of target users will evaluate the application on usability,
+response quality, and engagement metrics using the System Usability
+Scale (SUS).
+
+\section{Results}\label{sec-results}
+
+\emph{This section will be populated with evaluation results once the
+system is deployed and user testing is complete. Planned metrics
+include:}
+
+\begin{itemize}
+\tightlist
+\item
+  Emotion classification accuracy (F1 score)
+\item
+  LLM response relevance (human evaluation on a 1--5 scale)
+\item
+  RAG retrieval precision (top-k relevance)
+\item
+  User retention rate over 4 weeks
+\item
+  System Usability Scale (SUS) score
+\item
+  Average response latency
+\end{itemize}
+
+\begin{verbatim}
+C:\Users\DELL\AppData\Local\Temp\ipykernel_14340\2335424602.py:14: UserWarning:
+
+Tight layout not applied. The bottom and top margins cannot be made large enough to accommodate all Axes decorations.
+\end{verbatim}
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/04-implementation-results_files/figure-pdf/fig-architecture-overview-output-2.pdf}}
+
+}
+
+\caption{\label{fig-architecture-overview}Planned evaluation metrics for
+the UpHeal system}
+
+\end{figure}%
+
+\bookmarksetup{startatroot}
+
+\chapter{Conclusion \& Future Work}\label{sec-conclusion}
+
+\section{Conclusions}\label{sec-conclusions}
+
+This thesis presented UpHeal, an AI-powered, data-driven, and gamified
+mental health companion designed to address the accessibility gap in
+mental health support. The system integrates large language models with
+retrieval-augmented generation for clinically grounded responses,
+real-time emotion classification for personalized interaction, and
+gamification elements for sustained user engagement.
+
+Key contributions of this work include:
+
+\begin{itemize}
+\tightlist
+\item
+  A modular, privacy-first architecture that separates AI inference from
+  user data storage, enabling independent scaling and compliance with
+  data protection regulations.
+\item
+  A RAG-augmented conversational pipeline that grounds LLM responses in
+  curated clinical knowledge, reducing hallucinations and improving
+  therapeutic relevance.
+\item
+  An emotion-adaptive interaction model that detects the user's
+  emotional state and adjusts the response accordingly.
+\item
+  A gamification framework that promotes daily engagement through
+  streaks, badges, and mood trend visualization.
+\end{itemize}
+
+The evaluation results demonstrate that UpHeal achieves {[}to be
+completed after testing{]} in emotion classification accuracy, {[}X/5{]}
+in response relevance as rated by human evaluators, and a System
+Usability Scale score of {[}X/100{]}.
+
+\section{Future Work}\label{sec-future-work}
+
+Several directions for future improvement and research are identified:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Multilingual support}: Extending the system to support Arabic
+  and other languages commonly spoken in Egypt and the MENA region.
+\item
+  \textbf{Therapist dashboard}: Developing a secure interface for
+  licensed therapists to monitor patient progress and intervene when
+  necessary.
+\item
+  \textbf{Advanced gamification}: Incorporating adaptive difficulty in
+  gamification elements and social features such as anonymous peer
+  support groups.
+\item
+  \textbf{Model optimization}: Investigating model quantization and edge
+  deployment to reduce cloud dependency and latency.
+\item
+  \textbf{Longitudinal study}: Conducting a formal clinical trial to
+  assess the long-term impact of UpHeal on user well-being and clinical
+  outcomes.
+\end{enumerate}
+
+\section{Ethics Considerations}\label{sec-ethics}
+
+The development and deployment of UpHeal raise several ethical
+considerations:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Informed consent}: Users are informed about data collection
+  practices and AI-generated nature of responses before use.
+\item
+  \textbf{Data privacy}: All personal and conversational data is
+  encrypted and access-controlled. Data minimization principles are
+  followed.
+\item
+  \textbf{Non-replacement disclaimer}: UpHeal is explicitly positioned
+  as a complementary tool, not a replacement for professional mental
+  health care.
+\item
+  \textbf{Crisis intervention}: The system includes mandatory safety
+  protocols that redirect users expressing suicidal ideation or
+  self-harm to emergency resources and crisis helplines.
+\item
+  \textbf{Bias mitigation}: Emotion classifiers and LLM responses are
+  periodically audited for demographic and cultural biases.
+\item
+  \textbf{Transparency}: Users can access and delete their conversation
+  data at any time, in compliance with data protection regulations.
+\end{itemize}
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{part}{Appendices}
+\appendix
+
+\chapter{Appendix}\label{sec-appendix}
+
+\section{Source Code Repository}\label{source-code-repository}
+
+The complete source code for UpHeal is available at:
+\url{https://github.com/Upheal1}
+
+\section{Additional Diagrams}\label{additional-diagrams}
+
+Detailed deployment diagrams, database schema, and API documentation are
+included as supplementary materials.
+
+\section{Publication}\label{publication}
+
+\emph{If any publication results from this project, it will be listed
+here.}
+
+\protect\phantomsection\label{refs}
+\begin{CSLReferences}{0}{0}
+\bibitem[\citeproctext]{ref-who2021mental}
+\CSLLeftMargin{{[}1{]} }%
+\CSLRightInline{World Health Organization, {``Mental health:
+Strengthening our response.''}
+\url{https://www.who.int/news-room/fact-sheets/detail/mental-health-strengthening-our-response},
+2021.}
+
+\bibitem[\citeproctext]{ref-lewis2020rag}
+\CSLLeftMargin{{[}2{]} }%
+\CSLRightInline{{P. Lewis \emph{et al.}}, {``Retrieval-augmented
+generation for knowledge-intensive {NLP} tasks,''} \emph{Advances in
+Neural Information Processing Systems}, vol. 33, pp. 9459--9474, 2020.}
+
+\bibitem[\citeproctext]{ref-hamari2016gamification}
+\CSLLeftMargin{{[}3{]} }%
+\CSLRightInline{J. Hamari, J. Koivisto, and H. Sarsa, {``Gamification: A
+systematic literature review of gamification research in the context of
+health and well-being,''} 2016.}
+
+\bibitem[\citeproctext]{ref-chen2020retention}
+\CSLLeftMargin{{[}4{]} }%
+\CSLRightInline{Y. Chen, B. Vargas, P. Dutta, and P. Rui, {``Mobile
+health app usage and retention: A systematic review,''} \emph{Journal of
+Medical Internet Research}, vol. 22, no. 7, p. e18135, 2020.}
+
+\bibitem[\citeproctext]{ref-devlin2019bert}
+\CSLLeftMargin{{[}5{]} }%
+\CSLRightInline{J. Devlin, M.-W. Chang, K. Lee, and K. Toutanova,
+{``{BERT}: Pre-training of deep bidirectional transformers for language
+understanding,''} \emph{Proceedings of the 2019 Conference of the North
+American Chapter of the Association for Computational Linguistics}, pp.
+4171--4186, 2019.}
+
+\bibitem[\citeproctext]{ref-radford2022whisper}
+\CSLLeftMargin{{[}6{]} }%
+\CSLRightInline{A. Radford, J. W. Kim, T. Xu, G. Brockman, C. McLeavey,
+and I. Sutskever, {``Robust speech recognition via large-scale weak
+supervision,''} \emph{arXiv preprint arXiv:2212.04356}, 2022.}
+
+\end{CSLReferences}
+
+
+
+
+\end{document}

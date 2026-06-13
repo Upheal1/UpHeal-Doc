@@ -1,0 +1,50 @@
+# Introduction {#sec-introduction}
+
+## Background and Motivation {#sec-background}
+
+Mental health disorders represent one of the leading causes of disability worldwide. The World Health Organization estimates that one in every eight people globally lives with a mental health condition, yet the median coverage of mental health services in low- and middle-income countries remains below 25% [@who2021mental]. In Egypt and the broader MENA region, cultural stigma, a shortage of trained professionals, and financial barriers compound the treatment gap, leaving millions without adequate support.
+
+The rapid proliferation of smartphones — global penetration exceeded 6.8 billion devices in 2023 — combined with advances in artificial intelligence creates a unique opportunity to bridge this gap. Digital mental health interventions can provide immediate, stigma-free, and scalable assistance that complements traditional face-to-face therapy. Over the past decade, the field has evolved from simple self-help journals and static psychoeducation modules to sophisticated platforms that leverage natural language processing, emotion recognition, and behavioral gamification to deliver personalized support at scale.
+
+Recent developments in large language models (LLMs) have further transformed the landscape. Models such as LLaMA, Gemma, and GPT-4 have demonstrated the ability to generate contextually relevant, empathetic text that can be grounded in curated knowledge bases through retrieval-augmented generation (RAG) [@lewis2020rag]. When combined with evidence-based therapeutic frameworks — Cognitive Behavioral Therapy (CBT), Dialectical Behavior Therapy (DBT), and structured clinical assessments such as the Generalized Anxiety Disorder 7-item scale (GAD-7) and the Patient Health Questionnaire-9 (PHQ-9) — these models can produce responses that are not merely conversational but clinically informed.
+
+Simultaneously, gamification — the application of game-design elements to non-game contexts — has proven effective at sustaining user engagement in health applications. Meta-analyses indicate that well-designed gamification elements, including points, badges, streaks, and adaptive difficulty, can increase retention rates by 20–40% compared to ungameified counterparts [@hamari2016gamification].
+
+Despite these advances, a significant gap remains between the promise of AI-assisted mental health tools and their practical deployment. Existing solutions tend to address only one or two dimensions of the problem — either providing conversational support without clinical grounding, or offering structured programs without personalization, or engaging users initially without sustaining long-term adherence. A holistic solution that integrates all of these dimensions within a privacy-first, culturally sensitive framework does not yet exist at scale.
+
+## Problem Definition {#sec-problem-definition}
+
+Despite the growing number of digital mental health applications, four fundamental challenges persist:
+
+1.  **Lack of personalization**. Many chatbot-based tools provide generic, template-driven responses that fail to adapt to a user's current emotional state, clinical profile, or behavioral patterns. A person reporting mild anxiety on Monday and severe anxiety on Thursday may receive identical therapeutic suggestions, undermining both trust and clinical efficacy.
+
+2.  **Low user retention**. Without engaging design, users tend to abandon mental health applications within two to four weeks. A systematic review of mobile health app usage found that 77% of users who download a health app discontinue use within the first three days, and fewer than 5% remain active after 90 days [@hamari2016gamification; @chen2020retention]. The absence of progressive reward systems, social accountability, and adaptive difficulty curves contributes to this attrition.
+
+3.  **Limited clinical grounding**. Few applications integrate evidence-based therapeutic frameworks with AI-generated responses. Most commercial mental health chatbots operate as closed-domain retrieval systems, returning pre-authored scripts from a fixed response bank. Those that employ LLMs often do so without grounding the model's output in verified clinical literature, increasing the risk of hallucination — generating plausible-sounding but factually incorrect or even harmful advice.
+
+4.  **Inadequate privacy and safety mechanisms**. Handling sensitive mental health data requires robust encryption, access controls, and ethical practices. Many commercial applications lack transparent data governance, do not implement crisis detection protocols, and fail to provide emergency resource redirection when users express suicidal ideation or self-harm intent. The absence of culturally localized crisis resources further limits the utility of these tools in non-Western markets.
+
+These challenges are not independent. Low personalization reduces perceived value, which accelerates attrition. Attrition starves the system of the longitudinal data needed to personalize effectively. And without clinical grounding, even personalized responses can be dangerous. Addressing these challenges requires an integrated approach.
+
+## Proposed Solution {#sec-proposed-solution}
+
+UpHeal is an AI-powered, data-driven, and gamified mental health companion designed to address all four challenges simultaneously through an integrated system architecture. The system combines four complementary pillars:
+
+**Pillar 1: RAG-augmented conversational AI.** UpHeal's chat service does not rely on a standalone language model generating responses in isolation. Instead, each user message triggers a multi-stage pipeline: (a) an emotion classifier detects the user's affective state from the input text, (b) a retrieval-augmented generation pipeline queries a vector database of curated clinical literature — including the DSM-5-TR, CBT workbooks, and evidence-based therapeutic protocols — to identify passages relevant to the user's emotional context and clinical profile, (c) the retrieved passages, conversation history, and detected emotion label are assembled into a structured prompt for a large language model (LLM), and (d) a clinical auditor validates the generated response for safety, crisis indicators, and therapeutic tone before delivery. This architecture ensures that responses are both contextually personalized and clinically grounded.
+
+**Pillar 2: Real-time emotion-adaptive interaction.** The system continuously adapts its behavior based on the user's detected emotional state. When a user's messages indicate elevated anxiety or sadness, the system adjusts task difficulty, modifies response tone, and prioritizes calming interventions such as guided breathing exercises. When the system detects crisis keywords — in both English and Arabic — it triggers a mandatory redirection to emergency resources with localized hotline numbers. Emotion classification is powered by a fine-tuned model that processes text input, with future support for voice-based detection via Whisper speech-to-text transcription.
+
+**Pillar 3: Comprehensive gamification engine.** UpHeal implements a multi-layered gamification system designed to sustain engagement over weeks and months rather than days. The engine includes: an experience point (XP) system with eight activity types and streak-based multipliers (up to 5× for 365-day streaks); a leveling system with progressive thresholds; ten badges across streak, task completion, and addiction-free categories; twelve achievements with multi-condition unlock criteria; daily, weekly, and special challenges with time-based expiration; and animated reward overlays that provide immediate positive reinforcement. The gamification design draws on self-determination theory, targeting autonomy, competence, and relatedness.
+
+**Pillar 4: Privacy-first, safety-augmented architecture.** UpHeal enforces encryption in transit (TLS 1.3) and at rest (AES-256 via Supabase), row-level security (RLS) policies that isolate user data, and a three-tier JWT authentication system (HS256, ES256/JWKS, development fallback). The clinical auditor operates as a mandatory safety gate: every generated response is screened for crisis keywords, robotic tone, safety risks, and frustration indicators before delivery. The auditor supports bilingual crisis detection (English and Arabic) and provides locale-specific emergency hotlines.
+
+The system architecture comprises a Flutter cross-platform mobile application serving as the primary user interface, a Python FastAPI backend orchestrating the AI pipeline through a microservices gateway, Supabase providing authentication, PostgreSQL database persistence, real-time subscriptions, and object storage, a ChromaDB vector store indexed with sentence-transformer embeddings (`all-mpnet-base-v2`, 768 dimensions) housing the clinical knowledge base, and GPU-hosted inference services for the LLM, emotion classifier, and speech-to-text components.
+
+## Thesis Organization {#sec-thesis-organization}
+
+The remainder of this thesis is organized as follows:
+
+-   @sec-literature-review surveys related work in digital mental health, conversational agents, emotion recognition, gamification, and retrieval-augmented generation, and presents a detailed gap analysis.
+-   @sec-system-design presents the system requirements, use cases, sequence diagrams, and architectural decisions, including the AI pipeline design, data models, gamification system, and security considerations.
+-   @sec-implementation-results details the technology stack, frontend and backend implementation, testing methodology, and evaluation results.
+-   @sec-conclusion summarizes the contributions, outlines future work directions, and discusses ethical considerations.

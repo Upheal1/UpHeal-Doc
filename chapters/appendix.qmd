@@ -1,0 +1,13 @@
+# Appendix {#sec-appendix}
+
+## Source Code Repository
+
+The complete source code for UpHeal is available at: [https://github.com/Upheal1](https://github.com/Upheal1)
+
+## Additional Diagrams
+
+Detailed deployment diagrams, database schema, and API documentation are included as supplementary materials.
+
+## Publication
+
+*If any publication results from this project, it will be listed here.*

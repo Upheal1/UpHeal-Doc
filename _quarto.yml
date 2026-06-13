@@ -1,0 +1,62 @@
+project:
+  type: book
+  output-dir: output
+
+book:
+  title: "UpHeal: An AI-Powered, Data-Driven and Gamified Mental Health Companion"
+  author:
+    - name: "Hozaifa Moustafa"
+    - name: "Ahmed Osama"
+    - name: "Devide Hany"
+    - name: "Malak Yasser"
+    - name: "Abdalrahman Osama"
+    - name: "Yahya Amr"
+    - name: "Ahmed Zakaria"
+  date: "June 2026"
+  chapters:
+    - index.qmd
+    - acknowledgements.qmd
+    - chapters/01-introduction.qmd
+    - chapters/02-literature-review.qmd
+    - chapters/03-system-design.qmd
+    - chapters/04-implementation-results.qmd
+    - chapters/05-conclusion.qmd
+  appendices:
+    - chapters/appendix.qmd
+
+bibliography: references.bib
+csl: styles/ieee.csl
+
+format:
+  pdf:
+    documentclass: report
+    classoption: [12pt, a4paper]
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    lof: true
+    lot: true
+    include-in-header:
+      text: |
+        \usepackage{fancyhdr}
+        \usepackage{setspace}
+        \onehalfspacing
+        \pagestyle{fancy}
+        \fancyhf{}
+        \fancyhead[R]{\thepage}
+        \renewcommand{\headrulewidth}{0pt}
+    include-before-body:
+      text: |
+        \thispagestyle{empty}
+    pdf-engine: xelatex
+    keep-tex: true
+  docx:
+    toc: true
+    number-sections: true
+    toc-depth: 3
+
+execute:
+  freeze: auto
+
+editor_options:
+  chunk_output_type: console
