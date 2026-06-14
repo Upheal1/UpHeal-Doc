@@ -2,7 +2,7 @@
 
 ## 3.1 System Architecture Overview
 
-The UpHeal system follows a layered microservices architecture. Figure 3.1 presents the high-level block diagram showing all components and their interconnections.
+The UpHeal system follows a layered microservices architecture inspired by the RAG framework [@lewis2020rag] and modern LLM integration patterns [@toufique2023llm]. Figure 3.1 presents the high-level block diagram showing all components and their interconnections.
 
 Figure 3.1: UpHeal system architecture block diagram.
 
@@ -67,7 +67,7 @@ flowchart TB
 | Gateway | Auth Middleware | PyJWT + Supabase | 3-tier JWT verification |
 | Microservices | Chat Service | Python + FastAPI | Conversational AI |
 | Microservices | Assessment Service | Python + FastAPI | Clinical scoring |
-| AI | Emotion Classifier | BERT/DistilBERT | Text emotion detection |
+| AI | Emotion Classifier | BERT/DistilBERT | Text emotion detection [@devlin2019bert] |
 | AI | ChromaDB Vector Store | ChromaDB 0.5+ | Clinical knowledge retrieval |
 | AI | LLM Service | Groq/Ollama | Response generation |
 | AI | Clinical Auditor | Custom Python | Safety validation |
@@ -164,7 +164,7 @@ Table 3.1: Embedding model specifications.
 
 ### 3.3.1 Prompt Assembly
 
-The prompt is constructed from four components:
+The prompt is constructed from four components, following instruction-fine-tuning patterns [@chung2022scaling]:
 
 ```
 Prompt Structure:
@@ -208,7 +208,7 @@ Table 3.2: LLM service configurations.
 
 | Parameter | Groq (Current) | Ollama (Planned) |
 |-----------|----------------|-------------------|
-| Model | llama-3.1-8b-instant | qwen2.5:7b / Gemma 2B |
+| Model | llama-3.1-8b-instant [@touvron2023llama; @chung2022scaling] | qwen2.5:7b / Gemma 2B [@team2024gemma] |
 | Hosting | Cloud (Groq) | Self-hosted (RunPod) |
 | Temperature | 0.7 | 0.7 |
 | Max Tokens | 300 | 500 |
