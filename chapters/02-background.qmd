@@ -1,0 +1,86 @@
+# Background (Survey) {#sec-background}
+
+## Introduction to Digital Mental Health {#sec-digital-mh-intro}
+
+Mental health disorders represent one of the leading causes of disability worldwide. The World Health Organization estimates that one in every eight people globally lives with a mental health condition, yet the median coverage of mental health services in low- and middle-income countries remains below 25%.
+
+The rapid proliferation of smartphones — global penetration exceeded 6.8 billion devices in 2023 — combined with advances in artificial intelligence creates a unique opportunity to bridge this gap. Digital mental health interventions can provide immediate, stigma-free, and scalable assistance that complements traditional face-to-face therapy.
+
+Over the past decade, the field has evolved from simple self-help journals and static psychoeducation modules to sophisticated platforms that leverage natural language processing, emotion recognition, and behavioral gamification to deliver personalized support at scale.
+
+## Current State of the Art {#sec-state-of-art}
+
+### Conversational Agents
+
+Conversational agents, or chatbots, have been widely explored as scalable mental health tools. Commercial products such as **Woebot**, **Wysa**, and **Replika** represent the state of the art.
+
+**Woebot** is a CBT-based chatbot that delivers structured therapeutic exercises through scripted dialogue. A study found that Woebot significantly reduced depression symptoms in young adults over a two-week period. The system operates primarily as a rule-based agent with limited NLP capabilities.
+
+**Wysa** combines rule-based logic with NLP to handle a broader range of user inputs. Users engaged with the bot an average of 3.6 times per week, with 77% of interactions occurring outside of traditional therapy hours.
+
+**Replika** uses a large language model for open-ended conversation but lacks clinical grounding and explicitly disclaims therapeutic intent.
+
+A systematic review of 47 mental health conversational agents found that only 12% incorporated evidence-based therapeutic frameworks, while 68% used simple keyword matching or rule-based responses.
+
+### Emotion Recognition
+
+Emotion classification from user input enables adaptive system responses. Pre-trained models such as BERT-based classifiers have shown strong performance in detecting emotional cues from text. For speech-based emotion recognition, Whisper has demonstrated robust performance in transcribing and analyzing emotional speech patterns.
+
+In the mental health domain, fine-tuning these models on domain-specific datasets allows for more nuanced emotional categorization. However, the integration of real-time emotion detection into conversational mental health systems remains limited.
+
+### Gamification
+
+Gamification strategies have been validated across multiple health domains as effective mechanisms for sustaining user engagement. Meta-analyses indicate that well-designed gamification elements, including points, badges, streaks, and adaptive difficulty, can increase retention rates by 20–40% compared to non-gamified counterparts.
+
+### Retrieval-Augmented Generation
+
+Retrieval-augmented generation (RAG) combines a retrieval component with a generative model. The framework was introduced by Lewis et al. and has been applied to domain-specific tasks with promising results. In the medical domain, RAG has been used to ground LLM responses in clinical literature, reducing hallucination and improving factual accuracy.
+
+## Evaluation of Current Solutions {#sec-evaluation}
+
+Table: Comparison of existing digital mental health solutions. {#tbl-comparison}
+
+| Dimension | Woebot | Wysa | Replika | UpHeal |
+|-----------|--------|------|---------|--------|
+| Personalization | Fixed scripts | Limited NLP | Generic | Emotion-adaptive + RAG |
+| Clinical grounding | CBT-based | Limited | None | DSM-5-TR + CBT + RAG |
+| User retention | Moderate | Moderate | High (social) | Gamification (XP, streaks, badges) |
+| Crisis detection | Basic | Basic | None | Multi-tier (EN/AR) + hotlines |
+| LLM integration | None | None | Yes (ungrounded) | RAG-augmented + clinical audit |
+
+## Identified Gap {#sec-gap}
+
+The analysis reveals that while existing solutions address individual aspects of digital mental health support, no existing system integrates all of the following:
+
+1.  RAG-augmented LLM responses grounded in clinical literature
+2.  Real-time emotion-adaptive interaction
+3.  Comprehensive gamification with clinical sensitivity
+4.  Privacy-first architecture with bilingual crisis detection
+
+## Importance of the Proposed Research {#sec-importance}
+
+The proposed system addresses a critical need in the MENA region, where cultural stigma, shortage of professionals, and financial barriers compound the treatment gap. The integration of these four pillars into a unified system represents a significant contribution to the field of digital mental health.
+
+## Research Objectives {#sec-objectives}
+
+The research aims to:
+
+1.  Design and implement a RAG-augmented conversational AI system for mental health support.
+2.  Develop an emotion classification system that adapts the system's behavior based on user affective state.
+3.  Create a comprehensive gamification engine that sustains user engagement over months.
+4.  Implement a privacy-first, safety-augmented architecture with bilingual crisis detection.
+
+## Research Questions {#sec-research-questions}
+
+1.  Can a RAG-augmented LLM system generate clinically grounded, empathetic responses that outperform rule-based chatbots?
+2.  Does real-time emotion classification improve user engagement and therapeutic outcomes?
+3.  What gamification design maximizes long-term retention while maintaining clinical sensitivity?
+4.  How can the system ensure privacy, safety, and cultural relevance for the MENA region?
+
+## Thesis Organization {#sec-thesis-org}
+
+The remainder of this thesis is organized as follows:
+
+-   Chapter 3 presents the methodology, system architecture, and design decisions.
+-   Chapter 4 presents the results and discussions.
+-   Chapter 5 presents the conclusions and future work.

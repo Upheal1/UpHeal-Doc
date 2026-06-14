@@ -1,0 +1,228 @@
+# Methodology / Theory / Analysis {#sec-methodology}
+
+## System Overview
+
+The UpHeal system comprises a Flutter mobile frontend, a Python FastAPI backend with microservices, Supabase for data persistence, and a ChromaDB vector store for clinical knowledge retrieval.
+
+## System Architecture
+
+Figure 1: UpHeal system architecture block diagram.
+
+```{mermaid}
+flowchart LR
+    A[Flutter Mobile App] --> B[FastAPI Gateway]
+    B --> C[Auth Middleware]
+    B --> D[Assessment Service]
+    B --> E[Chat Service]
+    B --> F[Journal Service]
+    B --> G[Telemetry Service]
+    E --> H[ChromaDB Vector Store]
+    E --> I[LLM Service]
+    E --> J[Clinical Auditor]
+    D --> K[Supabase PostgreSQL]
+    E --> K
+    F --> K
+    G --> K
+    H --> L[Clinical Documents]
+```
+
+## Functional Requirements
+
+Table: Functional requirements. {#tbl-fr}
+
+| ID | Requirement | Priority |
+|----|-------------|----------|
+| FR-01 | User registration and authentication | High |
+| FR-02 | AI-powered conversational interface | High |
+| FR-03 | Emotion classification from text | High |
+| FR-04 | Speech-to-text input | Medium |
+| FR-05 | Mood logging with 5-level scale | High |
+| FR-06 | Gamification (XP, badges, streaks) | High |
+| FR-07 | RAG pipeline for clinical grounding | High |
+| FR-08 | GAD-7 and PHQ-9 assessments | High |
+| FR-09 | Conversation history storage | Medium |
+| FR-10 | Emergency resources and crisis detection | High |
+
+## Non-Functional Requirements
+
+Table: Non-functional requirements. {#tbl-nfr}
+
+| ID | Requirement | Target |
+|----|-------------|--------|
+| NFR-01 | Chat response latency | ≤ 5 seconds |
+| NFR-02 | Data protection compliance | GDPR + Egyptian DPL |
+| NFR-03 | Cross-platform support | Android + iOS |
+| NFR-04 | Backend uptime | 99.5% |
+| NFR-05 | Data encryption | TLS 1.3 + AES-256 |
+| NFR-06 | Concurrent users | 1,000 |
+| NFR-07 | Clinical audit latency | ≤ 500 ms |
+
+## Chat Flow Sequence
+
+Figure 2: Chat interaction sequence diagram.
+
+```{mermaid}
+sequenceDiagram
+    participant U as User
+    participant F as Flutter App
+    participant B as FastAPI Backend
+    participant S as Supabase
+    participant C as ChromaDB
+    participant L as LLM Service
+    participant A as Clinical Auditor
+
+    U->>F: Send message
+    F->>B: POST /api/chat
+    B->>S: Verify JWT
+    S-->>B: Valid
+    B->>B: Emotion classification
+    B->>C: Retrieve context (RAG)
+    C-->>B: Top-k passages
+    B->>L: Generate response
+    L-->>B: Response
+    B->>A: Audit response
+    A-->>B: Safety status
+    B->>S: Store conversation
+    B-->>F: Response + emotion
+    F-->>U: Display response
+```
+
+## Functional Flow
+
+Figure 3: System functional flow diagram.
+
+```{mermaid}
+flowchart TD
+    A[Open App] --> B{Authenticated?}
+    B -->|No| C[Login]
+    B -->|Yes| D[Home]
+    C --> D
+    D --> E[Chat]
+    D --> F[Mood]
+    D --> G[Assessment]
+    D --> H[Roadmap]
+    E --> I[Emotion Classify]
+    I --> J[RAG Retrieve]
+    J --> K[LLM Generate]
+    K --> L[Clinical Audit]
+    L --> M{Safe?}
+    M -->|Yes| N[Display Response]
+    M -->|No| O[Emergency Resources]
+```
+
+## AI Pipeline
+
+Figure 4: AI/ML pipeline block diagram.
+
+```{mermaid}
+flowchart LR
+    A[User Input] --> B[Input Processing]
+    B --> C[Emotion Classification]
+    C --> D[RAG Retrieval]
+    D --> E[LLM Generation]
+    E --> F[Clinical Audit]
+    F --> G[Response Delivery]
+    H[ChromaDB] --> D
+    I[Clinical Documents] --> H
+```
+
+### Algorithm: RAG Retrieval
+
+```
+Algorithm: RetrieveClinicalContext
+Input: user_message, emotion_label, user_context
+Output: top_k_passages
+
+1. Embed user_message using all-mpnet-base-v2
+2. Build metadata filter from user_context.form_scores
+3. Query ChromaDB with filter and embedding
+4. Over-fetch: n_fetch = min(max(top_k * 4, 15), 50)
+5. Apply digital detox boost
+6. Return top_k passages
+```
+
+### Algorithm: Clinical Audit
+
+```
+Algorithm: ClinicalAudit
+Input: response_text, user_locale
+Output: safety_status, emergency_payload
+
+1. Detect crisis keywords (EN/AR)
+2. Detect robotic tone
+3. Flag safety risk tasks
+4. Score frustration
+5. If crisis detected: return RED + hotlines
+6. Else if safety risk: return YELLOW + advisory
+7. Else: return GREEN
+```
+
+## Data Models
+
+Table: Database schema. {#tbl-schema}
+
+| Table | Purpose | Key Columns |
+|-------|---------|-------------|
+| users | Authentication | id, email, created_at |
+| user_profiles | Clinical data | user_id, gad7_score, phq9_score |
+| clinical_tasks | Task definitions | id, title, difficulty, xp_reward |
+| roadmaps | User roadmaps | user_id, status, generation_number |
+| journal_entries | Journals | id, user_id, content, mood |
+| chat_sessions | Chat history | id, user_id, roadmap_id |
+| mood_entries | Mood tracking | id, user_id, mood, date |
+| streak_data | Streaks | user_id, current_streak, longest_streak |
+
+## Gamification System
+
+Table: Gamification elements. {#tbl-gamification}
+
+| Element | Count | Description |
+|---------|-------|-------------|
+| XP Activities | 8 | Mood, breathing, journal, challenge, focus, sleep, steps, chat |
+| Badges | 10 | Streak, task, addiction-free categories |
+| Achievements | 12 | Focus streak, total sessions, total time, level |
+| Challenges | 10 | Daily, weekly, special tiers |
+| Streak Multipliers | 7 | 1.0× to 5.0× based on streak length |
+
+## Security Architecture
+
+Table: Security measures. {#tbl-security}
+
+| Layer | Mechanism |
+|-------|-----------|
+| Authentication | 3-tier JWT (HS256, ES256, fallback) |
+| Transport | TLS 1.3 |
+| Storage | AES-256 |
+| Access Control | Row-Level Security (RLS) |
+| Crisis Detection | Bilingual keyword matching (EN/AR) |
+| Rate Limiting | 10 req/min on /api/assess |
+
+## Hardware Specifications
+
+Table: Infrastructure specifications. {#tbl-hardware}
+
+| Component | Specification |
+|-----------|-------------|
+| Frontend | Flutter (Android/iOS) |
+| Backend | DigitalOcean 4 vCPU, 8GB RAM |
+| Database | Supabase PostgreSQL |
+| Vector Store | ChromaDB |
+| Embedding | all-mpnet-base-v2 (768-dim) |
+| Chat LLM | Groq llama-3.1-8b-instant |
+| Planned GPU | RunPod A100 80GB |
+
+## Implementation Stack
+
+Table: Technology stack. {#tbl-stack}
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | Flutter + Provider |
+| Backend | FastAPI + Uvicorn |
+| Auth | Supabase Auth |
+| Database | Supabase PostgreSQL |
+| Vector DB | ChromaDB |
+| Embedding | Sentence-Transformers |
+| Chat LLM | Groq API / Ollama |
+| Container | Docker + Compose |
+| Hosting | DigitalOcean / Railway |

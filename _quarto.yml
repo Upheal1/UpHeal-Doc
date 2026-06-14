@@ -17,10 +17,10 @@ book:
     - index.qmd
     - acknowledgements.qmd
     - chapters/01-introduction.qmd
-    - chapters/02-literature-review.qmd
-    - chapters/03-system-design.qmd
-    - chapters/04-implementation-results.qmd
-    - chapters/05-conclusion.qmd
+    - chapters/02-background.qmd
+    - chapters/03-methodology.qmd
+    - chapters/04-results-discussions.qmd
+    - chapters/05-conclusions.qmd
   appendices:
     - chapters/appendix.qmd
 

@@ -1,6 +1,6 @@
 # Introduction {#sec-introduction}
 
-## Background and Motivation {#sec-background}
+## Background and Motivation {#sec-background-motivation}
 
 Mental health disorders represent one of the leading causes of disability worldwide. The World Health Organization estimates that one in every eight people globally lives with a mental health condition, yet the median coverage of mental health services in low- and middle-income countries remains below 25% [@who2021mental]. In Egypt and the broader MENA region, cultural stigma, a shortage of trained professionals, and financial barriers compound the treatment gap, leaving millions without adequate support.
 
@@ -44,7 +44,7 @@ The system architecture comprises a Flutter cross-platform mobile application se
 
 The remainder of this thesis is organized as follows:
 
--   @sec-literature-review surveys related work in digital mental health, conversational agents, emotion recognition, gamification, and retrieval-augmented generation, and presents a detailed gap analysis.
--   @sec-system-design presents the system requirements, use cases, sequence diagrams, and architectural decisions, including the AI pipeline design, data models, gamification system, and security considerations.
--   @sec-implementation-results details the technology stack, frontend and backend implementation, testing methodology, and evaluation results.
--   @sec-conclusion summarizes the contributions, outlines future work directions, and discusses ethical considerations.
+-   @sec-background surveys related work in digital mental health, conversational agents, emotion recognition, gamification, and retrieval-augmented generation, and presents a detailed gap analysis.
+-   @sec-methodology presents the system requirements, methodology, block diagrams, flowcharts, and architectural decisions, including the AI pipeline design, data models, gamification system, and security considerations.
+-   @sec-results-discussions details the implementation, evaluation results, and discussion of findings.
+-   @sec-conclusions summarizes the contributions, outlines future work directions, and discusses the impact on technology and society.
