@@ -2,11 +2,11 @@
 
 ## Introduction to Digital Mental Health {#sec-digital-mh-intro}
 
-Mental health disorders represent one of the leading causes of disability worldwide. The World Health Organization estimates that one in every eight people globally lives with a mental health condition, yet the median coverage of mental health services in low- and middle-income countries remains below 25%.
+Mental health disorders represent one of the leading causes of disability worldwide. The World Health Organization estimates that one in every eight people globally lives with a mental health condition, yet the median coverage of mental health services in low- and middle-income countries remains below 25% [@who2021mental]. A systematic review by Baumeister et al. found that digital mental health interventions show moderate to large effect sizes for depression (g = 0.54) and anxiety (g = 0.61) compared to control conditions [@baumeister2021digital].
 
-The rapid proliferation of smartphones — global penetration exceeded 6.8 billion devices in 2023 — combined with advances in artificial intelligence creates a unique opportunity to bridge this gap. Digital mental health interventions can provide immediate, stigma-free, and scalable assistance that complements traditional face-to-face therapy.
+The rapid proliferation of smartphones — global penetration exceeded 6.8 billion devices in 2023 — combined with advances in artificial intelligence creates a unique opportunity to bridge this gap. Digital mental health interventions can provide immediate, stigma-free, and scalable assistance that complements traditional face-to-face therapy [@toufique2023llm].
 
-Over the past decade, the field has evolved from simple self-help journals and static psychoeducation modules to sophisticated platforms that leverage natural language processing, emotion recognition, and behavioral gamification to deliver personalized support at scale.
+Over the past decade, the field has evolved from simple self-help journals and static psychoeducation modules to sophisticated platforms that leverage natural language processing, emotion recognition, and behavioral gamification to deliver personalized support at scale [@kumar2023mental].
 
 ## Current State of the Art {#sec-state-of-art}
 
@@ -14,27 +14,27 @@ Over the past decade, the field has evolved from simple self-help journals and s
 
 Conversational agents, or chatbots, have been widely explored as scalable mental health tools. Commercial products such as **Woebot**, **Wysa**, and **Replika** represent the state of the art.
 
-**Woebot** is a CBT-based chatbot that delivers structured therapeutic exercises through scripted dialogue. A study found that Woebot significantly reduced depression symptoms in young adults over a two-week period. The system operates primarily as a rule-based agent with limited NLP capabilities.
+**Woebot** is a CBT-based chatbot that delivers structured therapeutic exercises through scripted dialogue. A randomized controlled trial found that Woebot significantly reduced depression symptoms in young adults over a two-week period (PHQ-9 reduction of 2.5 points) [@woebot2021]. The system operates primarily as a rule-based agent with limited NLP capabilities.
 
-**Wysa** combines rule-based logic with NLP to handle a broader range of user inputs. Users engaged with the bot an average of 3.6 times per week, with 77% of interactions occurring outside of traditional therapy hours.
+**Wysa** combines rule-based logic with NLP to handle a broader range of user inputs. Users engaged with the bot an average of 3.6 times per week, with 77% of interactions occurring outside of traditional therapy hours, and a study found significant reductions in depression symptoms (PHQ-9 decrease of 2.8 points over 4 weeks) [@inkster2018empath].
 
 **Replika** uses a large language model for open-ended conversation but lacks clinical grounding and explicitly disclaims therapeutic intent.
 
-A systematic review of 47 mental health conversational agents found that only 12% incorporated evidence-based therapeutic frameworks, while 68% used simple keyword matching or rule-based responses.
+A systematic review of 47 mental health conversational agents by Kumar and Jaiswal found that only 12% incorporated evidence-based therapeutic frameworks, while 68% used simple keyword matching or rule-based responses [@kumar2023mental].
 
 ### Emotion Recognition
 
-Emotion classification from user input enables adaptive system responses. Pre-trained models such as BERT-based classifiers have shown strong performance in detecting emotional cues from text. For speech-based emotion recognition, Whisper has demonstrated robust performance in transcribing and analyzing emotional speech patterns.
+Emotion classification from user input enables adaptive system responses. Pre-trained models such as BERT-based classifiers have shown strong performance in detecting emotional cues from text [@devlin2019bert]. For speech-based emotion recognition, Whisper has demonstrated robust performance in transcribing and analyzing emotional speech patterns [@radford2022whisper].
 
-In the mental health domain, fine-tuning these models on domain-specific datasets allows for more nuanced emotional categorization. However, the integration of real-time emotion detection into conversational mental health systems remains limited.
+In the mental health domain, fine-tuning these models on domain-specific datasets allows for more nuanced emotional categorization. However, the integration of real-time emotion detection into conversational mental health systems remains limited [@toufique2023llm].
 
 ### Gamification
 
-Gamification strategies have been validated across multiple health domains as effective mechanisms for sustaining user engagement. Meta-analyses indicate that well-designed gamification elements, including points, badges, streaks, and adaptive difficulty, can increase retention rates by 20–40% compared to non-gamified counterparts.
+Gamification strategies have been validated across multiple health domains as effective mechanisms for sustaining user engagement. Meta-analyses indicate that well-designed gamification elements, including points, badges, streaks, and adaptive difficulty, can increase retention rates by 20–40% compared to non-gamified counterparts [@hamari2016gamification].
 
 ### Retrieval-Augmented Generation
 
-Retrieval-augmented generation (RAG) combines a retrieval component with a generative model. The framework was introduced by Lewis et al. and has been applied to domain-specific tasks with promising results. In the medical domain, RAG has been used to ground LLM responses in clinical literature, reducing hallucination and improving factual accuracy.
+Retrieval-augmented generation (RAG) combines a retrieval component with a generative model. The framework was introduced by Lewis et al. [@lewis2020rag] and has been applied to domain-specific tasks with promising results. In the medical domain, RAG has been used to ground LLM responses in clinical literature, reducing hallucination and improving factual accuracy [@toufique2023llm]. Sentence-BERT embeddings have proven effective for semantic search in retrieval pipelines, achieving strong performance on semantic textual similarity benchmarks [@reimers2019sentence].
 
 ## Evaluation of Current Solutions {#sec-evaluation}
 
