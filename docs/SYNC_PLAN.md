@@ -33,51 +33,51 @@ Ch1 (Intro) ──→ Ch2 (Lit Review) ──→ Ch3 (System Design) ──→ C
 
 ### Week 1: Ch1 (Introduction) + Ch2 (Background) — **Hozaifa + Abdalrahman**
 
-| Day | Task | Owner | Deliverable | Dependencies |
-|-----|------|-------|-------------|-------------|
-| Mon | Ch1.1 Background + Ch1.2 Problem | Hozaifa | Draft text (500 words) | None |
-| Tue | Ch1.3 Proposed Solution | Hozaifa | Draft text (500 words) | Ch1.1-1.2 content |
-| Wed | Ch1.4 Thesis Organization | Hozaifa | Draft text (200 words) | Ch1.3 content |
-| Thu | Ch1 review + merge | Abdalrahman | Review comments, fixes | Ch1.1-1.4 complete |
-| Fri | Ch2.1 Digital Mental Health | Ahmed | Draft + references | Ch1 scope approved |
-| Sat | Ch2.2-2.5 (Conversational, Emotion, Gamification, RAG) | Ahmed | Draft + references | Ch2.1 structure |
-| Sun | Ch2.6 Gap Analysis + Ch2 review | Ahmed + Yahya | Complete draft + review | Ch2.1-2.5 content |
+| Day | Task | Owner | Branch Name | Deliverable | Dependencies |
+|-----|------|-------|-------------|-------------|-------------|
+| Mon | Ch1.1 Background + Ch1.2 Problem | Hozaifa | `ch1/background` | Draft text (500 words) | None |
+| Tue | Ch1.3 Proposed Solution | Hozaifa | `ch1/solution` | Draft text (500 words) | Ch1.1-1.2 content |
+| Wed | Ch1.4 Thesis Organization | Hozaifa | `ch1/organization` | Draft text (200 words) | Ch1.3 content |
+| Thu | Ch1 review + merge | Abdalrahman | `ch1/complete` | Review comments, fixes | Ch1.1-1.4 complete |
+| Fri | Ch2.1 Digital Mental Health | Ahmed | `ch2/digital-mh` | Draft + references | Ch1 scope approved |
+| Sat | Ch2.2-2.5 (Conversational, Emotion, Gamification, RAG) | Ahmed | `ch2/chatbots`, `ch2/emotion`, `ch2/gamification`, `ch2/rag` | Draft + references | Ch2.1 structure |
+| Sun | Ch2.6 Gap Analysis + Ch2 review | Ahmed + Yahya | `ch2/gap-analysis` | Complete draft + review | Ch2.1-2.5 content |
 
 ### Week 2: Ch3 (Methodology) — **Hozaifa + Yahya + Ahmed + Devide/Malak**
 
-| Day | Task | Owner | Deliverable | Dependencies |
-|-----|------|-------|-------------|-------------|
-| Mon | Ch3.1-3.2 Requirements (FR + NFR) | Hozaifa | 10 FR + 5 NFR | Ch1 problem statement |
-| Tue | Ch3.3-3.5 Diagrams (Use Case, Sequence, Flow) | Hozaifa | Mermaid diagrams | Ch3.1-3.2 requirements |
-| Wed | Ch3.6 System Architecture | Hozaifa | Architecture diagram | Ch3.3-3.5 diagrams |
-| Thu | Ch3.7 AI/ML Pipeline Design | Ahmed | Emotion, RAG, LLM description | Ch3.6 architecture approved |
-| Fri | Ch3.8-3.9 Data Models + Gamification | Yahya + Abdalrahman | Schemas + gamification | Ch3.6-3.7 components |
-| Sat | Ch3.10 Security | Devide + Malak | Security considerations | Ch3.6 architecture |
-| Sun | Ch3.11 Hardware + Ch3 review | Hozaifa | Table + full review | All Ch3 sections complete |
+| Day | Task | Owner | Branch Name | Deliverable | Dependencies |
+|-----|------|-------|-------------|-------------|-------------|
+| Mon | Ch3.1-3.2 Requirements (FR + NFR) | Hozaifa | `ch3/requirements` | 10 FR + 5 NFR | Ch1 problem statement |
+| Tue | Ch3.3-3.5 Diagrams (Use Case, Sequence, Flow) | Hozaifa | `ch3/diagrams` | Mermaid diagrams | Ch3.1-3.2 requirements |
+| Wed | Ch3.6 System Architecture | Hozaifa | `ch3/system-architecture` | Architecture diagram | Ch3.3-3.5 diagrams |
+| Thu | Ch3.7 AI/ML Pipeline Design | Ahmed | `ch3/ai-pipeline` | Emotion, RAG, LLM description | Ch3.6 architecture approved |
+| Fri | Ch3.8-3.9 Data Models + Gamification | Yahya + Abdalrahman | `ch3/data-models`, `ch3/gamification` | Schemas + gamification | Ch3.6-3.7 components |
+| Sat | Ch3.10 Security | Devide + Malak | `ch3/security` | Security considerations | Ch3.6 architecture |
+| Sun | Ch3.11 Hardware + Ch3 review | Hozaifa | `ch3/complete` | Table + full review | All Ch3 sections complete |
 
 ### Week 3: Ch4 (Results and Discussions) — **Abdalrahman + Hozaifa + Ahmed + Yahya**
 
-| Day | Task | Owner | Deliverable | Dependencies |
-|-----|------|-------|-------------|-------------|
-| Mon | Ch4.1 Technology Stack | All | Complete table | Ch3 methodology |
-| Tue | Ch4.2 Frontend Implementation | Abdalrahman | Screens, state mgmt, native | Ch3.6 system arch |
-| Wed | Ch4.3 Backend Implementation | Hozaifa + Yahya | Microservices, RAG, assessment | Ch3.7 AI pipeline |
-| Thu | Ch4.4 Chat LLM Integration | Ahmed | Groq, Ollama, Gemma | Ch3.7 LLM design |
-| Fri | Ch4.5 Testing | Hozaifa | Unit, integration, UAT | Ch4.2-4.4 complete |
-| Sat | Ch4.6 Results + Charts | Abdalrahman | Charts from real data | Ch4.5 testing data |
-| Sun | Ch4 review + fixes | All | Full review | All Ch4 sections complete |
+| Day | Task | Owner | Branch Name | Deliverable | Dependencies |
+|-----|------|-------|-------------|-------------|-------------|
+| Mon | Ch4.1 Technology Stack | All | `ch4/tech-stack` | Complete table | Ch3 methodology |
+| Tue | Ch4.2 Frontend Implementation | Abdalrahman | `ch4/frontend` | Screens, state mgmt, native | Ch3.6 system arch |
+| Wed | Ch4.3 Backend Implementation | Hozaifa + Yahya | `ch4/backend` | Microservices, RAG, assessment | Ch3.7 AI pipeline |
+| Thu | Ch4.4 Chat LLM Integration | Ahmed | `ch4/llm-integration` | Groq, Ollama, Gemma | Ch3.7 LLM design |
+| Fri | Ch4.5 Testing | Hozaifa | `ch4/testing` | Unit, integration, UAT | Ch4.2-4.4 complete |
+| Sat | Ch4.6 Results + Charts | Abdalrahman | `ch4/results` | Charts from real data | Ch4.5 testing data |
+| Sun | Ch4 review + fixes | All | `ch4/complete` | Full review | All Ch4 sections complete |
 
 ### Week 4: Ch5 (Conclusions) + Final Review — **All**
 
-| Day | Task | Owner | Deliverable | Dependencies |
-|-----|------|-------|-------------|-------------|
-| Mon | Ch5.1 Conclusions | Hozaifa | Summary of contributions | Ch4 results complete |
-| Tue | Ch5.2 Future Work | Ahmed | 5+ directions | Ch4 discussion findings |
-| Wed | Ch5.3 Ethics | Abdalrahman | Privacy, consent, crisis | Ch3.10 security |
-| Thu | Abstract + Acknowledgements | Yahya | Polish | All chapters complete |
-| Fri | Full formatting pass | All | Consistency check | All chapters + abstract |
-| Sat | Supervisor review | Dr. Sahar | Feedback | Final PDF ready |
-| Sun | Final fixes + PDF build | All | Submission-ready | Dr. Sahar feedback |
+| Day | Task | Owner | Branch Name | Deliverable | Dependencies |
+|-----|------|-------|-------------|-------------|-------------|
+| Mon | Ch5.1 Conclusions | Hozaifa | `ch5/conclusions` | Summary of contributions | Ch4 results complete |
+| Tue | Ch5.2 Future Work | Ahmed | `ch5/future-work` | 5+ directions | Ch4 discussion findings |
+| Wed | Ch5.3 Ethics | Abdalrahman | `ch5/ethics` | Privacy, consent, crisis | Ch3.10 security |
+| Thu | Abstract + Acknowledgements | Yahya | `content/abstract` | Polish | All chapters complete |
+| Fri | Full formatting pass | All | `content/formatting` | Consistency check | All chapters + abstract |
+| Sat | Supervisor review | Dr. Sahar | `review/supervisor` | Feedback | Final PDF ready |
+| Sun | Final fixes + PDF build | All | `build/final` | Submission-ready | Dr. Sahar feedback |
 
 ---
 
