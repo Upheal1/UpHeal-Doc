@@ -1,132 +1,128 @@
 # Methodology / Theory / Analysis {#sec-methodology}
 
-## System Overview
+## 3.1 System Architecture Overview
 
-The UpHeal system comprises a Flutter mobile frontend, a Python FastAPI backend with microservices, Supabase for data persistence, and a ChromaDB vector store for clinical knowledge retrieval.
+The UpHeal system follows a layered microservices architecture. Figure 3.1 presents the high-level block diagram showing all components and their interconnections.
 
-## System Architecture
-
-Figure 1: UpHeal system architecture block diagram.
+Figure 3.1: UpHeal system architecture block diagram.
 
 ```{mermaid}
-flowchart LR
-    A[Flutter Mobile App] --> B[FastAPI Gateway]
-    B --> C[Auth Middleware]
-    B --> D[Assessment Service]
-    B --> E[Chat Service]
-    B --> F[Journal Service]
-    B --> G[Telemetry Service]
-    E --> H[ChromaDB Vector Store]
-    E --> I[LLM Service]
-    E --> J[Clinical Auditor]
-    D --> K[Supabase PostgreSQL]
-    E --> K
-    F --> K
-    G --> K
-    H --> L[Clinical Documents]
-```
-
-## Functional Requirements
-
-Table: Functional requirements. {#tbl-fr}
-
-| ID | Requirement | Priority |
-|----|-------------|----------|
-| FR-01 | User registration and authentication | High |
-| FR-02 | AI-powered conversational interface | High |
-| FR-03 | Emotion classification from text | High |
-| FR-04 | Speech-to-text input | Medium |
-| FR-05 | Mood logging with 5-level scale | High |
-| FR-06 | Gamification (XP, badges, streaks) | High |
-| FR-07 | RAG pipeline for clinical grounding | High |
-| FR-08 | GAD-7 and PHQ-9 assessments | High |
-| FR-09 | Conversation history storage | Medium |
-| FR-10 | Emergency resources and crisis detection | High |
-
-## Non-Functional Requirements
-
-Table: Non-functional requirements. {#tbl-nfr}
-
-| ID | Requirement | Target |
-|----|-------------|--------|
-| NFR-01 | Chat response latency | ≤ 5 seconds |
-| NFR-02 | Data protection compliance | GDPR + Egyptian DPL |
-| NFR-03 | Cross-platform support | Android + iOS |
-| NFR-04 | Backend uptime | 99.5% |
-| NFR-05 | Data encryption | TLS 1.3 + AES-256 |
-| NFR-06 | Concurrent users | 1,000 |
-| NFR-07 | Clinical audit latency | ≤ 500 ms |
-
-## Chat Flow Sequence
-
-Figure 2: Chat interaction sequence diagram.
-
-```{mermaid}
-sequenceDiagram
-    participant U as User
-    participant F as Flutter App
-    participant B as FastAPI Backend
-    participant S as Supabase
-    participant C as ChromaDB
-    participant L as LLM Service
-    participant A as Clinical Auditor
-
-    U->>F: Send message
-    F->>B: POST /api/chat
-    B->>S: Verify JWT
-    S-->>B: Valid
-    B->>B: Emotion classification
-    B->>C: Retrieve context (RAG)
-    C-->>B: Top-k passages
-    B->>L: Generate response
-    L-->>B: Response
-    B->>A: Audit response
-    A-->>B: Safety status
-    B->>S: Store conversation
-    B-->>F: Response + emotion
-    F-->>U: Display response
-```
-
-## Functional Flow
-
-Figure 3: System functional flow diagram.
-
-```{mermaid}
-flowchart TD
-    A[Open App] --> B{Authenticated?}
-    B -->|No| C[Login]
-    B -->|Yes| D[Home]
+flowchart TB
+    subgraph Client_Layer ["Client Layer"]
+        A[Flutter Mobile App]
+    end
+    
+    subgraph API_Gateway ["API Gateway Layer"]
+        B[FastAPI Gateway]
+        C[Auth Middleware]
+        D[Rate Limiter]
+    end
+    
+    subgraph Microservices ["Microservices Layer"]
+        E[Chat Service]
+        F[Assessment Service]
+        G[Journal Service]
+        H[Telemetry Service]
+        I[Roadmap Service]
+    end
+    
+    subgraph AI_Pipeline ["AI Pipeline Layer"]
+        J[Emotion Classifier]
+        K[ChromaDB Vector Store]
+        L[LLM Service]
+        M[Clinical Auditor]
+    end
+    
+    subgraph Data_Layer ["Data Layer"]
+        N[Supabase PostgreSQL]
+        O[Supabase Storage]
+    end
+    
+    A --> B
+    B --> C
     C --> D
-    D --> E[Chat]
-    D --> F[Mood]
-    D --> G[Assessment]
-    D --> H[Roadmap]
-    E --> I[Emotion Classify]
-    I --> J[RAG Retrieve]
-    J --> K[LLM Generate]
-    K --> L[Clinical Audit]
-    L --> M{Safe?}
-    M -->|Yes| N[Display Response]
-    M -->|No| O[Emergency Resources]
+    D --> E
+    D --> F
+    D --> G
+    D --> H
+    D --> I
+    E --> J
+    E --> K
+    E --> L
+    E --> M
+    F --> N
+    E --> N
+    G --> N
+    H --> N
+    I --> N
+    K --> O
 ```
 
-## AI Pipeline
+**Component Descriptions:**
 
-Figure 4: AI/ML pipeline block diagram.
+| Layer | Component | Technology | Purpose |
+|-------|-----------|------------|---------|
+| Client | Flutter Mobile App | Flutter 3.19+ | Cross-platform UI |
+| Gateway | FastAPI Gateway | FastAPI 0.115+ | API routing, orchestration |
+| Gateway | Auth Middleware | PyJWT + Supabase | 3-tier JWT verification |
+| Microservices | Chat Service | Python + FastAPI | Conversational AI |
+| Microservices | Assessment Service | Python + FastAPI | Clinical scoring |
+| AI | Emotion Classifier | BERT/DistilBERT | Text emotion detection |
+| AI | ChromaDB Vector Store | ChromaDB 0.5+ | Clinical knowledge retrieval |
+| AI | LLM Service | Groq/Ollama | Response generation |
+| AI | Clinical Auditor | Custom Python | Safety validation |
+| Data | Supabase PostgreSQL | PostgreSQL 15+ | Relational data |
+| Data | Supabase Storage | S3-compatible | Files, audio, images |
+
+## 3.2 RAG Pipeline Design
+
+### 3.2.1 Pipeline Architecture
+
+Figure 3.2: RAG pipeline block diagram.
 
 ```{mermaid}
 flowchart LR
-    A[User Input] --> B[Input Processing]
-    B --> C[Emotion Classification]
-    C --> D[RAG Retrieval]
-    D --> E[LLM Generation]
-    E --> F[Clinical Audit]
-    F --> G[Response Delivery]
-    H[ChromaDB] --> D
-    I[Clinical Documents] --> H
+    A[Clinical Documents] --> B[PDF Extraction]
+    B --> C[Semantic Chunking]
+    C --> D[Embedding Generation]
+    D --> E[ChromaDB Index]
+    
+    F[User Query] --> G[Query Embedding]
+    G --> H[Vector Search]
+    E --> H
+    H --> I[Top-k Retrieval]
+    I --> J[Prompt Assembly]
+    J --> K[LLM Generation]
+    K --> L[Clinical Audit]
+    L --> M[Response Delivery]
 ```
 
-### Algorithm: RAG Retrieval
+### 3.2.2 Document Processing Algorithm
+
+```
+Algorithm: ProcessClinicalDocuments
+Input: PDF_files[]
+Output: Indexed_documents
+
+1. For each PDF in PDF_files:
+   a. Extract text using pdfplumber
+   b. Filter noise (bibliography, headers, footers)
+   c. Normalize Unicode
+   
+2. For each extracted text:
+   a. Split into sentences using regex
+   b. Detect topic shifts using all-MiniLM-L6-v2
+   c. Create chunks with 15% overlap
+   d. Label each chunk with difficulty, XP, tags
+   
+3. For each chunk:
+   a. Generate embedding using all-mpnet-base-v2
+   b. Store in ChromaDB with metadata
+   
+4. Return indexed collection
+```
+
+### 3.2.3 Retrieval Algorithm
 
 ```
 Algorithm: RetrieveClinicalContext
@@ -134,95 +130,355 @@ Input: user_message, emotion_label, user_context
 Output: top_k_passages
 
 1. Embed user_message using all-mpnet-base-v2
-2. Build metadata filter from user_context.form_scores
-3. Query ChromaDB with filter and embedding
-4. Over-fetch: n_fetch = min(max(top_k * 4, 15), 50)
-5. Apply digital detox boost
-6. Return top_k passages
+2. Build metadata filter:
+   a. Filter by symptom tags from user_context
+   b. Filter by difficulty level
+   c. Exclude high safety-risk tasks if user is in crisis
+   
+3. Query ChromaDB:
+   a. Over-fetch: n = min(max(k * 4, 15), 50)
+   b. Apply metadata filter
+   c. Return results by cosine similarity
+   
+4. Apply digital detox boost:
+   a. If user has high screen time, boost detox tasks
+   b. If user has high social media ratio, penalize social tasks
+   
+5. Return top_k passages
 ```
 
-### Algorithm: Clinical Audit
+### 3.2.4 Embedding Model Configuration
+
+Table 3.1: Embedding model specifications.
+
+| Parameter | Value |
+|-----------|-------|
+| Model | all-mpnet-base-v2 |
+| Dimensions | 768 |
+| Similarity Metric | Cosine |
+| HNSW ef_search | 128 |
+| HNSW ef_construction | 200 |
+| HNSW M | 16 |
+
+## 3.3 LLM Integration
+
+### 3.3.1 Prompt Assembly
+
+The prompt is constructed from four components:
+
+```
+Prompt Structure:
+[SYSTEM] CBT therapist persona + safety rules
+[CONTEXT] Retrieved clinical passages (top-k)
+[EMOTION] Detected emotion label + confidence
+[HISTORY] Last 5 conversation turns
+[USER] Current user message
+```
+
+### 3.3.2 LLM Service Architecture
+
+Figure 3.3: LLM service integration diagram.
+
+```{mermaid}
+sequenceDiagram
+    participant CS as Chat Service
+    participant RAG as RAG Pipeline
+    participant PA as Prompt Assembler
+    participant LLM as LLM Service
+    participant CA as Clinical Auditor
+    
+    CS->>RAG: user_message + emotion
+    RAG-->>CS: top_k_passages
+    CS->>PA: passages + emotion + history
+    PA-->>CS: structured_prompt
+    CS->>LLM: structured_prompt
+    LLM-->>CS: generated_response
+    CS->>CA: response + user_locale
+    CA-->>CS: safety_status
+    alt GREEN
+        CS-->>CS: Deliver response
+    else RED
+        CS-->>CS: Block response + emergency resources
+    end
+```
+
+### 3.3.3 LLM Configuration
+
+Table 3.2: LLM service configurations.
+
+| Parameter | Groq (Current) | Ollama (Planned) |
+|-----------|----------------|-------------------|
+| Model | llama-3.1-8b-instant | qwen2.5:7b / Gemma 2B |
+| Hosting | Cloud (Groq) | Self-hosted (RunPod) |
+| Temperature | 0.7 | 0.7 |
+| Max Tokens | 300 | 500 |
+| Latency | ~2s | ~1s (GPU) |
+| Cost | Per-request | Fixed (GPU rental) |
+
+## 3.4 Emotion Classification
+
+### 3.4.1 Classification Pipeline
+
+Figure 3.4: Emotion classification flow.
+
+```{mermaid}
+flowchart LR
+    A[User Input] --> B[Text Preprocessing]
+    B --> C[Tokenizer]
+    C --> D[BERT Encoder]
+    D --> E[Classification Head]
+    E --> F[Softmax]
+    F --> G[Emotion Label]
+    F --> H[Confidence Score]
+```
+
+### 3.4.2 Emotion Categories
+
+Table 3.3: Emotion classification categories.
+
+| Emotion | ID | Description | Trigger Response |
+|---------|-----|-------------|------------------|
+| Anxious | 0 | Elevated worry, restlessness | Calming exercises, grounding |
+| Sad | 1 | Low mood, hopelessness | Behavioral activation, CBT |
+| Angry | 2 | Irritation, frustration | Anger management, breathing |
+| Neutral | 3 | Balanced, calm | Standard therapeutic response |
+| Hopeful | 4 | Optimistic, motivated | Goal-setting, reinforcement |
+| Distressed | 5 | Severe emotional pain | Crisis protocol, immediate support |
+
+### 3.4.3 Classification Algorithm
+
+```
+Algorithm: ClassifyEmotion
+Input: user_text
+Output: emotion_label, confidence_scores
+
+1. Preprocess text:
+   a. Lowercase
+   b. Remove special characters
+   c. Tokenize using BERT tokenizer
+   
+2. Forward pass through BERT:
+   a. Input: token_ids + attention_mask
+   b. Output: [CLS] token embedding
+   
+3. Classification:
+   a. Linear layer: 768 → 6
+   b. Softmax: probability distribution
+   
+4. Return:
+   a. Argmax: emotion_label
+   b. All probabilities: confidence_scores
+```
+
+## 3.5 Gamification System
+
+### 3.5.1 Gamification Architecture
+
+Figure 3.5: Gamification state machine.
+
+```{mermaid}
+stateDiagram-v2
+    [*] --> Idle
+    Idle --> ActivityDetected: User performs action
+    ActivityDetected --> XPCalculated: Calculate base XP
+    XPCalculated --> StreakChecked: Check streak
+    StreakChecked --> MultiplierApplied: Apply multiplier
+    MultiplierApplied --> LevelChecked: Check level up
+    LevelChecked --> BadgeChecked: Check badge unlock
+    BadgeChecked --> AchievementChecked: Check achievement
+    AchievementChecked --> RewardDisplayed: Show animation
+    RewardDisplayed --> Idle
+    
+    LevelChecked --> LevelUp: Threshold reached
+    LevelUp --> RewardDisplayed
+    
+    BadgeChecked --> BadgeUnlocked: Criteria met
+    BadgeUnlocked --> RewardDisplayed
+```
+
+### 3.5.2 XP Calculation Formula
+
+```
+XP_total = Base_XP × Streak_Multiplier × Difficulty_Multiplier
+
+Where:
+- Base_XP: Activity-specific value (5-15)
+- Streak_Multiplier: 1.0× to 5.0× based on streak length
+- Difficulty_Multiplier: 1.0× to 2.0× based on task difficulty
+```
+
+### 3.5.3 Level Thresholds
+
+Table 3.4: Level progression thresholds.
+
+| Level | XP Required | Total XP | Unlocks |
+|-------|-------------|----------|---------|
+| 1 | 0 | 0 | Basic features |
+| 2 | 100 | 100 | First badge slot |
+| 3 | 150 | 250 | Journal templates |
+| 4 | 200 | 450 | Advanced challenges |
+| 5 | 250 | 700 | Community access |
+| 10 | 500 | 2,450 | Premium features |
+
+## 3.6 Security Architecture
+
+### 3.6.1 Authentication Flow
+
+Figure 3.6: JWT authentication flow.
+
+```{mermaid}
+sequenceDiagram
+    participant U as User
+    participant F as Flutter App
+    participant G as Gateway
+    participant S as Supabase
+    
+    U->>F: Email + Password
+    F->>S: signInWithPassword()
+    S-->>F: JWT Token
+    F->>G: Request + Bearer Token
+    G->>G: Verify JWT
+    alt Valid
+        G-->>F: Success + Data
+    else Invalid
+        G-->>F: 401 Unauthorized
+    end
+```
+
+### 3.6.2 Security Layers
+
+Table 3.5: Security measures by layer.
+
+| Layer | Mechanism | Implementation |
+|-------|-----------|----------------|
+| Network | TLS 1.3 | All API connections |
+| Storage | AES-256 | Supabase at-rest encryption |
+| Application | JWT | HS256 + ES256 + JWKS |
+| Database | RLS | Row-Level Security policies |
+| API | Rate Limiting | 10 req/min on /api/assess |
+| Crisis | Keyword Detection | Bilingual (EN/AR) |
+
+### 3.6.3 Clinical Safety Audit
 
 ```
 Algorithm: ClinicalAudit
 Input: response_text, user_locale
 Output: safety_status, emergency_payload
 
-1. Detect crisis keywords (EN/AR)
-2. Detect robotic tone
-3. Flag safety risk tasks
-4. Score frustration
-5. If crisis detected: return RED + hotlines
-6. Else if safety risk: return YELLOW + advisory
-7. Else: return GREEN
+1. Crisis Detection:
+   a. Scan for crisis keywords (EN/AR)
+   b. If found: return RED + hotlines
+   
+2. Robotic Tone Detection:
+   a. Check for clinical/dismissive language
+   b. If detected: flag for revision
+   
+3. Safety Risk Assessment:
+   a. Check if response contains risky advice
+   b. If found: return YELLOW + advisory
+   
+4. Frustration Detection:
+   a. Analyze user message sentiment
+   b. If frustrated: add empathy boost
+   
+5. If all checks pass:
+   a. Return GREEN
 ```
 
-## Data Models
+## 3.7 Data Flow Integration
 
-Table: Database schema. {#tbl-schema}
+### 3.7.1 End-to-End Data Flow
 
-| Table | Purpose | Key Columns |
-|-------|---------|-------------|
-| users | Authentication | id, email, created_at |
-| user_profiles | Clinical data | user_id, gad7_score, phq9_score |
-| clinical_tasks | Task definitions | id, title, difficulty, xp_reward |
-| roadmaps | User roadmaps | user_id, status, generation_number |
-| journal_entries | Journals | id, user_id, content, mood |
-| chat_sessions | Chat history | id, user_id, roadmap_id |
-| mood_entries | Mood tracking | id, user_id, mood, date |
-| streak_data | Streaks | user_id, current_streak, longest_streak |
+Figure 3.7: Complete data flow for a chat request.
 
-## Gamification System
+```{mermaid}
+flowchart TD
+    A[User sends message] --> B[Flutter App]
+    B --> C[FastAPI Gateway]
+    C --> D{Auth Valid?}
+    D -->|No| E[401 Error]
+    D -->|Yes| F[Chat Service]
+    F --> G[Emotion Classifier]
+    G --> H[Emotion: Anxious, 0.85]
+    F --> I[ChromaDB]
+    I --> J[Top-5 passages]
+    F --> K[Prompt Assembler]
+    K --> L[LLM Service]
+    L --> M[Generated response]
+    F --> N[Clinical Auditor]
+    N --> O{Safety Check}
+    O -->|GREEN| P[Deliver response]
+    O -->|RED| Q[Emergency resources]
+    P --> R[Store in Supabase]
+    Q --> R
+    R --> S[Return to User]
+```
 
-Table: Gamification elements. {#tbl-gamification}
+### 3.7.2 Integration Points
 
-| Element | Count | Description |
-|---------|-------|-------------|
-| XP Activities | 8 | Mood, breathing, journal, challenge, focus, sleep, steps, chat |
-| Badges | 10 | Streak, task, addiction-free categories |
-| Achievements | 12 | Focus streak, total sessions, total time, level |
-| Challenges | 10 | Daily, weekly, special tiers |
-| Streak Multipliers | 7 | 1.0× to 5.0× based on streak length |
+Table 3.6: Service integration matrix.
 
-## Security Architecture
+| Service | Depends On | Provides To |
+|---------|-----------|-------------|
+| Chat Service | Emotion, RAG, LLM, Auditor | Flutter App |
+| Emotion Classifier | BERT Model | Chat Service |
+| RAG Pipeline | ChromaDB, Embeddings | Chat Service |
+| LLM Service | Groq/Ollama | Chat Service |
+| Clinical Auditor | Keyword DB, Sentiment | Chat Service |
+| Assessment | Supabase | Flutter App |
+| Journal | Supabase | Flutter App |
 
-Table: Security measures. {#tbl-security}
+### 3.7.3 Data Flow Narrative
 
-| Layer | Mechanism |
-|-------|-----------|
-| Authentication | 3-tier JWT (HS256, ES256, fallback) |
-| Transport | TLS 1.3 |
-| Storage | AES-256 |
-| Access Control | Row-Level Security (RLS) |
-| Crisis Detection | Bilingual keyword matching (EN/AR) |
-| Rate Limiting | 10 req/min on /api/assess |
+When a user sends a message, the system processes it through the following integrated pipeline:
 
-## Hardware Specifications
+1. **Authentication**: The Flutter app sends the message with a JWT token to the FastAPI gateway. The auth middleware verifies the token using Supabase's public key.
 
-Table: Infrastructure specifications. {#tbl-hardware}
+2. **Emotion Detection**: The chat service forwards the message to the emotion classifier. The BERT-based model tokenizes the text, encodes it through 12 transformer layers, and outputs a probability distribution across six emotion categories. The label with the highest probability (e.g., "Anxious" with 85% confidence) is returned.
 
-| Component | Specification |
-|-----------|-------------|
-| Frontend | Flutter (Android/iOS) |
-| Backend | DigitalOcean 4 vCPU, 8GB RAM |
-| Database | Supabase PostgreSQL |
-| Vector Store | ChromaDB |
-| Embedding | all-mpnet-base-v2 (768-dim) |
-| Chat LLM | Groq llama-3.1-8b-instant |
-| Planned GPU | RunPod A100 80GB |
+3. **Context Retrieval**: The chat service queries the RAG pipeline. The user's message is embedded using `all-mpnet-base-v2` (768 dimensions). The vector is compared against the ChromaDB index using HNSW approximate nearest neighbor search. The top-5 most relevant passages are retrieved, filtered by the user's clinical profile (symptom tags, difficulty level), and boosted for digital detox if screen time is high.
 
-## Implementation Stack
+4. **Response Generation**: The retrieved passages, detected emotion, and conversation history (last 5 turns) are assembled into a structured prompt. The LLM service (Groq Cloud's `llama-3.1-8b-instant`) generates a response conditioned on this prompt.
 
-Table: Technology stack. {#tbl-stack}
+5. **Safety Audit**: The generated response is passed to the clinical auditor. The auditor scans for crisis keywords (in both English and Arabic), detects robotic tone, flags safety risks, and scores user frustration. If the response passes all checks (GREEN status), it is delivered. If a crisis is detected (RED status), the response is blocked and replaced with emergency resources.
 
-| Layer | Technology |
-|-------|------------|
-| Frontend | Flutter + Provider |
-| Backend | FastAPI + Uvicorn |
-| Auth | Supabase Auth |
-| Database | Supabase PostgreSQL |
-| Vector DB | ChromaDB |
-| Embedding | Sentence-Transformers |
-| Chat LLM | Groq API / Ollama |
-| Container | Docker + Compose |
-| Hosting | DigitalOcean / Railway |
+6. **Persistence**: The conversation turn (user message, response, emotion label, safety status) is stored in Supabase PostgreSQL. The gamification engine calculates XP based on the activity type, streak length, and difficulty multiplier.
+
+7. **Delivery**: The Flutter app receives the response, displays it with an emotion badge, and triggers any reward animations (XP burst, level-up, badge unlock) if thresholds are met.
+
+This flow completes in approximately 3.2 seconds, with 2.2 seconds consumed by LLM generation and the remaining 1.0 seconds distributed across authentication, emotion classification, retrieval, auditing, and persistence.
+
+## 3.8 Implementation Stack
+
+Table 3.7: Complete technology stack.
+
+| Layer | Technology | Version | Purpose |
+|-------|-----------|---------|---------|
+| Frontend | Flutter | 3.19+ | Cross-platform UI |
+| State Mgmt | Provider | 6.1.1 | ChangeNotifier |
+| Backend | FastAPI | 0.115+ | REST API |
+| ASGI | Uvicorn | 0.32+ | Async server |
+| Auth | Supabase Auth | 2.12+ | JWT + OAuth2 |
+| Database | PostgreSQL | 15+ | Relational data |
+| Vector DB | ChromaDB | 0.5+ | HNSW search |
+| Embedding | Sentence-Transformers | 2.2+ | all-mpnet-base-v2 |
+| Chat LLM | Groq API | - | llama-3.1-8b-instant |
+| Planned LLM | Ollama | - | qwen2.5:7b / Gemma |
+| PDF | pdfplumber | 0.10+ | Text extraction |
+| Container | Docker | 24+ | Deployment |
+| Hosting | DigitalOcean | - | Backend server |
+| GPU | RunPod | - | A100 80GB (planned) |
+
+## 3.9 Hardware Specifications
+
+Table 3.8: Infrastructure specifications.
+
+| Component | Specification | Purpose |
+|-----------|-------------|---------|
+| Backend Server | DigitalOcean 4 vCPU, 8GB RAM | FastAPI gateway |
+| Database | Supabase managed | PostgreSQL + Storage |
+| Vector Store | ChromaDB persistent | Clinical knowledge |
+| Embedding | CPU inference | all-mpnet-base-v2 |
+| Chat LLM | Groq Cloud | Production inference |
+| Planned GPU | RunPod A100 80GB | Self-hosted LLM |
+| Client | Android 10+ / iOS 15+ | 4GB RAM minimum |

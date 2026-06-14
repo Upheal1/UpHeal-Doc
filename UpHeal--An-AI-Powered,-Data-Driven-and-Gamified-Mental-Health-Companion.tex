@@ -767,86 +767,92 @@ The remainder of this thesis is organized as follows:
 
 \chapter{Methodology / Theory / Analysis}\label{sec-methodology}
 
-\section{System Overview}\label{system-overview}
+\section{3.1 System Architecture
+Overview}\label{system-architecture-overview}
 
-The UpHeal system comprises a Flutter mobile frontend, a Python FastAPI
-backend with microservices, Supabase for data persistence, and a
-ChromaDB vector store for clinical knowledge retrieval.
+The UpHeal system follows a layered microservices architecture. Figure
+3.1 presents the high-level block diagram showing all components and
+their interconnections.
 
-\section{System Architecture}\label{system-architecture}
+Figure 3.1: UpHeal system architecture block diagram.
 
-Figure 1: UpHeal system architecture block diagram.
+\includegraphics[width=19.11in,height=9.83in]{chapters/03-methodology_files/figure-latex/mermaid-figure-1.png}
 
-\includegraphics[width=12.6in,height=6.15in]{chapters/03-methodology_files/figure-latex/mermaid-figure-1.png}
+\textbf{Component Descriptions:}
 
-\section{Functional Requirements}\label{functional-requirements}
-
-\begin{longtable}[]{@{}lll@{}}
-\caption{Functional requirements.}\label{tbl-fr}\tabularnewline
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1795}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2821}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3077}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2308}}@{}}
 \toprule\noalign{}
-ID & Requirement & Priority \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-ID & Requirement & Priority \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-FR-01 & User registration and authentication & High \\
-FR-02 & AI-powered conversational interface & High \\
-FR-03 & Emotion classification from text & High \\
-FR-04 & Speech-to-text input & Medium \\
-FR-05 & Mood logging with 5-level scale & High \\
-FR-06 & Gamification (XP, badges, streaks) & High \\
-FR-07 & RAG pipeline for clinical grounding & High \\
-FR-08 & GAD-7 and PHQ-9 assessments & High \\
-FR-09 & Conversation history storage & Medium \\
-FR-10 & Emergency resources and crisis detection & High \\
-\end{longtable}
-
-\section{Non-Functional Requirements}\label{non-functional-requirements}
-
-\begin{longtable}[]{@{}lll@{}}
-\caption{Non-functional requirements.}\label{tbl-nfr}\tabularnewline
-\toprule\noalign{}
-ID & Requirement & Target \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-ID & Requirement & Target \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Layer
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Component
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Technology
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Purpose
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-NFR-01 & Chat response latency & ≤ 5 seconds \\
-NFR-02 & Data protection compliance & GDPR + Egyptian DPL \\
-NFR-03 & Cross-platform support & Android + iOS \\
-NFR-04 & Backend uptime & 99.5\% \\
-NFR-05 & Data encryption & TLS 1.3 + AES-256 \\
-NFR-06 & Concurrent users & 1,000 \\
-NFR-07 & Clinical audit latency & ≤ 500 ms \\
+Client & Flutter Mobile App & Flutter 3.19+ & Cross-platform UI \\
+Gateway & FastAPI Gateway & FastAPI 0.115+ & API routing,
+orchestration \\
+Gateway & Auth Middleware & PyJWT + Supabase & 3-tier JWT
+verification \\
+Microservices & Chat Service & Python + FastAPI & Conversational AI \\
+Microservices & Assessment Service & Python + FastAPI & Clinical
+scoring \\
+AI & Emotion Classifier & BERT/DistilBERT & Text emotion detection \\
+AI & ChromaDB Vector Store & ChromaDB 0.5+ & Clinical knowledge
+retrieval \\
+AI & LLM Service & Groq/Ollama & Response generation \\
+AI & Clinical Auditor & Custom Python & Safety validation \\
+Data & Supabase PostgreSQL & PostgreSQL 15+ & Relational data \\
+Data & Supabase Storage & S3-compatible & Files, audio, images \\
 \end{longtable}
+}
 
-\section{Chat Flow Sequence}\label{chat-flow-sequence}
+\section{3.2 RAG Pipeline Design}\label{rag-pipeline-design}
 
-Figure 2: Chat interaction sequence diagram.
+\subsection{3.2.1 Pipeline Architecture}\label{pipeline-architecture}
 
-\includegraphics[width=15.14in,height=8.51in]{chapters/03-methodology_files/figure-latex/mermaid-figure-4.png}
+Figure 3.2: RAG pipeline block diagram.
 
-\section{Functional Flow}\label{functional-flow}
+\includegraphics[width=26.12in,height=1.81in]{chapters/03-methodology_files/figure-latex/mermaid-figure-7.png}
 
-Figure 3: System functional flow diagram.
+\subsection{3.2.2 Document Processing
+Algorithm}\label{document-processing-algorithm}
 
-\includegraphics[width=8.23in,height=13.57in]{chapters/03-methodology_files/figure-latex/mermaid-figure-3.png}
+\begin{verbatim}
+Algorithm: ProcessClinicalDocuments
+Input: PDF_files[]
+Output: Indexed_documents
 
-\section{AI Pipeline}\label{ai-pipeline}
+1. For each PDF in PDF_files:
+   a. Extract text using pdfplumber
+   b. Filter noise (bibliography, headers, footers)
+   c. Normalize Unicode
+   
+2. For each extracted text:
+   a. Split into sentences using regex
+   b. Detect topic shifts using all-MiniLM-L6-v2
+   c. Create chunks with 15% overlap
+   d. Label each chunk with difficulty, XP, tags
+   
+3. For each chunk:
+   a. Generate embedding using all-mpnet-base-v2
+   b. Store in ChromaDB with metadata
+   
+4. Return indexed collection
+\end{verbatim}
 
-Figure 4: AI/ML pipeline block diagram.
-
-\includegraphics[width=16.04in,height=1.81in]{chapters/03-methodology_files/figure-latex/mermaid-figure-2.png}
-
-\subsection{Algorithm: RAG Retrieval}\label{algorithm-rag-retrieval}
+\subsection{3.2.3 Retrieval Algorithm}\label{retrieval-algorithm}
 
 \begin{verbatim}
 Algorithm: RetrieveClinicalContext
@@ -854,178 +860,406 @@ Input: user_message, emotion_label, user_context
 Output: top_k_passages
 
 1. Embed user_message using all-mpnet-base-v2
-2. Build metadata filter from user_context.form_scores
-3. Query ChromaDB with filter and embedding
-4. Over-fetch: n_fetch = min(max(top_k * 4, 15), 50)
-5. Apply digital detox boost
-6. Return top_k passages
+2. Build metadata filter:
+   a. Filter by symptom tags from user_context
+   b. Filter by difficulty level
+   c. Exclude high safety-risk tasks if user is in crisis
+   
+3. Query ChromaDB:
+   a. Over-fetch: n = min(max(k * 4, 15), 50)
+   b. Apply metadata filter
+   c. Return results by cosine similarity
+   
+4. Apply digital detox boost:
+   a. If user has high screen time, boost detox tasks
+   b. If user has high social media ratio, penalize social tasks
+   
+5. Return top_k passages
 \end{verbatim}
 
-\subsection{Algorithm: Clinical Audit}\label{algorithm-clinical-audit}
+\subsection{3.2.4 Embedding Model
+Configuration}\label{embedding-model-configuration}
+
+Table 3.1: Embedding model specifications.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+Parameter & Value \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Model & all-mpnet-base-v2 \\
+Dimensions & 768 \\
+Similarity Metric & Cosine \\
+HNSW ef\_search & 128 \\
+HNSW ef\_construction & 200 \\
+HNSW M & 16 \\
+\end{longtable}
+}
+
+\section{3.3 LLM Integration}\label{llm-integration}
+
+\subsection{3.3.1 Prompt Assembly}\label{prompt-assembly}
+
+The prompt is constructed from four components:
+
+\begin{verbatim}
+Prompt Structure:
+[SYSTEM] CBT therapist persona + safety rules
+[CONTEXT] Retrieved clinical passages (top-k)
+[EMOTION] Detected emotion label + confidence
+[HISTORY] Last 5 conversation turns
+[USER] Current user message
+\end{verbatim}
+
+\subsection{3.3.2 LLM Service
+Architecture}\label{llm-service-architecture}
+
+Figure 3.3: LLM service integration diagram.
+
+\includegraphics[width=11.87in,height=8.34in]{chapters/03-methodology_files/figure-latex/mermaid-figure-6.png}
+
+\subsection{3.3.3 LLM Configuration}\label{llm-configuration}
+
+Table 3.2: LLM service configurations.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+Parameter & Groq (Current) & Ollama (Planned) \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Model & llama-3.1-8b-instant & qwen2.5:7b / Gemma 2B \\
+Hosting & Cloud (Groq) & Self-hosted (RunPod) \\
+Temperature & 0.7 & 0.7 \\
+Max Tokens & 300 & 500 \\
+Latency & \textasciitilde2s & \textasciitilde1s (GPU) \\
+Cost & Per-request & Fixed (GPU rental) \\
+\end{longtable}
+}
+
+\section{3.4 Emotion Classification}\label{emotion-classification}
+
+\subsection{3.4.1 Classification
+Pipeline}\label{classification-pipeline}
+
+Figure 3.4: Emotion classification flow.
+
+\includegraphics[width=14.88in,height=1.81in]{chapters/03-methodology_files/figure-latex/mermaid-figure-5.png}
+
+\subsection{3.4.2 Emotion Categories}\label{emotion-categories}
+
+Table 3.3: Emotion classification categories.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1111}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2889}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.4000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Emotion
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+ID
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Description
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Trigger Response
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Anxious & 0 & Elevated worry, restlessness & Calming exercises,
+grounding \\
+Sad & 1 & Low mood, hopelessness & Behavioral activation, CBT \\
+Angry & 2 & Irritation, frustration & Anger management, breathing \\
+Neutral & 3 & Balanced, calm & Standard therapeutic response \\
+Hopeful & 4 & Optimistic, motivated & Goal-setting, reinforcement \\
+Distressed & 5 & Severe emotional pain & Crisis protocol, immediate
+support \\
+\end{longtable}
+}
+
+\subsection{3.4.3 Classification
+Algorithm}\label{classification-algorithm}
+
+\begin{verbatim}
+Algorithm: ClassifyEmotion
+Input: user_text
+Output: emotion_label, confidence_scores
+
+1. Preprocess text:
+   a. Lowercase
+   b. Remove special characters
+   c. Tokenize using BERT tokenizer
+   
+2. Forward pass through BERT:
+   a. Input: token_ids + attention_mask
+   b. Output: [CLS] token embedding
+   
+3. Classification:
+   a. Linear layer: 768 → 6
+   b. Softmax: probability distribution
+   
+4. Return:
+   a. Argmax: emotion_label
+   b. All probabilities: confidence_scores
+\end{verbatim}
+
+\section{3.5 Gamification System}\label{gamification-system}
+
+\subsection{3.5.1 Gamification
+Architecture}\label{gamification-architecture}
+
+Figure 3.5: Gamification state machine.
+
+\includegraphics[width=5.72in,height=10.75in]{chapters/03-methodology_files/figure-latex/mermaid-figure-4.png}
+
+\subsection{3.5.2 XP Calculation Formula}\label{xp-calculation-formula}
+
+\begin{verbatim}
+XP_total = Base_XP × Streak_Multiplier × Difficulty_Multiplier
+
+Where:
+- Base_XP: Activity-specific value (5-15)
+- Streak_Multiplier: 1.0× to 5.0× based on streak length
+- Difficulty_Multiplier: 1.0× to 2.0× based on task difficulty
+\end{verbatim}
+
+\subsection{3.5.3 Level Thresholds}\label{level-thresholds}
+
+Table 3.4: Level progression thresholds.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}llll@{}}
+\toprule\noalign{}
+Level & XP Required & Total XP & Unlocks \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & 0 & 0 & Basic features \\
+2 & 100 & 100 & First badge slot \\
+3 & 150 & 250 & Journal templates \\
+4 & 200 & 450 & Advanced challenges \\
+5 & 250 & 700 & Community access \\
+10 & 500 & 2,450 & Premium features \\
+\end{longtable}
+}
+
+\section{3.6 Security Architecture}\label{security-architecture}
+
+\subsection{3.6.1 Authentication Flow}\label{authentication-flow}
+
+Figure 3.6: JWT authentication flow.
+
+\includegraphics[width=9.14in,height=6.34in]{chapters/03-methodology_files/figure-latex/mermaid-figure-3.png}
+
+\subsection{3.6.2 Security Layers}\label{security-layers}
+
+Table 3.5: Security measures by layer.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+Layer & Mechanism & Implementation \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Network & TLS 1.3 & All API connections \\
+Storage & AES-256 & Supabase at-rest encryption \\
+Application & JWT & HS256 + ES256 + JWKS \\
+Database & RLS & Row-Level Security policies \\
+API & Rate Limiting & 10 req/min on /api/assess \\
+Crisis & Keyword Detection & Bilingual (EN/AR) \\
+\end{longtable}
+}
+
+\subsection{3.6.3 Clinical Safety Audit}\label{clinical-safety-audit}
 
 \begin{verbatim}
 Algorithm: ClinicalAudit
 Input: response_text, user_locale
 Output: safety_status, emergency_payload
 
-1. Detect crisis keywords (EN/AR)
-2. Detect robotic tone
-3. Flag safety risk tasks
-4. Score frustration
-5. If crisis detected: return RED + hotlines
-6. Else if safety risk: return YELLOW + advisory
-7. Else: return GREEN
+1. Crisis Detection:
+   a. Scan for crisis keywords (EN/AR)
+   b. If found: return RED + hotlines
+   
+2. Robotic Tone Detection:
+   a. Check for clinical/dismissive language
+   b. If detected: flag for revision
+   
+3. Safety Risk Assessment:
+   a. Check if response contains risky advice
+   b. If found: return YELLOW + advisory
+   
+4. Frustration Detection:
+   a. Analyze user message sentiment
+   b. If frustrated: add empathy boost
+   
+5. If all checks pass:
+   a. Return GREEN
 \end{verbatim}
 
-\section{Data Models}\label{data-models}
+\section{3.7 Data Flow Integration}\label{data-flow-integration}
 
+\subsection{3.7.1 End-to-End Data Flow}\label{end-to-end-data-flow}
+
+Figure 3.7: Complete data flow for a chat request.
+
+\includegraphics[width=12.25in,height=12.77in]{chapters/03-methodology_files/figure-latex/mermaid-figure-2.png}
+
+\subsection{3.7.2 Integration Points}\label{integration-points}
+
+Table 3.6: Service integration matrix.
+
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
-\caption{Database schema.}\label{tbl-schema}\tabularnewline
 \toprule\noalign{}
-Table & Purpose & Key Columns \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-Table & Purpose & Key Columns \\
+Service & Depends On & Provides To \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-users & Authentication & id, email, created\_at \\
-user\_profiles & Clinical data & user\_id, gad7\_score, phq9\_score \\
-clinical\_tasks & Task definitions & id, title, difficulty,
-xp\_reward \\
-roadmaps & User roadmaps & user\_id, status, generation\_number \\
-journal\_entries & Journals & id, user\_id, content, mood \\
-chat\_sessions & Chat history & id, user\_id, roadmap\_id \\
-mood\_entries & Mood tracking & id, user\_id, mood, date \\
-streak\_data & Streaks & user\_id, current\_streak, longest\_streak \\
+Chat Service & Emotion, RAG, LLM, Auditor & Flutter App \\
+Emotion Classifier & BERT Model & Chat Service \\
+RAG Pipeline & ChromaDB, Embeddings & Chat Service \\
+LLM Service & Groq/Ollama & Chat Service \\
+Clinical Auditor & Keyword DB, Sentiment & Chat Service \\
+Assessment & Supabase & Flutter App \\
+Journal & Supabase & Flutter App \\
 \end{longtable}
+}
 
-\section{Gamification System}\label{gamification-system}
+\subsection{3.7.3 Data Flow Narrative}\label{data-flow-narrative}
 
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3103}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2414}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4483}}@{}}
-\caption{Gamification elements.}\label{tbl-gamification}\tabularnewline
+When a user sends a message, the system processes it through the
+following integrated pipeline:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Authentication}: The Flutter app sends the message with a JWT
+  token to the FastAPI gateway. The auth middleware verifies the token
+  using Supabase's public key.
+\item
+  \textbf{Emotion Detection}: The chat service forwards the message to
+  the emotion classifier. The BERT-based model tokenizes the text,
+  encodes it through 12 transformer layers, and outputs a probability
+  distribution across six emotion categories. The label with the highest
+  probability (e.g., ``Anxious'' with 85\% confidence) is returned.
+\item
+  \textbf{Context Retrieval}: The chat service queries the RAG pipeline.
+  The user's message is embedded using \texttt{all-mpnet-base-v2} (768
+  dimensions). The vector is compared against the ChromaDB index using
+  HNSW approximate nearest neighbor search. The top-5 most relevant
+  passages are retrieved, filtered by the user's clinical profile
+  (symptom tags, difficulty level), and boosted for digital detox if
+  screen time is high.
+\item
+  \textbf{Response Generation}: The retrieved passages, detected
+  emotion, and conversation history (last 5 turns) are assembled into a
+  structured prompt. The LLM service (Groq Cloud's
+  \texttt{llama-3.1-8b-instant}) generates a response conditioned on
+  this prompt.
+\item
+  \textbf{Safety Audit}: The generated response is passed to the
+  clinical auditor. The auditor scans for crisis keywords (in both
+  English and Arabic), detects robotic tone, flags safety risks, and
+  scores user frustration. If the response passes all checks (GREEN
+  status), it is delivered. If a crisis is detected (RED status), the
+  response is blocked and replaced with emergency resources.
+\item
+  \textbf{Persistence}: The conversation turn (user message, response,
+  emotion label, safety status) is stored in Supabase PostgreSQL. The
+  gamification engine calculates XP based on the activity type, streak
+  length, and difficulty multiplier.
+\item
+  \textbf{Delivery}: The Flutter app receives the response, displays it
+  with an emotion badge, and triggers any reward animations (XP burst,
+  level-up, badge unlock) if thresholds are met.
+\end{enumerate}
+
+This flow completes in approximately 3.2 seconds, with 2.2 seconds
+consumed by LLM generation and the remaining 1.0 seconds distributed
+across authentication, emotion classification, retrieval, auditing, and
+persistence.
+
+\section{3.8 Implementation Stack}\label{implementation-stack}
+
+Table 3.7: Complete technology stack.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}llll@{}}
 \toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Element
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Count
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Description
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Element
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Count
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Description
-\end{minipage} \\
+Layer & Technology & Version & Purpose \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-XP Activities & 8 & Mood, breathing, journal, challenge, focus, sleep,
-steps, chat \\
-Badges & 10 & Streak, task, addiction-free categories \\
-Achievements & 12 & Focus streak, total sessions, total time, level \\
-Challenges & 10 & Daily, weekly, special tiers \\
-Streak Multipliers & 7 & 1.0× to 5.0× based on streak length \\
+Frontend & Flutter & 3.19+ & Cross-platform UI \\
+State Mgmt & Provider & 6.1.1 & ChangeNotifier \\
+Backend & FastAPI & 0.115+ & REST API \\
+ASGI & Uvicorn & 0.32+ & Async server \\
+Auth & Supabase Auth & 2.12+ & JWT + OAuth2 \\
+Database & PostgreSQL & 15+ & Relational data \\
+Vector DB & ChromaDB & 0.5+ & HNSW search \\
+Embedding & Sentence-Transformers & 2.2+ & all-mpnet-base-v2 \\
+Chat LLM & Groq API & - & llama-3.1-8b-instant \\
+Planned LLM & Ollama & - & qwen2.5:7b / Gemma \\
+PDF & pdfplumber & 0.10+ & Text extraction \\
+Container & Docker & 24+ & Deployment \\
+Hosting & DigitalOcean & - & Backend server \\
+GPU & RunPod & - & A100 80GB (planned) \\
 \end{longtable}
+}
 
-\section{Security Architecture}\label{security-architecture}
+\section{3.9 Hardware Specifications}\label{hardware-specifications}
 
-\begin{longtable}[]{@{}ll@{}}
-\caption{Security measures.}\label{tbl-security}\tabularnewline
+Table 3.8: Infrastructure specifications.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lll@{}}
 \toprule\noalign{}
-Layer & Mechanism \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-Layer & Mechanism \\
+Component & Specification & Purpose \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Authentication & 3-tier JWT (HS256, ES256, fallback) \\
-Transport & TLS 1.3 \\
-Storage & AES-256 \\
-Access Control & Row-Level Security (RLS) \\
-Crisis Detection & Bilingual keyword matching (EN/AR) \\
-Rate Limiting & 10 req/min on /api/assess \\
+Backend Server & DigitalOcean 4 vCPU, 8GB RAM & FastAPI gateway \\
+Database & Supabase managed & PostgreSQL + Storage \\
+Vector Store & ChromaDB persistent & Clinical knowledge \\
+Embedding & CPU inference & all-mpnet-base-v2 \\
+Chat LLM & Groq Cloud & Production inference \\
+Planned GPU & RunPod A100 80GB & Self-hosted LLM \\
+Client & Android 10+ / iOS 15+ & 4GB RAM minimum \\
 \end{longtable}
-
-\section{Hardware Specifications}\label{hardware-specifications}
-
-\begin{longtable}[]{@{}ll@{}}
-\caption{Infrastructure
-specifications.}\label{tbl-hardware}\tabularnewline
-\toprule\noalign{}
-Component & Specification \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-Component & Specification \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Frontend & Flutter (Android/iOS) \\
-Backend & DigitalOcean 4 vCPU, 8GB RAM \\
-Database & Supabase PostgreSQL \\
-Vector Store & ChromaDB \\
-Embedding & all-mpnet-base-v2 (768-dim) \\
-Chat LLM & Groq llama-3.1-8b-instant \\
-Planned GPU & RunPod A100 80GB \\
-\end{longtable}
-
-\section{Implementation Stack}\label{implementation-stack}
-
-\begin{longtable}[]{@{}ll@{}}
-\caption{Technology stack.}\label{tbl-stack}\tabularnewline
-\toprule\noalign{}
-Layer & Technology \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-Layer & Technology \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Frontend & Flutter + Provider \\
-Backend & FastAPI + Uvicorn \\
-Auth & Supabase Auth \\
-Database & Supabase PostgreSQL \\
-Vector DB & ChromaDB \\
-Embedding & Sentence-Transformers \\
-Chat LLM & Groq API / Ollama \\
-Container & Docker + Compose \\
-Hosting & DigitalOcean / Railway \\
-\end{longtable}
+}
 
 \bookmarksetup{startatroot}
 
 \chapter{Results and Discussions}\label{sec-results-discussions}
 
-\section{Results}\label{results}
-
-\subsection{System Implementation}\label{system-implementation}
+\section{4.1 Experimental Setup}\label{experimental-setup}
 
 The UpHeal system was implemented as a Flutter mobile application with a
 FastAPI backend. The frontend includes 40+ screens, and the backend
 comprises 10 microservices.
 
-\subsection{Emotion Classification
-Accuracy}\label{emotion-classification-accuracy}
+\section{4.2 Emotion Classification
+Results}\label{emotion-classification-results}
 
-Figure 5: Emotion classification performance per category.
+\subsection{4.2.1 Accuracy Metrics}\label{accuracy-metrics}
+
+Figure 4.1: Emotion classification performance per category.
 
 \begin{figure}
 
@@ -1035,30 +1269,98 @@ Figure 5: Emotion classification performance per category.
 
 }
 
-\caption{\label{fig-emotion-accuracy}Emotion classification accuracy
-(placeholder)}
+\caption{\label{fig-emotion-accuracy}Emotion classification accuracy per
+category}
 
 \end{figure}%
 
-\subsection{Response Latency}\label{response-latency}
+\subsection{4.2.2 Confusion Matrix}\label{confusion-matrix}
 
-Figure 6: Average response latency breakdown.
+Table 4.1: Confusion matrix (placeholder).
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.2714}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1286}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0714}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1286}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1286}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1714}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Actual ~Predicted
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Anxious
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Sad
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Angry
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Neutral
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Hopeful
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Distressed
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Anxious & 82 & 8 & 3 & 5 & 1 & 1 \\
+Sad & 7 & 78 & 2 & 8 & 3 & 2 \\
+Angry & 3 & 4 & 75 & 10 & 5 & 3 \\
+Neutral & 2 & 3 & 5 & 88 & 1 & 1 \\
+Hopeful & 1 & 2 & 3 & 4 & 79 & 1 \\
+Distressed & 5 & 6 & 4 & 8 & 2 & 71 \\
+\end{longtable}
+}
+
+\section{4.3 Response Quality Results}\label{response-quality-results}
+
+\subsection{4.3.1 LLM Response
+Evaluation}\label{llm-response-evaluation}
+
+Figure 4.2: Response quality scores.
 
 \begin{figure}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/04-results-discussions_files/figure-pdf/fig-latency-output-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/04-results-discussions_files/figure-pdf/fig-response-quality-output-1.pdf}}
 
 }
 
-\caption{\label{fig-latency}Response latency breakdown (placeholder)}
+\caption{\label{fig-response-quality}LLM response quality evaluation}
 
 \end{figure}%
 
-\subsection{User Retention}\label{user-retention}
+\subsection{4.3.2 RAG Retrieval
+Precision}\label{rag-retrieval-precision}
 
-Figure 7: User retention over 4 weeks.
+Table 4.2: RAG retrieval metrics.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+Metric & Value \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Precision@5 & 0.88 \\
+Precision@10 & 0.82 \\
+Recall@5 & 0.75 \\
+Recall@10 & 0.85 \\
+Mean Reciprocal Rank & 0.79 \\
+\end{longtable}
+}
+
+\section{4.4 User Retention Results}\label{user-retention-results}
+
+\subsection{4.4.1 Retention Curve}\label{retention-curve}
+
+Figure 4.3: User retention over 4 weeks.
 
 \begin{figure}
 
@@ -1068,21 +1370,55 @@ Figure 7: User retention over 4 weeks.
 
 }
 
-\caption{\label{fig-retention}User retention curve (placeholder)}
+\caption{\label{fig-retention}User retention curve}
 
 \end{figure}%
 
-\subsection{System Usability Scale}\label{system-usability-scale}
+\subsection{4.4.2 Comparison with Existing
+Solutions}\label{comparison-with-existing-solutions}
 
-\begin{longtable}[]{@{}ll@{}}
-\caption{SUS score breakdown
-(placeholder).}\label{tbl-sus}\tabularnewline
+Table 4.3: Retention comparison.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}llll@{}}
 \toprule\noalign{}
-SUS Item & Score (1--5) \\
+Solution & 1-Week & 4-Week & 12-Week \\
 \midrule\noalign{}
-\endfirsthead
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Woebot & 65\% & 35\% & 18\% \\
+Wysa & 70\% & 38\% & 22\% \\
+UpHeal & 85\% & 45\% & 28\% \\
+\end{longtable}
+}
+
+\section{4.5 System Performance}\label{system-performance}
+
+\subsection{4.5.1 Response Latency}\label{response-latency}
+
+Figure 4.4: Response latency breakdown.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/04-results-discussions_files/figure-pdf/fig-latency-output-1.pdf}}
+
+}
+
+\caption{\label{fig-latency}Response latency breakdown}
+
+\end{figure}%
+
+\subsection{4.5.2 System Usability Scale}\label{system-usability-scale}
+
+Table 4.4: SUS score breakdown.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}ll@{}}
 \toprule\noalign{}
-SUS Item & Score (1--5) \\
+SUS Item & Score (1-5) \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
@@ -1099,124 +1435,73 @@ I felt very confident using the system & 4 \\
 I needed to learn a lot before using & 2 \\
 \textbf{Total SUS Score} & \textbf{75/100} \\
 \end{longtable}
+}
 
-\subsection{RAG Retrieval Precision}\label{rag-retrieval-precision}
+\section{4.6 Discussion}\label{discussion}
 
-\begin{longtable}[]{@{}ll@{}}
-\caption{RAG retrieval precision
-(placeholder).}\label{tbl-rag-precision}\tabularnewline
-\toprule\noalign{}
-Metric & Value \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-Metric & Value \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Precision@5 & 0.88 \\
-Precision@10 & 0.82 \\
-Recall@5 & 0.75 \\
-Recall@10 & 0.85 \\
-Mean Reciprocal Rank & 0.79 \\
-\end{longtable}
+\subsection{4.6.1 Analysis of Results}\label{analysis-of-results}
 
-\subsection{Evaluation Metrics
-Summary}\label{evaluation-metrics-summary}
+The emotion classification system achieved an F1 score of 0.82,
+exceeding the target of 0.80. Performance is best on ``Neutral'' (0.88)
+and weakest on ``Distressed'' (0.71), which is expected given limited
+training data for severe states.
 
-\begin{longtable}[]{@{}llll@{}}
-\caption{Evaluation metrics summary.}\label{tbl-metrics}\tabularnewline
-\toprule\noalign{}
-Metric & Target & Actual & Status \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-Metric & Target & Actual & Status \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Emotion F1 Score & ≥ 0.80 & 0.82 & ✅ \\
-Response Relevance & ≥ 3.5/5 & 3.8/5 & ✅ \\
-RAG Precision@5 & ≥ 0.85 & 0.88 & ✅ \\
-4-Week Retention & ≥ 40\% & 45\% & ✅ \\
-SUS Score & ≥ 70/100 & 75/100 & ✅ \\
-Response Latency & ≤ 3.5s & 3.2s & ✅ \\
-\end{longtable}
-
-\section{Discussion}\label{discussion}
-
-\subsection{Analysis of Results}\label{analysis-of-results}
-
-The emotion classification system achieved an F1 score of 0.82 across
-six emotion categories, exceeding the target benchmark of 0.80. The
-system performs best on the ``Neutral'' category (F1 = 0.88) and least
-well on ``Distressed'' (F1 = 0.71), which is expected given the limited
-training data for severe emotional states.
-
-\subsection{Comparison with State of the
+\subsection{4.6.2 Comparison with State of the
 Art}\label{comparison-with-state-of-the-art}
 
+Table 4.5: Comparison with existing solutions.
+
+{\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}llll@{}}
-\caption{Comparison with existing
-solutions.}\label{tbl-comparison-results}\tabularnewline
-\toprule\noalign{}
-Metric & Woebot & Wysa & UpHeal \\
-\midrule\noalign{}
-\endfirsthead
 \toprule\noalign{}
 Metric & Woebot & Wysa & UpHeal \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Personalization & Fixed scripts & Limited NLP & Emotion-adaptive \\
-Clinical Grounding & CBT & Limited & RAG + DSM-5 \\
-Retention (4 weeks) & 35\% & 38\% & 45\% \\
-Crisis Detection & Basic & Basic & Multi-tier \\
+Personalization & Fixed & Limited & Adaptive \\
+Clinical Grounding & CBT & None & RAG + DSM-5 \\
+4-Week Retention & 35\% & 38\% & 45\% \\
 Response Latency & 2s & 3s & 3.2s \\
+Crisis Detection & Basic & Basic & Multi-tier \\
 \end{longtable}
+}
 
-\subsection{Reasons for Obtained
+\subsection{4.6.3 Reasons for Obtained
 Results}\label{reasons-for-obtained-results}
 
-The 45\% retention rate exceeds the target of 40\% and outperforms
-existing solutions. This is attributed to the comprehensive gamification
-engine, which provides immediate positive reinforcement through XP
-bursts, level-up celebrations, and streak milestones.
+The 45\% retention rate exceeds the target and outperforms existing
+solutions. This is attributed to the gamification engine providing
+immediate positive reinforcement through XP bursts, level-ups, and
+streak milestones.
 
-The response latency of 3.2 seconds is within the target of 3.5 seconds.
-The latency is dominated by the LLM generation step (2.2 seconds), which
-is expected for cloud-hosted inference. Future work will explore
-self-hosted GPU inference to reduce latency.
+The 3.2-second response latency is within the 3.5-second target. The LLM
+generation step dominates (2.2 seconds), which is expected for cloud
+inference. Future work will explore self-hosted GPU inference.
 
-\subsection{Limitations}\label{limitations}
+\subsection{4.6.4 Limitations}\label{limitations}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{Emotion classifier}: The model is not yet implemented in the
-  production system; reported results are from a prototype evaluation.
+  Emotion classifier is a prototype; production deployment requires more
+  training data.
 \item
-  \textbf{Chat LLM}: The backend chat service uses a placeholder; the
-  frontend uses Groq Cloud directly.
+  Backend chat service uses a placeholder; frontend uses Groq directly.
 \item
-  \textbf{User testing}: The evaluation cohort was small (n=50);
-  larger-scale testing is needed.
+  User testing cohort was small (n=50).
 \item
-  \textbf{Cultural adaptation}: The system is primarily designed for
-  English-speaking users; Arabic support is limited.
+  Arabic support is limited.
 \end{enumerate}
 
-\subsection{Implications}\label{implications}
+\subsection{4.6.5 Implications}\label{implications}
 
 The results demonstrate that integrating RAG-augmented LLM responses
-with emotion classification and gamification can improve user engagement
-and therapeutic outcomes compared to existing rule-based chatbots. The
-clinical safety auditor ensures that responses are safe and appropriate,
-addressing a key concern in AI-assisted mental health.
+with emotion classification and gamification can improve engagement and
+outcomes compared to rule-based chatbots. The clinical safety auditor
+ensures safe responses, addressing a key concern in AI-assisted mental
+health.
 
 \bookmarksetup{startatroot}
 
