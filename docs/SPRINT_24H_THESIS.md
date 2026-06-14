@@ -44,9 +44,9 @@ The thesis was written from architectural intent, not the built system. These mu
 
 | Hour | Hozaifa | Abdalrahman | Yahya |
 |------|---------|-------------|-------|
-| 0–2 | Expand **Ch2 §2.2 Conversational Agents** — add Woebot clinical trial details, Wysa RCT results, Replika user studies, CASA-chat taxonomy. Add 3+ references | Sketch **Ch4 §4.2 Frontend Implementation** structure: list all 48 screens by route, GoRouter navigation, Provider state management, 20+ service classes, community feature architecture | Expand **Ch2 §2.3 Emotion Recognition** — add BERT architecture details, emotion detection datasets (GoEmotions, EmoBank), Whisper-based ASR. Add 3+ references |
-| 2–4 | Expand **Ch2 §2.5 RAG** — add dense retrieval details, HNSW algorithm citation, ChromaDB specifics, sentence-transformer evaluation. Add 3+ references | Write **Ch4 §4.2** body text: onboarding flow (3-screen wizard), Supabase Auth (email/password + Google), home dashboard, AI Coach screen, community hub (feed + groups + chat), gamification engine implementation | Expand **Ch2 §2.4 Gamification** — add Self-Determination Theory (Deci & Ryan), gamification taxonomy (points/badges/leaderboards), health gamification studies. Add 3+ references |
-| 4–6 | Write **Ch3 §3.1 FR/NFR** — extract 10 functional requirements and 7 non-functional requirements from the actual codebase (assessment flow, chat flow, RAG retrieval, gamification triggers, crisis detection, journal CRUD, telemetry) | Continue **Ch4 §4.2** — gamification implementation: XP formula `100 + (level-1)*50`, 10 badges (streak/tasks/addiction-free), 12 achievements (5 types), 10 challenges (daily/weekly/special), streak system with freeze tokens, reward orchestrator, comeback reward | Expand **Ch2 §2.1 Digital MH landscape** — add MENA-specific mental health data, COVID-19 telehealth acceleration, treatment gap statistics, Baumeister systematic review detail. Add 2+ references |
+| 0–2 | `ch2/conversational-agents` — Expand **Ch2 §2.2 Conversational Agents** — add Woebot clinical trial details, Wysa RCT results, Replika user studies, CASA-chat taxonomy. Add 3+ references | `ch4/frontend` — Sketch **Ch4 §4.2 Frontend Implementation** structure: list all 48 screens by route, GoRouter navigation, Provider state management, 20+ service classes, community feature architecture | `ch2/emotion-recognition` — Expand **Ch2 §2.3 Emotion Recognition** — add BERT architecture details, emotion detection datasets (GoEmotions, EmoBank), Whisper-based ASR. Add 3+ references |
+| 2–4 | `ch2/conversational-agents` — Expand **Ch2 §2.5 RAG** — add dense retrieval details, HNSW algorithm citation, ChromaDB specifics, sentence-transformer evaluation. Add 3+ references. Then → `ch2/gap-analysis` — update comparison table | `ch4/frontend` — Write **Ch4 §4.2** body text: onboarding flow (3-screen wizard), Supabase Auth (email/password + Google), home dashboard, AI Coach screen, community hub (feed + groups + chat), gamification engine implementation | `ch2/gamification` — Expand **Ch2 §2.4 Gamification** — add Self-Determination Theory (Deci & Ryan), gamification taxonomy (points/badges/leaderboards), health gamification studies. Add 3+ references |
+| 4–6 | `ch3/requirements` — Write **Ch3 §3.1 FR/NFR** — extract 10 functional requirements and 7 non-functional requirements from the actual codebase (assessment flow, chat flow, RAG retrieval, gamification triggers, crisis detection, journal CRUD, telemetry) | `ch4/frontend` — Continue **Ch4 §4.2** — gamification implementation: XP formula `100 + (level-1)*50`, 10 badges (streak/tasks/addiction-free), 12 achievements (5 types), 10 challenges (daily/weekly/special), streak system with freeze tokens, reward orchestrator, comeback reward | `ch2/emotion-recognition` — Expand **Ch2 §2.1 Digital MH landscape** — add MENA-specific mental health data, COVID-19 telehealth acceleration, treatment gap statistics, Baumeister systematic review detail. Add 2+ references |
 
 **Checkpoint V1 (Hour 6):** Ch2 expanded to 250+ lines; 15+ references in .bib; FR/NFR drafted in Ch3; Ch4 §4.2 outline complete.
 
@@ -56,10 +56,10 @@ The thesis was written from architectural intent, not the built system. These mu
 
 | Hour | Hozaifa | Abdalrahman | Yahya |
 |------|---------|-------------|-------|
-| 6–8 | Write **Ch4 §4.3 Backend Implementation** — actual service map: gateway orchestrator (3-stage pipeline: Profiler → Architect → Assemble), assessment service (Bayesian GAD-7/PHQ-9 with 55%/45% blend + sigmoid R_app), RAG knowledge base (ChromaDB + all-mpnet-base-v2, 768-dim), architect pipeline (triple-threat reranking: 0.35×sim + 0.25×form + 0.25×R_app + 0.15×utility) | Write **Ch4 §4.4 Chat LLM Integration** — current architecture: Flutter → `UphealApi().sendChatMessage()` → `POST /api/chat` → gateway → `ChatService.send_message()` → pipeline (emotion classify → RAG retrieve → prompt assemble → LLM generate → clinical audit), Groq `llama-3.1-8b-instant`, migration path to Ollama | Add 10+ **references to .bib** — DSM-5-TR, Kroenke PHQ-9, Spitzer GAD-7, Deci & Ryan SDT, Johnson-Gentile gamification taxonomy, ChromaDB docs, FastAPI docs, Flutter framework, Supabase docs, Malkov HNSW |
-| 8–10 | Write **Ch4 §4.3 continued** — auditor service (crisis detection EN/41 + AR/20 keywords, robotic tone, frustration scoring 0.0–1.0), ingestion pipeline (PDF extraction via pdfplumber, semantic chunking with 15% overlap, formatter agent with LLM enrichment for difficulty/xp/safety tags), director evaluator (7-day window, 6 mutation triggers: LOW_COMPLETION, HIGH_DROP_OFF, etc.) | Write **Ch4 §4.4 continued** — community feature: Supabase Realtime subscriptions (feed:global broadcast, group:{groupId} broadcast), Edge Functions (create-post with moderation, send-message with auth), 7 SQL migrations defining 13 tables with RLS policies, focus room Pomodoro sync | Write **Ch4 §4.5 Testing** — describe test suite: 29 backend test files (pytest), 6 frontend test files, integration tests. Categories: architect pipeline, assessment core, auditor crisis detection, ChromaDB adapter, orchestration, rate limiting, sentiment classifier, authentication middleware |
-| 10–12 | Write **Ch3 Use Case Diagram** — Mermaid diagram with 8 user use cases (Register/Login, Take Assessment, Chat with AI Coach, View Roadmap, Track Mood, Journal Entry, Manage Gamification, Join Community) + 6 system use cases (RAG Retrieval, Emotion Classification, Clinical Audit, Crisis Detection, Roadmap Generation, Gamification XP Calculation) | Write **Ch4 §4.5 continued** — frontend unit tests (widget tests, service tests, model tests), manual UAT description, SUS methodology (10-question SUS, n=20 participants) | Add 5+ more **references to .bib** — Hutton pdfplumber, Wolf HuggingFace Transformers, Dettmers QLoRA, Demasio GoEmotions, Park EmoBank |
-| 12–14 | Write **Ch3 §3.8 Data Models** expansion — update Supabase schema: add community tables (posts, comments, groups, group_messages, message_reactions, focus_room_state, community_xp_events, community_notifications), chat tables (chat_sessions, chat_messages), add field details for all 20+ tables | Write **Ch4 §4.6 Results** — update charts: add community engagement metrics (posts/week, messages/week, group activity), update screen count to 48, add navigation architecture diagram (GoRouter StatefulShellRoute) | **Cite-check Ch2–Ch5**: ensure every new reference is cited inline at least once, update `docs/PROGRESS.md` |
+| 6–8 | `ch4/backend` — Write **Ch4 §4.3 Backend Implementation** — actual service map: gateway orchestrator (3-stage pipeline: Profiler → Architect → Assemble), assessment service (Bayesian GAD-7/PHQ-9 with 55%/45% blend + sigmoid R_app), RAG knowledge base (ChromaDB + all-mpnet-base-v2, 768-dim), architect pipeline (triple-threat reranking: 0.35×sim + 0.25×form + 0.25×R_app + 0.15×utility) | `ch4/chat-llm` — Write **Ch4 §4.4 Chat LLM Integration** — current architecture: Flutter → `UphealApi().sendChatMessage()` → `POST /api/chat` → gateway → `ChatService.send_message()` → pipeline (emotion classify → RAG retrieve → prompt assemble → LLM generate → clinical audit), Groq `llama-3.1-8b-instant`, migration path to Ollama | `content/references` — Add 10+ **references to .bib** — DSM-5-TR, Kroenke PHQ-9, Spitzer GAD-7, Deci & Ryan SDT, Johnson-Gentile gamification taxonomy, ChromaDB docs, FastAPI docs, Flutter framework, Supabase docs, Malkov HNSW |
+| 8–10 | `ch4/backend` — Write **Ch4 §4.3 continued** — auditor service (crisis detection EN/41 + AR/20 keywords, robotic tone, frustration scoring 0.0–1.0), ingestion pipeline (PDF extraction via pdfplumber, semantic chunking with 15% overlap, formatter agent with LLM enrichment for difficulty/xp/safety tags), director evaluator (7-day window, 6 mutation triggers: LOW_COMPLETION, HIGH_DROP_OFF, etc.) | `ch4/chat-llm` — Write **Ch4 §4.4 continued** — community feature: Supabase Realtime subscriptions (feed:global broadcast, group:{groupId} broadcast), Edge Functions (create-post with moderation, send-message with auth), 7 SQL migrations defining 13 tables with RLS policies, focus room Pomodoro sync | `ch4/testing` — Write **Ch4 §4.5 Testing** — describe test suite: 29 backend test files (pytest), 6 frontend test files, integration tests. Categories: architect pipeline, assessment core, auditor crisis detection, ChromaDB adapter, orchestration, rate limiting, sentiment classifier, authentication middleware |
+| 10–12 | `ch3/requirements` — Write **Ch3 Use Case Diagram** — Mermaid diagram with 8 user use cases (Register/Login, Take Assessment, Chat with AI Coach, View Roadmap, Track Mood, Journal Entry, Manage Gamification, Join Community) + 6 system use cases (RAG Retrieval, Emotion Classification, Clinical Audit, Crisis Detection, Roadmap Generation, Gamification XP Calculation) | `ch4/chat-llm` — Write **Ch4 §4.5 continued** — frontend unit tests (widget tests, service tests, model tests), manual UAT description, SUS methodology (10-question SUS, n=20 participants) | `content/references` — Add 5+ more **references to .bib** — Hutton pdfplumber, Wolf HuggingFace Transformers, Dettmers QLoRA, Demasio GoEmotions, Park EmoBank |
+| 12–14 | `ch3/data-models` — Write **Ch3 §3.8 Data Models** expansion — update Supabase schema: add community tables (posts, comments, groups, group_messages, message_reactions, focus_room_state, community_xp_events, community_notifications), chat tables (chat_sessions, chat_messages), add field details for all 20+ tables | `ch4/results` — Write **Ch4 §4.6 Results** — update charts: add community engagement metrics (posts/week, messages/week, group activity), update screen count to 48, add navigation architecture diagram (GoRouter StatefulShellRoute) | `content/references` — **Cite-check Ch2–Ch5**: ensure every new reference is cited inline at least once, update `docs/PROGRESS.md` |
 
 **Checkpoint V2 (Hour 14):** Ch4 §4.2–4.4 written with codebase truth; Ch3 use case diagram added; 30+ references in .bib; data models updated.
 
@@ -69,9 +69,9 @@ The thesis was written from architectural intent, not the built system. These mu
 
 | Hour | Hozaifa | Abdalrahman | Yahya |
 |------|---------|-------------|-------|
-| 14–16 | Write **Ch5 §5.3 Ethics Considerations** — data privacy (AES-256 at rest, TLS 1.3 in transit, Supabase RLS policies), informed consent (opt-in data collection, GDPR-aligned), crisis protocol (EN/AR hotlines: 988, Crisis Text Line, 911 + Arabic equivalents), algorithmic bias (emotional equity across demographics), transparency (AI explainability), data minimization | Polish **Ch4 §4.2–4.4** — verify all screen names match `lib/screens/`, verify all service classes match `lib/services/`, verify all model classes match `lib/models/`, cross-check numbers against actual codebase | Write **Appendix updates** — update source code repositories (4 repos), update database schema (add 13 community + 2 chat tables with all columns), update API endpoints (add community routes + chat endpoints + journal CRUD), update project structure tree |
-| 16–18 | Review **Ch3** — verify methodology matches codebase: 3-stage pipeline (Profiler → Architect → Assemble), triple-threat reranking weights, Bayesian GAD-7/PHQ-9 blending ratio (55%/45%), sigmoid R_app formula, formatter agent LLM enrichment, director evaluator triggers | Review **Ch4 §4.2** — verify gamification numbers: XP formula matches `xp_config.dart`, 10 badges match `badge_model.dart`, 12 achievements match `achievement.dart`, 10 challenges match `challenge_model.dart`, streak milestones match `streak_service.dart`, community XP events match `community_models.dart` | Cross-check **all citations** — verify every `[@citationKey]` has a matching `.bib` entry, verify every `.bib` entry is cited at least once inline, no orphan references, no uncited references |
-| 18–20 | **Ch1 final review** — verify introduction matches expanded Ch2–Ch5 (especially §1.4 Thesis Organization cross-references), ensure consistency of terminology and system description | **Appendix final review** — verify project structure tree matches actual directory listing, verify chart reproduction instructions work (`python scripts/generate_charts.py`), verify all table/figure numbers are sequential | **References cleanup** — final pass: sort alphabetically, verify IEEE format (authors, title, journal, volume, pages, year), verify DOIs where available, remove opencode2024 if unused |
+| 14–16 | `ch5/ethics` — Write **Ch5 §5.3 Ethics Considerations** — data privacy (AES-256 at rest, TLS 1.3 in transit, Supabase RLS policies), informed consent (opt-in data collection, GDPR-aligned), crisis protocol (EN/AR hotlines: 988, Crisis Text Line, 911 + Arabic equivalents), algorithmic bias (emotional equity across demographics), transparency (AI explainability), data minimization | `ch4/frontend` — Polish **Ch4 §4.2–4.4** — verify all screen names match `lib/screens/`, verify all service classes match `lib/services/`, verify all model classes match `lib/models/`, cross-check numbers against actual codebase | `content/appendix` — Write **Appendix updates** — update source code repositories (4 repos), update database schema (add 13 community + 2 chat tables with all columns), update API endpoints (add community routes + chat endpoints + journal CRUD), update project structure tree |
+| 16–18 | `ch3/requirements` — Review **Ch3** — verify methodology matches codebase: 3-stage pipeline (Profiler → Architect → Assemble), triple-threat reranking weights, Bayesian GAD-7/PHQ-9 blending ratio (55%/45%), sigmoid R_app formula, formatter agent LLM enrichment, director evaluator triggers | `ch4/frontend` — Review **Ch4 §4.2** — verify gamification numbers: XP formula matches `xp_config.dart`, 10 badges match `badge_model.dart`, 12 achievements match `achievement.dart`, 10 challenges match `challenge_model.dart`, streak milestones match `streak_service.dart`, community XP events match `community_models.dart` | `content/references` — Cross-check **all citations** — verify every `[@citationKey]` has a matching `.bib` entry, verify every `.bib` entry is cited at least once inline, no orphan references, no uncited references |
+| 18–20 | `ch3/requirements` — **Ch1 final review** — verify introduction matches expanded Ch2–Ch5 (especially §1.4 Thesis Organization cross-references), ensure consistency of terminology and system description | `content/appendix` — **Appendix final review** — verify project structure tree matches actual directory listing, verify chart reproduction instructions work (`python scripts/generate_charts.py`), verify all table/figure numbers are sequential | `content/references` — **References cleanup** — final pass: sort alphabetically, verify IEEE format (authors, title, journal, volume, pages, year), verify DOIs where available, remove opencode2024 if unused |
 
 **Checkpoint V3 (Hour 20):** Ch5 ethics written; all data models updated; community feature documented; all 30+ references cited; codebase numbers verified.
 
@@ -79,32 +79,52 @@ The thesis was written from architectural intent, not the built system. These mu
 
 ### Phase 4: Build & Ship (Hours 20–24)
 
-| Hour | Owner | Task |
-|------|-------|------|
-| 20–21 | Hozaifa | Run `quarto render` — fix any LaTeX errors, Mermaid rendering issues, Python chart errors |
-| 21–22 | Abdalrahman | Open compiled PDF, verify all figures render, check page breaks, verify table formatting, verify all code blocks format correctly |
-| 22–23 | Yahya | Final **cite-check pass**: open PDF, verify every `[1]`–`[30+]` resolves in the bibliography, verify figure/table numbering is sequential, verify `@sec-` cross-references resolve to correct chapter numbers |
-| 23–24 | All | Final commit and push: |
+| Hour | Owner | Branch | Task |
+|------|-------|--------|------|
+| 20–21 | Hozaifa | `ch3/requirements` | Run `quarto render` — fix any LaTeX errors, Mermaid rendering issues, Python chart errors |
+| 21–22 | Abdalrahman | `ch4/frontend` | Open compiled PDF, verify all figures render, check page breaks, verify table formatting, verify all code blocks format correctly |
+| 22–23 | Yahya | `content/references` | Final **cite-check pass**: open PDF, verify every `[1]`–`[30+]` resolves in the bibliography, verify figure/table numbering is sequential, verify `@sec-` cross-references resolve to correct chapter numbers |
+| 23–24 | All | `main` | Merge all branches, final build, push: |
 
 ```bash
-cd "d:\Career\Grad Project\UpHeal-Doc"
-git checkout -b sprint/24h-thesis-completion
-git add .
-git commit -m "[Sprint] 24h thesis completion
+# ─── PHASE 4: MERGE ALL BRANCHES TO MAIN ─────────────────────────────
 
-- Expanded Ch2 from 86 to 250+ lines with citations
-- Added FR/NFR to Ch3 with use case diagram
-- Updated Ch3 data models with community + chat tables
-- Rewrote Ch4 §4.2 with 48 screens, GoRouter, Supabase auth
-- Rewrote Ch4 §4.3 with actual 12-service backend architecture
-- Rewrote Ch4 §4.4 with chat pipeline and community feature
-- Updated Ch4 §4.5 with real test suite (29+ 6 files)
-- Updated Ch4 §4.6 with community metrics
-- Added Ch5 §5.3 Ethics Considerations
-- Expanded references from 15 to 30+
-- Updated Appendix with codebase truth
-- Fixed all codebase mismatches"
-git push origin sprint/24h-thesis-completion
+# 1. Merge references FIRST (all chapters depend on it)
+git checkout main && git pull origin main
+gh pr merge <references-PR> --squash --delete-branch
+
+# 2. Merge Ch2 branches
+gh pr merge <conversational-agents-PR> --squash --delete-branch
+gh pr merge <emotion-recognition-PR> --squash --delete-branch
+gh pr merge <gamification-PR> --squash --delete-branch
+gh pr merge <gap-analysis-PR> --squash --delete-branch
+
+# 3. Pull latest main (now with Ch2 + references)
+git pull origin main
+
+# 4. Merge Ch3 branches
+gh pr merge <requirements-PR> --squash --delete-branch
+gh pr merge <data-models-PR> --squash --delete-branch
+
+# 5. Merge Ch4 branches
+gh pr merge <frontend-PR> --squash --delete-branch
+gh pr merge <backend-PR> --squash --delete-branch
+gh pr merge <chat-llm-PR> --squash --delete-branch
+gh pr merge <testing-PR> --squash --delete-branch
+gh pr merge <results-PR> --squash --delete-branch
+
+# 6. Merge Ch5 + Appendix
+gh pr merge <ethics-PR> --squash --delete-branch
+gh pr merge <appendix-PR> --squash --delete-branch
+
+# 7. Final build
+git checkout main && git pull origin main
+quarto render
+
+# 8. Commit and push the final build
+git add .
+git commit -m "[Sprint] 24h thesis completion — expanded Ch2, updated Ch3-4, added ethics, 30+ references"
+git push origin main
 ```
 
 **Checkpoint V4 (Hour 24):** PDF builds with 0 errors; all references cited; all codebase numbers verified; pushed to GitHub.
@@ -193,11 +213,111 @@ These numbers must replace estimates in the thesis:
 
 ## Branch Strategy
 
-| Action | Branch |
-|--------|--------|
-| Create sprint branch | `git checkout -b sprint/24h-thesis-completion` |
-| Push at end | `git push origin sprint/24h-thesis-completion` |
-| Merge after review | Create PR to merge into `main` |
+Each person creates one branch per section they own. Work on your branch only. Create a PR when done. **Never edit another person's section on their branch.**
+
+### Branch Assignments
+
+| Branch | Owner | Sections | Merges Into | Reviewer |
+|--------|-------|----------|-------------|----------|
+| `ch2/conversational-agents` | Hozaifa | Ch2 §2.2 Conversational Agents, Ch2 §2.5 RAG | `main` | Yahya |
+| `ch2/emotion-recognition` | Yahya | Ch2 §2.3 Emotion Recognition, Ch2 §2.1 Digital MH | `main` | Hozaifa |
+| `ch2/gamification` | Yahya | Ch2 §2.4 Gamification for Health | `main` | Hozaifa |
+| `ch2/gap-analysis` | Hozaifa | Ch2 §2.6 Gap Analysis (update comparison table) | `main` | Yahya |
+| `ch3/requirements` | Hozaifa | Ch3 §3.1 FR/NFR, Ch3 Use Case Diagram | `main` | Abdalrahman |
+| `ch3/data-models` | Hozaifa | Ch3 §3.8 Data Models (add community + chat tables) | `main` | Yahya |
+| `ch4/frontend` | Abdalrahman | Ch4 §4.2 Frontend Implementation | `main` | Hozaifa |
+| `ch4/backend` | Hozaifa | Ch4 §4.3 Backend Implementation | `main` | Yahya |
+| `ch4/chat-llm` | Abdalrahman | Ch4 §4.4 Chat LLM Integration + Community Feature | `main` | Hozaifa |
+| `ch4/testing` | Yahya | Ch4 §4.5 Testing | `main` | Hozaifa |
+| `ch4/results` | Abdalrahman | Ch4 §4.6 Results + Charts | `main` | Hozaifa |
+| `ch5/ethics` | Hozaifa | Ch5 §5.3 Ethics Considerations | `main` | Abdalrahman |
+| `content/references` | Yahya | references.bib (add 15+ new entries) | `main` | Hozaifa |
+| `content/appendix` | Abdalrahman + Yahya | Appendix (schema, API endpoints, project structure) | `main` | Hozaifa |
+
+### Dependency Order (Which Branches to Merge First)
+
+```
+content/references  ──→  ch2/*  ──→  ch3/requirements  ──→  ch4/*  ──→  ch5/ethics  ──→  ch4/results  ──→  content/appendix
+        │                    │                               │                      │                    │
+       (Yahya)          (All three)                     (Hozaifa)            (Hozaifa)          (Abdalrahman)    (Abdalrahman+Yahya)
+```
+
+**Rule:** Merge `content/references` first (new .bib entries needed by all chapters). Then merge Ch2 branches. Then Ch3. Then Ch4. Then Ch5. Then results + appendix last.
+
+### Branch Workflow
+
+```bash
+# ─── SETUP (each person, once) ───────────────────────────────────────
+git clone https://github.com/Upheal1/UpHeal-Doc.git
+cd UpHeal-Doc
+
+# ─── START OF SESSION ────────────────────────────────────────────────
+git checkout main
+git pull origin main
+
+# ─── CREATE YOUR BRANCH ──────────────────────────────────────────────
+# Hozaifa:
+git checkout -b ch2/conversational-agents
+# Abdalrahman:
+git checkout -b ch4/frontend
+# Yahya:
+git checkout -b ch2/emotion-recognition
+
+# ─── WHILE WRITING (commit often) ────────────────────────────────────
+git add .
+git commit -m "[Ch2] Added Woebot clinical trial citations — Hozaifa"
+git push origin ch2/conversational-agents
+
+# ─── STAY IN SYNC (every 2 hours) ────────────────────────────────────
+git checkout main
+git pull origin main
+git checkout ch2/conversational-agents
+git merge main                    # resolve conflicts if any
+
+# ─── SECTION DONE → CREATE PR ────────────────────────────────────────
+gh pr create --title "[Ch2] Conversational agents + RAG citations" \
+  --body "## Changes
+- Expanded §2.2 with Woebot RCT, Wysa study, Replika analysis
+- Expanded §2.5 with HNSW, ChromaDB, sentence-transformer details
+- Added 6 new references (apa2022dsm5tr, malkov2018hnsw, chromadb2024, fastapi2024, wolf2020transformers, hutton2022pdfplumber)
+## Reviewers
+- @yahya-amr" \
+  --base main \
+  --head ch2/conversational-agents
+
+# ─── AFTER REVIEW → MERGE ────────────────────────────────────────────
+gh pr merge <PR-NUMBER> --squash --delete-branch
+
+# ─── NEXT SECTION (create new branch) ────────────────────────────────
+git checkout main
+git pull origin main
+git checkout -b ch3/requirements
+# ... repeat cycle
+```
+
+### Shared File Rules
+
+These files are edited by multiple people. **Always pull main before editing.**
+
+| File | Who Edits | Conflict Risk | Rule |
+|------|-----------|--------------|------|
+| `references.bib` | Yahya (lead), all three add entries | **HIGH** | Add entries at the **bottom** only. Yahya merges first, others rebase. |
+| `chapters/02-background.qmd` | All three (different sections) | **MEDIUM** | Edit **only your assigned sections**. Do not touch others' sections. |
+| `chapters/03-methodology.qmd` | Hozaifa (lead) | LOW | Others review via PR only. |
+| `chapters/04-results-discussions.qmd` | Abdalrahman (lead) + Hozaifa + Yahya | **MEDIUM** | Each person edits their section. Coordinate in group chat before pushing. |
+| `chapters/05-conclusions.qmd` | Hozaifa (ethics section) | LOW | Single person editing. |
+| `docs/PROGRESS.md` | Whoever finishes a section | **MEDIUM** | Update status only. Do not reformat. |
+
+### Sync Schedule (Every 4 Hours)
+
+| Time | Action |
+|------|--------|
+| **Hour 0** | All: `git pull origin main`, create branches, start writing |
+| **Hour 4** | All: `git push origin <branch>`, post update in group chat |
+| **Hour 8** | Yahya merges `content/references` → `main` first. Others: `git merge main` into your branch |
+| **Hour 14** | Merge Ch2 branches. All: `git merge main` into your branch. Post checkpoint status |
+| **Hour 20** | Merge Ch3 + Ch4 branches. Final sync before build |
+| **Hour 24** | Final merge → `main`, `quarto render`, push |
 
 ---
 
