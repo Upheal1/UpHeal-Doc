@@ -30,12 +30,12 @@
 | Section | Status | Last Updated | Notes |
 |---------|--------|-------------|-------|
 | 2.1 Digital Mental Health Landscape | ✅ Draft | 2026-06-13 | WHO, Baumeister review, MENA context |
-| 2.2 Conversational Agents | ✅ Draft | 2026-06-13 | Woebot, Wysa, Replika, Kumar review |
-| 2.3 Emotion Recognition | ✅ Draft | 2026-06-13 | BERT, Whisper, mental health datasets |
-| 2.4 Gamification for Health | ✅ Draft | 2026-06-13 | Hamari meta-analysis, 20-40% boost |
-| 2.5 Retrieval-Augmented Generation | ✅ Draft | 2026-06-13 | Lewis et al., medical RAG applications |
+| 2.2 Conversational Agents | ✅ Draft | 2026-06-15 | Woebot, Wysa, Replika, Kumar review, citations added |
+| 2.3 Emotion Recognition | ✅ Draft | 2026-06-15 | BERT, Whisper, mental health datasets, citations added |
+| 2.4 Gamification for Health | ✅ Draft | 2026-06-15 | Hamari meta-analysis, 20-40% boost, citation added |
+| 2.5 Retrieval-Augmented Generation | ✅ Draft | 2026-06-15 | Lewis et al., medical RAG, Reimers Sentence-BERT, citations added |
 | 2.6 Gap Analysis | ✅ Draft | 2026-06-13 | Table comparing Woebot/Wysa/Replika/UpHeal |
-| References | ✅ | 2026-06-13 | 10 IEEE references |
+| References | ✅ | 2026-06-15 | All sections now cited with IEEE references |
 | Supervisor review | ⬜ | | |
 | Final revision | ⬜ | | |
 
@@ -97,9 +97,9 @@
 
 | Section | Status | Last Updated | Notes |
 |---------|--------|-------------|-------|
-| Source Code Links | ⬜ | | |
-| Additional Diagrams | ⬜ | | |
-| Publication List | ⬜ | | |
+| Source Code Links | ✅ | 2026-06-15 | 4 repositories listed |
+| Additional Diagrams | ✅ | 2026-06-15 | DB schema, API endpoints, project structure |
+| Publication List | ✅ | 2026-06-15 | Target venues listed |
 
 ---
 
@@ -109,10 +109,13 @@
 |------|--------|-------------|-------|
 | Update _quarto.yml with team names | ✅ | 2026-06-13 | System |
 | Update index.qmd cover page | ✅ | 2026-06-13 | System |
-| Rebuild PDF | ✅ | 2026-06-13 | System |
+| Rebuild PDF | ✅ | 2026-06-15 | OpenCode (24h Sprint) |
 | Write all 5 chapter drafts | ✅ | 2026-06-13 | System |
-| Push to GitHub | ⬜ | | |
-| Add real test data to Ch4 | ⬜ | | |
-| Review all references | ⬜ | | |
-| Final formatting pass | ⬜ | | |
+| Push to GitHub | ✅ | 2026-06-15 | OpenCode (24h Sprint) |
+| Add citations to Ch2-Ch5 | ✅ | 2026-06-15 | OpenCode (24h Sprint) |
+| Expand appendix | ✅ | 2026-06-15 | OpenCode (24h Sprint) |
+| Remove placeholders | ✅ | 2026-06-15 | OpenCode (24h Sprint) |
+| Add real test data to Ch4 | 🔄 | 2026-06-15 | Placeholder data replaced with annotated methodology |
+| Review all references | ✅ | 2026-06-15 | 15/16 references now cited in text |
+| Final formatting pass | ✅ | 2026-06-15 | Cross-refs verified, style guide check passed |
 | Supervisor sign-off | ⬜ | | |
