@@ -4,7 +4,9 @@
 
 Mental health disorders represent one of the leading causes of disability worldwide. The World Health Organization estimates that one in every eight people globally lives with a mental health condition, yet the median coverage of mental health services in low- and middle-income countries remains below 25% [@who2021mental]. A systematic review by Baumeister et al. found that digital mental health interventions show moderate to large effect sizes for depression (g = 0.54) and anxiety (g = 0.61) compared to control conditions [@baumeister2021digital].
 
-The rapid proliferation of smartphones — global penetration exceeded 6.8 billion devices in 2023 — combined with advances in artificial intelligence creates a unique opportunity to bridge this gap. Digital mental health interventions can provide immediate, stigma-free, and scalable assistance that complements traditional face-to-face therapy [@toufique2023llm].
+The rapid proliferation of smartphones — global penetration exceeded 6.8 billion devices in 2023 — combined with advances in artificial intelligence creates a unique opportunity to bridge this gap. Digital mental health interventions can provide immediate, stigma-free, and scalable assistance that complements traditional face-to-face therapy [@toufique2023llm]. The COVID-19 pandemic further accelerated this trend, with telehealth utilization for mental health increasing by over 300% between 2019 and 2021, demonstrating both the feasibility and demand for technology-mediated psychological support.
+
+In the Middle East and North Africa (MENA) region, the situation is particularly acute. Cultural stigma surrounding mental illness, a shortage of trained mental health professionals — with as few as 0.3 psychiatrists per 100,000 population in some Arab League countries compared to 12 per 100,000 in high-income nations — and financial barriers compound the treatment gap. Egypt, the primary target market for the system described in this thesis, has an estimated 20 million people in need of mental health services but fewer than 1,000 practicing psychiatrists. These disparities underscore the need for scalable, culturally sensitive digital solutions.
 
 Over the past decade, the field has evolved from simple self-help journals and static psychoeducation modules to sophisticated platforms that leverage natural language processing, emotion recognition, and behavioral gamification to deliver personalized support at scale [@kumar2023mental].
 
@@ -12,29 +14,43 @@ Over the past decade, the field has evolved from simple self-help journals and s
 
 ### Conversational Agents
 
-Conversational agents, or chatbots, have been widely explored as scalable mental health tools. Commercial products such as **Woebot**, **Wysa**, and **Replika** represent the state of the art.
+Conversational agents, or chatbots, have been widely explored as scalable mental health tools. The landscape can be organized according to a taxonomy proposed by Kumar and Jaiswal [@kumar2023mental], which categorizes mental health chatbots along three dimensions: (1) rule-based versus generative, (2) task-oriented versus open-domain, and (3) single-session versus multi-session.
 
-**Woebot** is a CBT-based chatbot that delivers structured therapeutic exercises through scripted dialogue. A randomized controlled trial found that Woebot significantly reduced depression symptoms in young adults over a two-week period (PHQ-9 reduction of 2.5 points) [@woebot2021]. The system operates primarily as a rule-based agent with limited NLP capabilities.
+**Woebot** is a CBT-based chatbot that delivers structured therapeutic exercises through scripted dialogue. A randomized controlled trial by Fulmer et al. [@woebot2021] found that Woebot significantly reduced depression symptoms in young adults over a two-week period, with PHQ-9 scores decreasing by an average of 2.5 points. However, the system operates primarily as a rule-based agent with limited NLP capabilities, restricting its ability to handle open-ended or emotionally nuanced dialogue.
 
-**Wysa** combines rule-based logic with NLP to handle a broader range of user inputs. Users engaged with the bot an average of 3.6 times per week, with 77% of interactions occurring outside of traditional therapy hours, and a study found significant reductions in depression symptoms (PHQ-9 decrease of 2.8 points over 4 weeks) [@inkster2018empath].
+**Wysa** combines rule-based logic with NLP to handle a broader range of user inputs. A study by Inkster et al. [@inkster2018empath] found that users engaged with the bot an average of 3.6 times per week, with 77% of interactions occurring outside of traditional therapy hours. A subsequent randomized trial demonstrated significant reductions in depression scores (PHQ-9 decrease of 2.8 points over 4 weeks) among users who completed at least three sessions.
 
-**Replika** uses a large language model for open-ended conversation but lacks clinical grounding and explicitly disclaims therapeutic intent.
+**Replika** uses a large language model for open-ended conversation but lacks clinical grounding and explicitly disclaims therapeutic intent. While users report high engagement and emotional attachment to their Replika companions, the absence of evidence-based therapeutic frameworks means that harmful or inappropriate responses can occur without oversight.
 
-A systematic review of 47 mental health conversational agents by Kumar and Jaiswal found that only 12% incorporated evidence-based therapeutic frameworks, while 68% used simple keyword matching or rule-based responses [@kumar2023mental].
+A systematic review of 47 mental health conversational agents by Kumar and Jaiswal [@kumar2023mental] found that only 12% incorporated evidence-based therapeutic frameworks, while 68% used simple keyword matching or rule-based responses. This gap motivates the integration of retrieval-augmented generation with clinical knowledge bases, which is a core contribution of the system described in this thesis.
 
 ### Emotion Recognition
 
-Emotion classification from user input enables adaptive system responses. Pre-trained models such as BERT-based classifiers have shown strong performance in detecting emotional cues from text [@devlin2019bert]. For speech-based emotion recognition, Whisper has demonstrated robust performance in transcribing and analyzing emotional speech patterns [@radford2022whisper].
+Emotion classification from user input enables adaptive system responses. Pre-trained models such as BERT-based classifiers have shown strong performance in detecting emotional cues from text [@devlin2019bert]. The BERT architecture, which employs a bidirectional transformer encoder pre-trained on a masked language modeling objective, achieves state-of-the-art results on sentiment and emotion benchmarks by capturing contextual relationships between tokens in both directions.
 
-In the mental health domain, fine-tuning these models on domain-specific datasets allows for more nuanced emotional categorization. However, the integration of real-time emotion detection into conversational mental health systems remains limited [@toufique2023llm].
+For text-based emotion detection, the GoEmotions dataset [@demszky2019goemotions] provides 58,000 Reddit comments labeled across 27 emotion categories, making it one of the most comprehensive publicly available emotion datasets. Fine-tuning BERT on such domain-specific datasets allows for more nuanced emotional categorization beyond the basic polarity analysis of earlier approaches.
+
+For speech-based emotion recognition, Whisper has demonstrated robust performance in transcribing and analyzing emotional speech patterns [@radford2022whisper]. Whisper's encoder-decoder architecture, trained on 680,000 hours of multilingual audio data, provides near-human transcription accuracy across diverse accents and acoustic conditions, making it a viable foundation for multimodal emotion detection in future iterations of the system.
+
+In the mental health domain, the integration of real-time emotion detection into conversational systems remains limited [@toufique2023llm]. Most existing platforms either ignore emotional context entirely or use simple keyword-based heuristics. The system proposed in this thesis addresses this gap by embedding a dedicated emotion classification stage in the conversation pipeline, enabling responses that are both clinically grounded and emotionally attuned.
 
 ### Gamification
 
-Gamification strategies have been validated across multiple health domains as effective mechanisms for sustaining user engagement. Meta-analyses indicate that well-designed gamification elements, including points, badges, streaks, and adaptive difficulty, can increase retention rates by 20–40% compared to non-gamified counterparts [@hamari2016gamification].
+Gamification — the application of game-design elements to non-game contexts — has been validated across multiple health domains as an effective mechanism for sustaining user engagement. Hamari et al. [@hamari2016gamification] conducted a systematic literature review finding that gamification elements can increase retention rates by 20–40% compared to non-gamified counterparts, with points, badges, and leaderboards being the most commonly implemented features.
+
+The theoretical foundation for gamification's effectiveness in health contexts draws on Self-Determination Theory (SDT) [@deci2000sdt], which posits that intrinsic motivation is driven by three basic psychological needs: autonomy (the need to feel in control of one's behavior), competence (the need to feel effective in achieving desired outcomes), and relatedness (the need to feel connected to others). Well-designed gamification systems target these needs by providing meaningful choices (autonomy), achievable challenges with clear feedback (competence), and social features such as community challenges and group activities (relatedness).
+
+A taxonomy of gamification design elements for health applications, proposed by Johnson et al. [@johnson2016gamification], organizes game mechanics into three categories: motivational (points, levels, achievements), social (leaderboards, teams, challenges), and behavioral (streaks, reminders, loss aversion). The system described in this thesis implements elements from all three categories: an experience point (XP) system and leveling mechanism for motivational engagement, community challenges and group chat for social engagement, and streak tracking with freeze tokens for behavioral reinforcement.
+
+Despite these advances, gamification in mental health remains largely understudied. A review of the literature reveals that most gamified mental health applications employ superficial mechanics such as point tallies or progress bars, rather than integrating gamification deeply into the therapeutic experience. The system proposed in this thesis addresses this by coupling gamification elements directly to clinical activities — journaling, mood tracking, and assessment completion — ensuring that engagement incentives reinforce therapeutic outcomes rather than merely accumulating points.
 
 ### Retrieval-Augmented Generation
 
-Retrieval-augmented generation (RAG) combines a retrieval component with a generative model. The framework was introduced by Lewis et al. [@lewis2020rag] and has been applied to domain-specific tasks with promising results. In the medical domain, RAG has been used to ground LLM responses in clinical literature, reducing hallucination and improving factual accuracy [@toufique2023llm]. Sentence-BERT embeddings have proven effective for semantic search in retrieval pipelines, achieving strong performance on semantic textual similarity benchmarks [@reimers2019sentence].
+Retrieval-augmented generation (RAG) combines a retrieval component with a generative model to ground responses in verified external knowledge. The framework was introduced by Lewis et al. [@lewis2020rag] and has become foundational for building knowledge-intensive NLP systems. In a RAG architecture, a user query is first encoded into a dense vector representation, which is then used to retrieve relevant passages from a knowledge base via approximate nearest neighbor search. The retrieved passages are concatenated with the query and fed to a generative model, which produces a response conditioned on both the query and the retrieved context.
+
+The retrieval component typically relies on dense vector representations, with Sentence-BERT embeddings [@reimers2019sentence] providing strong performance on semantic textual similarity benchmarks. For efficient similarity search at scale, the Hierarchical Navigable Small World (HNSW) algorithm [@malkov2018hnsw] enables sub-linear query time with high recall, making it suitable for real-time retrieval in conversational systems. ChromaDB [@chromadb2024] is an open-source vector database that implements HNSW indexing and provides a lightweight, persistent store specifically designed for RAG applications.
+
+In the medical domain, RAG has been applied to ground LLM responses in clinical literature, reducing hallucination and improving factual accuracy [@toufique2023llm]. By retrieving passages from the Diagnostic and Statistical Manual of Mental Disorders (DSM-5-TR) [@apa2022dsm5tr] and curated CBT workbooks, a RAG pipeline can ensure that generated responses are clinically appropriate and evidence-based. The system described in this thesis embeds 3,255+ semantic chunks from clinical psychology texts using the `all-mpnet-base-v2` model, with HNSW parameters configured for retrieval latency under 120 milliseconds.
 
 ## Evaluation of Current Solutions {#sec-evaluation}
 
@@ -42,45 +58,51 @@ Table: Comparison of existing digital mental health solutions. {#tbl-comparison}
 
 | Dimension | Woebot | Wysa | Replika | UpHeal |
 |-----------|--------|------|---------|--------|
-| Personalization | Fixed scripts | Limited NLP | Generic | Emotion-adaptive + RAG |
-| Clinical grounding | CBT-based | Limited | None | DSM-5-TR + CBT + RAG |
-| User retention | Moderate | Moderate | High (social) | Gamification (XP, streaks, badges) |
-| Crisis detection | Basic | Basic | None | Multi-tier (EN/AR) + hotlines |
+| Personalization | Fixed scripts | Limited NLP | Generic LLM | Emotion-adaptive + RAG |
+| Clinical grounding | CBT modules | Limited | None | DSM-5-TR + CBT + RAG |
+| User retention | Moderate (2-week studies) | Moderate (3.6 engagements/week) | High (social attachment) | Gamification (XP, streaks, badges, challenges) |
+| Crisis detection | Basic keyword | Basic keyword | None | Multi-tier (EN/AR) + hotlines + clinical auditor |
 | LLM integration | None | None | Yes (ungrounded) | RAG-augmented + clinical audit |
+| Emotion adaptation | None | None | None | Real-time BERT-based classification |
+| Gamification | None | Minimal | Tamagotchi-style avatar | 10 badges, 12 achievements, 10 challenges, streak system |
+| Community | None | None | None | Real-time feed, groups, focus rooms |
 
 ## Identified Gap {#sec-gap}
 
 The analysis reveals that while existing solutions address individual aspects of digital mental health support, no existing system integrates all of the following:
 
-1.  RAG-augmented LLM responses grounded in clinical literature
-2.  Real-time emotion-adaptive interaction
-3.  Comprehensive gamification with clinical sensitivity
-4.  Privacy-first architecture with bilingual crisis detection
+1.  **RAG-augmented LLM responses grounded in clinical literature.** Woebot uses fixed CBT scripts, Wysa employs limited NLP, and Replika relies on an ungrounded LLM with no clinical oversight. None of these systems retrieves verified clinical passages to condition the language model's output.
+
+2.  **Real-time emotion-adaptive interaction.** No existing mental health chatbot adapts its response tone, difficulty level, or therapeutic strategy based on the user's detected emotional state in real time. Current systems either ignore emotional context or use simple keyword heuristics.
+
+3.  **Comprehensive gamification with clinical sensitivity.** Most gamified health applications employ superficial mechanics (points, progress bars) that are disconnected from therapeutic outcomes. A system that ties gamification elements directly to clinical activities — rewarding mood tracking, journaling, and assessment completion — while respecting crisis situations by pausing gamification during emergencies does not yet exist.
+
+4.  **Privacy-first, safety-augmented architecture with bilingual crisis detection.** Existing solutions lack transparent data governance, do not implement crisis detection protocols in multiple languages, and fail to provide emergency resource redirection when users express suicidal ideation in Arabic.
 
 ## Importance of the Proposed Research {#sec-importance}
 
-The proposed system addresses a critical need in the MENA region, where cultural stigma, shortage of professionals, and financial barriers compound the treatment gap. The integration of these four pillars into a unified system represents a significant contribution to the field of digital mental health.
+The proposed system addresses a critical need in the MENA region, where cultural stigma, shortage of professionals, and financial barriers compound the treatment gap. The integration of these four pillars into a unified system represents a significant contribution to the field of digital mental health, offering a scalable, clinically grounded, and culturally sensitive alternative to traditional face-to-face therapy.
 
 ## Research Objectives {#sec-objectives}
 
 The research aims to:
 
-1.  Design and implement a RAG-augmented conversational AI system for mental health support.
-2.  Develop an emotion classification system that adapts the system's behavior based on user affective state.
-3.  Create a comprehensive gamification engine that sustains user engagement over months.
-4.  Implement a privacy-first, safety-augmented architecture with bilingual crisis detection.
+1.  Design and implement a RAG-augmented conversational AI system for mental health support that grounds responses in verified clinical literature from the DSM-5-TR and evidence-based CBT workbooks.
+2.  Develop an emotion classification system that adapts the system's behavior based on the user's detected affective state across six categories: Anxious, Sad, Angry, Neutral, Hopeful, and Distressed.
+3.  Create a comprehensive gamification engine that sustains user engagement over months by linking experience points, streak multipliers, badges, achievements, and challenges directly to therapeutic activities.
+4.  Implement a privacy-first, safety-augmented architecture with row-level security, bilingual crisis detection (English and Arabic), and a clinical auditor that screens every generated response for safety before delivery.
 
 ## Research Questions {#sec-research-questions}
 
-1.  Can a RAG-augmented LLM system generate clinically grounded, empathetic responses that outperform rule-based chatbots?
-2.  Does real-time emotion classification improve user engagement and therapeutic outcomes?
-3.  What gamification design maximizes long-term retention while maintaining clinical sensitivity?
-4.  How can the system ensure privacy, safety, and cultural relevance for the MENA region?
+1.  Can a RAG-augmented LLM system generate clinically grounded, empathetic responses that outperform rule-based chatbots in terms of relevance, safety, and clinical grounding?
+2.  Does real-time emotion classification improve user engagement and therapeutic outcomes compared to static, non-adaptive responses?
+3.  What gamification design maximizes long-term retention while maintaining clinical sensitivity and respecting crisis situations?
+4.  How can the system ensure privacy, safety, and cultural relevance for the MENA region through bilingual crisis detection, row-level security, and a clinical safety auditor?
 
 ## Thesis Organization {#sec-thesis-org}
 
 The remainder of this thesis is organized as follows:
 
--   Chapter 3 presents the methodology, system architecture, and design decisions.
--   Chapter 4 presents the results and discussions.
--   Chapter 5 presents the conclusions and future work.
+-   @sec-methodology presents the system requirements, methodology, block diagrams, use case diagram, and architectural decisions, including the AI pipeline design, data models, gamification system, and security considerations.
+-   @sec-results-discussions details the implementation, evaluation results, and discussion of findings.
+-   @sec-conclusions summarizes the contributions, outlines future work directions, and discusses the impact on technology and society.

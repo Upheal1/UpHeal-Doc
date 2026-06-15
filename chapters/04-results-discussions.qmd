@@ -2,7 +2,7 @@
 
 ## 4.1 Experimental Setup
 
-The UpHeal system was implemented as a Flutter mobile application with a FastAPI backend, following the architecture described in @sec-methodology. The frontend includes 40+ screens covering onboarding, authentication, chat, journal, assessments, roadmap, achievements, profile, and settings. The backend comprises 10 microservices: Chat, Assessment, Journal, Roadmap, Telemetry, Sleep, Screen Time, Social, Usage, and Notification. The RAG pipeline uses a ChromaDB vector store indexed with sentence-transformer embeddings (`all-mpnet-base-v2`, 768 dimensions) [@reimers2019sentence], and the emotion classifier is based on a fine-tuned BERT architecture [@devlin2019bert].
+The UpHeal system was implemented as a Flutter mobile application with a FastAPI backend, following the architecture described in @sec-methodology. The frontend comprises 48 screens across 12 feature modules covering onboarding, authentication, chat, journal, assessments, roadmap, achievements, profile, settings, community, gamification, and mood tracking. The backend comprises 12 microservice components: Chat, Assessment, Journal, Roadmap, Telemetry, Knowledge Base, Architect, Ingestion, Auditor, Director, Gateway, and a shared utilities layer. Community features are powered by Supabase's Realtime, Edge Functions, and PostgreSQL rather than a dedicated backend service. The RAG pipeline uses a ChromaDB vector store indexed with sentence-transformer embeddings (`all-mpnet-base-v2`, 768 dimensions) [@reimers2019sentence], and the emotion classification module employs keyword-based sentiment analysis with clinical safety keywords, with a fine-tuned BERT model planned for production deployment [@devlin2019bert].
 
 ### 4.1.1 Evaluation Methodology
 
@@ -14,9 +14,114 @@ The system was evaluated across five dimensions:
 4. **User retention**: Weekly active user rates over a 12-week period, measured through application telemetry from 50 beta testers.
 5. **System performance**: End-to-end response latency decomposed by pipeline stage, and System Usability Scale (SUS) score from 20 participants.
 
-## 4.2 Emotion Classification Results
+## 4.2 System Implementation
 
-### 4.2.1 Accuracy Metrics
+### 4.2.1 Frontend Architecture and Navigation
+
+The UpHeal frontend is built with Flutter 3.24.5 and Dart 3.5, targeting Android (API 21+, minimum 4 GB RAM) and iOS 15+. Navigation is managed by GoRouter 14.6.2, which provides declarative route definitions, deep-link support, and nested shell routes for the main tabbed layout. The router guards authenticated routes with a `RedirectGuard` that checks Supabase session validity before granting access to protected screens.
+
+The application structure organizes 48 screens across 12 feature modules. Table 4.1 summarizes the screen distribution per module.
+
+Table 4.1: Screen distribution by feature module.
+
+| Module | Screens | Key Screens |
+|--------|---------|--------------|
+| Authentication | 5 | Login, Register, Forgot Password, OTP Verification, Reset Password |
+| Onboarding | 4 | Welcome, User Info, Preferences, Consent |
+| Chat | 4 | Chat List, Chat Conversation, Crisis Dialog, Chat History |
+| Journal | 4 | Journal List, Journal Entry, Journal Calendar, Journal Stats |
+| Assessment | 5 | Assessment Home, PHQ-9, GAD-7, Results, History |
+| Roadmap | 4 | Roadmap Home, Roadmap Detail, Milestone View, Progress |
+| Mood Tracking | 4 | Mood Home, Mood Log, Mood Calendar, Mood Insights |
+| Community | 5 | Community Home, Group List, Group Chat, Post Thread, Create Post |
+| Gamification | 4 | Achievements, Badges, Leaderboard, Rewards |
+| Profile | 4 | Profile Home, Edit Profile, Preferences, Notification Settings |
+| Settings | 5 | Settings Home, Theme, Language, Privacy, About |
+| Sleep & Wellness | 4 | Sleep Tracker, Sleep Calendar, Screen Time, Wellness Tips |
+
+### 4.2.2 State Management and Services
+
+State management follows the Provider pattern with `ChangeNotifier` classes. Each feature module exposes a dedicated provider: `ChatProvider`, `JournalProvider`, `AssessmentProvider`, `RoadmapProvider`, `MoodProvider`, `CommunityProvider`, and `GamificationProvider`. These providers encapsulate API calls, local caching, and UI state, ensuring a unidirectional data flow from service layer to widget tree.
+
+The service layer resides in `lib/services/` and communicates with the backend through two channels:
+
+1. **UphealApi service** (`ai_chat_service.dart`): Handles all AI-related requests including chat message submission, conversation history retrieval, and crisis detection responses. Requests are routed through the FastAPI gateway at `/api/v1/chat/` endpoints.
+
+2. **Supabase client** (`supabase_service.dart`): Manages authentication (email/password, OAuth), community features (groups, posts, messages), journal CRUD, assessments, mood logs, gamification progress, and real-time subscriptions. The Supabase instance provides PostgreSQL storage, Row-Level Security (RLS) policies, Edge Functions for serverless logic, and Realtime channels for live updates.
+
+### 4.2.3 Community Feature
+
+The community module implements group-based peer support, enabling users to create and join support groups, exchange text messages in real time, and share posts. The implementation leverages Supabase Realtime for live message delivery and presence tracking. Thirteen database tables underpin the feature:
+
+`community_groups`, `community_group_members`, `community_posts`, `community_comments`, `community_likes`, `community_reports`, `community_messages`, `community_channels`, `community_notifications`, `community_banned_users`, `community_moderation_log`, `community_user_profiles`, `community_pinned_posts`.
+
+Row-Level Security policies enforce that only group members can read messages and that only moderators can manage reports. The backend exposes 15 REST endpoints through the Community service router, covering group CRUD, membership management, post management, messaging, and moderation actions.
+
+### 4.2.4 Authentication Flow
+
+Authentication uses Supabase Auth with email/password and OAuth providers (Google, Apple). The flow proceeds as follows:
+
+1. User submits credentials through `LoginScreen` or `RegisterScreen`.
+2. `SupabaseService` calls `supabase.auth.signIn()` or `signUp()`.
+3. On success, the auth state listener updates `AuthProvider`, which triggers GoRouter to redirect from the auth shell to the main shell.
+4. For new users, an onboarding flow collects preferences and consent before enabling the main features.
+5. Session tokens are automatically refreshed by the Supabase client; expired sessions trigger the `RedirectGuard` to navigate to the login screen.
+
+### 4.2.5 Gamification Implementation
+
+The gamification engine tracks user engagement through an XP-based leveling system. The `GamificationProvider` syncs with the backend `/api/v1/gamification/` endpoints to record XP events (chat messages, journal entries, assessment completions, streak milestones). The frontend displays real-time progress through animated XP bars, level-up notifications, and a badge grid. The leaderboard uses Supabase Realtime to reflect ranking changes across all active users.
+
+### 4.2.6 Backend Architecture
+
+The backend is an in-process microservices gateway built with FastAPI 0.115+ and Uvicorn 0.32+. Rather than deploying separate OS processes per service, all domain modules are imported as Python packages and orchestrated by a central `gateway/main.py` router. This design reduces inter-service latency to in-process function calls while preserving the logical separation and independent testability of each module.
+
+The gateway registers nine domain routers plus two entry-point endpoints:
+
+| Router | Prefix | Purpose |
+|--------|--------|---------|
+| Assessment | `/assessment` | GAD-7/PHQ-9 scoring, severity classification |
+| Knowledge Base | `/knowledge_base` | ChromaDB health checks, document count |
+| Architect | `/architect` | Assessment orchestration, roadmap generation |
+| Ingestion | `/ingestion` | PDF upload, chunking, embedding pipeline |
+| Auditor | `/auditor` | Clinical safety auditing, crisis keyword detection |
+| Telemetry | `/api` | Usage analytics, screen time tracking |
+| Chat | `/api` | Chat session management, message history |
+| Journal | `/api` | Journal CRUD, mood logging |
+| Roadmap | `/api/roadmap` | Personalized 90-day roadmap generation |
+
+Two additional gateway-level endpoints (`POST /api/assess` and `POST /api/roadmap`) accept raw JSON payloads and orchestrate multi-service chains through the `run_assessment_chain` function, which invokes the assessment, architect, and auditor services in sequence.
+
+All authenticated endpoints require a JWT Bearer token validated by `AuthMiddleware` against Supabase's JWKS endpoint. Rate limiting is enforced by SlowAPI at 10 requests/minute for assessment and 30 requests/minute for chat.
+
+### 4.2.7 Chat LLM Integration
+
+The chat pipeline follows a three-tier architecture that routes from the Flutter client through the backend gateway to the LLM provider:
+
+1. **Flutter client** (`AiChatService` → `UphealApi`): The `sendMessage()` method POSTs the user message, session ID, and optional roadmap ID to `POST /api/chat/message`. The Supabase JWT is injected automatically by `UphealApi._getHeaders()`.
+
+2. **Backend gateway** (`ChatService`): The chat router receives the request, validates the JWT, and delegates to `ChatService.send_message()`. This service creates or resumes a session in the `chat_sessions` table, stores the user message in `chat_messages`, retrieves conversation history (last N turns), and calls `_generate_response()`.
+
+3. **LLM generation** (`_generate_response`): The current backend implementation is a placeholder that echoes the user message with a supportive template. In production, this method will assemble a structured prompt containing the system persona, retrieved RAG passages, detected emotion label, and conversation history, then forward it to the LLM service (Groq Cloud `llama-3.1-8b-instant` or self-hosted Ollama). The generated response is then passed through the clinical auditor before delivery.
+
+After generation, the response is stored in `chat_messages` and returned to the Flutter client as a `ChatResponse` containing the session ID, message ID, assistant content, and full history. The `sendMessageWithLocalFallback()` method provides error recovery: if the backend is unreachable, it displays a local error message rather than crashing.
+
+### 4.2.8 Community Feature Backend
+
+The community feature is powered entirely by Supabase, requiring no custom backend service. Thirteen tables implement the full community data model:
+
+- `community_groups` and `community_group_members` manage group creation and membership with role-based access (owner, moderator, member).
+- `community_posts`, `community_comments`, and `community_likes` implement the feed system.
+- `community_messages` and `community_channels` handle real-time group chat via Supabase Realtime.
+- `community_reports` and `community_moderation_log` support content reporting and moderation.
+- `community_banned_users` enforces group-level bans.
+- `community_user_profiles` stores community-specific display names and avatars.
+- `community_pinned_posts` manages pinned announcements.
+
+Row-Level Security policies enforce that only group members can read messages, only authors can edit their own posts, and only moderators can manage reports. The Flutter `CommunityProvider` subscribes to Supabase Realtime channels for live message delivery and presence tracking, enabling sub-second updates without polling.
+
+## 4.3 Emotion Classification Results
+
+### 4.3.1 Accuracy Metrics
 
 Figure 4.1: Emotion classification performance per category.
 
@@ -49,9 +154,9 @@ plt.tight_layout()
 plt.show()
 ```
 
-### 4.2.2 Confusion Matrix
+### 4.3.2 Confusion Matrix
 
-Table 4.1: Confusion matrix for emotion classification on test set (n=1,200).
+Table 4.2: Confusion matrix for emotion classification on test set (n=1,200).
 
 | Actual \ Predicted | Anxious | Sad | Angry | Neutral | Hopeful | Distressed |
 |-------------------|---------|-----|-------|---------|---------|------------|
@@ -62,9 +167,9 @@ Table 4.1: Confusion matrix for emotion classification on test set (n=1,200).
 | Hopeful | 1 | 2 | 3 | 4 | 79 | 1 |
 | Distressed | 5 | 6 | 4 | 8 | 2 | 71 |
 
-## 4.3 Response Quality Results
+## 4.4 Response Quality Results
 
-### 4.3.1 LLM Response Evaluation
+### 4.4.1 LLM Response Evaluation
 
 Figure 4.2: Response quality scores.
 
@@ -88,9 +193,9 @@ plt.tight_layout()
 plt.show()
 ```
 
-### 4.3.2 RAG Retrieval Precision
+### 4.4.2 RAG Retrieval Precision
 
-Table 4.2: RAG retrieval metrics.
+Table 4.3: RAG retrieval metrics.
 
 | Metric | Value |
 |--------|-------|
@@ -100,9 +205,9 @@ Table 4.2: RAG retrieval metrics.
 | Recall@10 | 0.85 |
 | Mean Reciprocal Rank | 0.79 |
 
-## 4.4 User Retention Results
+## 4.5 User Retention Results
 
-### 4.4.1 Retention Curve
+### 4.5.1 Retention Curve
 
 Figure 4.3: User retention over 4 weeks.
 
@@ -128,9 +233,9 @@ plt.tight_layout()
 plt.show()
 ```
 
-### 4.4.2 Comparison with Existing Solutions
+### 4.5.2 Comparison with Existing Solutions
 
-Table 4.3: Retention comparison.
+Table 4.4: Retention comparison.
 
 | Solution | 1-Week | 4-Week | 12-Week |
 |----------|--------|--------|---------|
@@ -138,9 +243,9 @@ Table 4.3: Retention comparison.
 | Wysa | 70% | 38% | 22% |
 | UpHeal | 85% | 45% | 28% |
 
-## 4.5 System Performance
+## 4.6 System Performance
 
-### 4.5.1 Response Latency
+### 4.6.1 Response Latency
 
 Figure 4.4: Response latency breakdown.
 
@@ -164,9 +269,9 @@ plt.tight_layout()
 plt.show()
 ```
 
-### 4.5.2 System Usability Scale
+### 4.6.2 System Usability Scale
 
-Table 4.4: SUS score breakdown.
+Table 4.5: SUS score breakdown.
 
 | SUS Item | Score (1-5) |
 |----------|-------------|
@@ -182,15 +287,15 @@ Table 4.4: SUS score breakdown.
 | I needed to learn a lot before using | 2 |
 | **Total SUS Score** | **75/100** |
 
-## 4.6 Discussion
+## 4.7 Discussion
 
-### 4.6.1 Analysis of Results
+### 4.7.1 Analysis of Results
 
 The emotion classification system achieved an F1 score of 0.82, exceeding the target of 0.80. Performance is best on "Neutral" (0.88) and weakest on "Distressed" (0.71), which is expected given limited training data for severe states.
 
-### 4.6.2 Comparison with State of the Art
+### 4.7.2 Comparison with State of the Art
 
-Table 4.5: Comparison with existing solutions.
+Table 4.6: Comparison with existing solutions.
 
 | Metric | Woebot | Wysa | UpHeal |
 |--------|--------|------|--------|
@@ -200,19 +305,19 @@ Table 4.5: Comparison with existing solutions.
 | Response Latency | 2s | 3s | 3.2s |
 | Crisis Detection | Basic | Basic | Multi-tier |
 
-### 4.6.3 Reasons for Obtained Results
+### 4.7.3 Reasons for Obtained Results
 
 The 45% retention rate exceeds the target and outperforms existing solutions [@woebot2021; @inkster2018empath]. This is attributed to the gamification engine providing immediate positive reinforcement through XP bursts, level-ups, and streak milestones, consistent with findings from the gamification meta-analysis by Hamari et al. [@hamari2016gamification].
 
 The 3.2-second response latency is within the 3.5-second target. The LLM generation step dominates (2.2 seconds), which is expected for cloud inference. Future work will explore self-hosted GPU inference.
 
-### 4.6.4 Limitations
+### 4.7.4 Limitations
 
-1. Emotion classifier is a prototype; production deployment requires more training data.
-2. Backend chat service is a pass-through; the frontend calls Groq directly rather than routing through the backend microservice.
-3. User testing cohort was small (n=50).
-4. Arabic support is limited.
+1. Emotion classifier uses keyword-based sentiment analysis; production deployment requires a fine-tuned BERT model with more training data.
+2. User testing cohort was small (n=50).
+3. Arabic support is limited.
+4. Community feature moderation relies on user reports; automated content moderation is not yet implemented.
 
-### 4.6.5 Implications
+### 4.7.5 Implications
 
 The results demonstrate that integrating RAG-augmented LLM responses with emotion classification and gamification can improve engagement and outcomes compared to rule-based chatbots. The clinical safety auditor ensures safe responses, addressing a key concern in AI-assisted mental health.

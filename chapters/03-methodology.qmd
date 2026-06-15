@@ -1,10 +1,101 @@
 # Methodology / Theory / Analysis {#sec-methodology}
 
-## 3.1 System Architecture Overview
+## 3.1 Functional Requirements
 
-The UpHeal system follows a layered microservices architecture inspired by the RAG framework [@lewis2020rag] and modern LLM integration patterns [@toufique2023llm]. Figure 3.1 presents the high-level block diagram showing all components and their interconnections.
+The following functional requirements (FR) define the core capabilities of the UpHeal system, derived from the problem definition in @sec-problem-definition and informed by the gap analysis in @sec-gap.
 
-Figure 3.1: UpHeal system architecture block diagram.
+| ID | Requirement | Priority | Rationale |
+|----|-------------|----------|-----------|
+| FR-01 | The system shall allow users to register and authenticate via email/password and Google Sign-In. | Must | Secure identity management is a prerequisite for personalized, persistent interactions. |
+| FR-02 | The system shall provide a conversational AI chatbot that generates responses conditioned on the user's detected emotional state and retrieved clinical context. | Must | Addresses the personalization gap identified in @sec-gap. |
+| FR-03 | The system shall classify the user's emotional state from text input into one of six categories: Anxious, Sad, Angry, Neutral, Hopeful, or Distressed, with a confidence score. | Must | Real-time emotion adaptation is a core pillar of the system design. |
+| FR-04 | The system shall detect crisis keywords in both English and Arabic and intervene with localized emergency resources when a crisis is identified. | Must | Bilingual crisis detection addresses the safety gap identified in @sec-gap. |
+| FR-05 | The system shall retrieve clinically relevant passages from a vector database indexed with DSM-5-TR and CBT workbook content to ground LLM responses. | Must | RAG addresses the clinical grounding gap identified in @sec-gap. |
+| FR-06 | The system shall generate GAD-7 and PHQ-9 clinical assessments and produce personalized 90-day wellness roadmaps based on the assessment results. | Must | Assessment-driven personalization is central to the therapeutic model. |
+| FR-07 | The system shall implement a gamification engine with experience points, levels, badges, achievements, challenges, and streak tracking with freeze tokens. | Must | Gamification addresses the retention gap identified in @sec-gap. |
+| FR-08 | The system shall provide journaling, mood tracking, sleep logging, and screen time monitoring features. | Must | These features provide the behavioral data needed for personalization and gamification. |
+| FR-09 | The system shall support a community feature with a real-time feed, group chat, synchronized focus rooms, and user profiles. | Should | Community features leverage the relatedness dimension of SDT [@deci2000sdt] to sustain engagement. |
+| FR-10 | The system shall screen every generated response through a clinical safety auditor that classifies it as GREEN, YELLOW, or RED before delivery. | Must | The clinical auditor ensures safety in every interaction, addressing the privacy and safety gap. |
+
+## 3.2 Non-Functional Requirements
+
+| ID | Requirement | Target | Rationale |
+|----|-------------|--------|-----------|
+| NFR-01 | Response latency | End-to-end response in under 4 seconds (target: 3.2 seconds) | Users expect near-real-time responses in conversational interfaces; latency above 4 seconds degrades perceived empathy. |
+| NFR-02 | Availability | 99.5% uptime (planned maintenance windows excluded) | Mental health applications must be accessible during moments of crisis. |
+| NFR-03 | Security | TLS 1.3 in transit, AES-256 at rest, row-level security (RLS), 3-tier JWT authentication | Sensitive mental health data requires defense in depth; regulatory compliance requires encryption at rest and in transit. |
+| NFR-04 | Privacy | User data isolation via RLS policies; no cross-user data access | Each user's mental health data must be strictly isolated to prevent information leakage between accounts. |
+| NFR-05 | Scalability | Handle 1,000 concurrent users with horizontal scaling | Sufficient for initial deployment; microservices architecture enables independent scaling of bottleneck services. |
+| NFR-06 | Emotion classification accuracy | Minimum F1 score of 0.80 across all six categories | Clinical utility requires reliable emotion detection; below 0.80 the system risks misclassifying distress as neutral. |
+| NFR-07 | Accessibility | Android 10+ and iOS 15+, minimum 4 GB RAM | Targeting the broadest possible mobile device compatibility in the MENA region. |
+
+## 3.3 Use Case Diagram
+
+Figure 3.1 presents the use case diagram for the UpHeal system, showing both actor use cases and system use cases.
+
+Figure 3.1: UpHeal use case diagram.
+
+```{mermaid}
+graph TB
+    subgraph Actors
+        User([User])
+        System([System])
+    end
+
+    subgraph User_Use_Cases
+        UC1[Register / Login]
+        UC2[Take Assessment]
+        UC3[Chat with AI Coach]
+        UC4[View Roadmap]
+        UC5[Track Mood]
+        UC6[Write Journal]
+        UC7[Manage Gamification]
+        UC8[Join Community]
+    end
+
+    subgraph System_Use_Cases
+        UC9[RAG Retrieval]
+        UC10[Emotion Classification]
+        UC11[Clinical Audit]
+        UC12[Crisis Detection]
+        UC13[Roadmap Generation]
+        UC14[Gamification XP Calculation]
+    end
+
+    User --> UC1
+    User --> UC2
+    User --> UC3
+    User --> UC4
+    User --> UC5
+    User --> UC6
+    User --> UC7
+    User --> UC8
+
+    UC3 -.-> UC9
+    UC3 -.-> UC10
+    UC3 -.-> UC11
+    UC3 -.-> UC12
+    UC2 -.-> UC13
+    UC5 -.-> UC14
+    UC6 -.-> UC14
+    UC7 -.-> UC14
+    UC8 -.-> UC14
+
+    System --> UC9
+    System --> UC10
+    System --> UC11
+    System --> UC12
+    System --> UC13
+    System --> UC14
+```
+
+The use cases are organized into two categories. User use cases represent direct interactions: registration and authentication (FR-01), clinical assessment (FR-06), conversational AI chat (FR-02, FR-03), roadmap viewing (FR-06), mood tracking (FR-08), journaling (FR-08), gamification management (FR-07), and community participation (FR-09). System use cases represent internal processes triggered by user actions: RAG retrieval (FR-05), emotion classification (FR-03), clinical auditing (FR-10), crisis detection (FR-04), personalized roadmap generation (FR-06), and gamification XP calculation (FR-07).
+
+## 3.4 System Architecture Overview
+
+The UpHeal system follows a layered microservices architecture inspired by the RAG framework [@lewis2020rag] and modern LLM integration patterns [@toufique2023llm]. Figure 3.2 presents the high-level block diagram showing all components and their interconnections.
+
+Figure 3.2: UpHeal system architecture block diagram.
 
 ```{mermaid}
 flowchart TB
@@ -24,6 +115,10 @@ flowchart TB
         G[Journal Service]
         H[Telemetry Service]
         I[Roadmap Service]
+        I2[Knowledge Base Service]
+        I3[Architect Service]
+        I4[Ingestion Service]
+        I5[Auditor Service]
     end
     
     subgraph AI_Pipeline ["AI Pipeline Layer"]
@@ -36,6 +131,7 @@ flowchart TB
     subgraph Data_Layer ["Data Layer"]
         N[Supabase PostgreSQL]
         O[Supabase Storage]
+        P[Supabase Realtime]
     end
     
     A --> B
@@ -46,15 +142,24 @@ flowchart TB
     D --> G
     D --> H
     D --> I
+    D --> I2
+    D --> I3
+    D --> I4
+    D --> I5
     E --> J
     E --> K
     E --> L
     E --> M
     F --> N
+    I3 --> F
+    I3 --> I5
+    I4 --> K
     E --> N
     G --> N
     H --> N
     I --> N
+    A --> P
+    P --> N
     K --> O
 ```
 
@@ -62,23 +167,32 @@ flowchart TB
 
 | Layer | Component | Technology | Purpose |
 |-------|-----------|------------|---------|
-| Client | Flutter Mobile App | Flutter 3.19+ | Cross-platform UI |
+| Client | Flutter Mobile App | Flutter 3.24.5 | Cross-platform UI |
 | Gateway | FastAPI Gateway | FastAPI 0.115+ | API routing, orchestration |
 | Gateway | Auth Middleware | PyJWT + Supabase | 3-tier JWT verification |
+| Gateway | Rate Limiter | SlowAPI | Request throttling |
 | Microservices | Chat Service | Python + FastAPI | Conversational AI |
 | Microservices | Assessment Service | Python + FastAPI | Clinical scoring |
+| Microservices | Journal Service | Python + FastAPI | Journal CRUD |
+| Microservices | Telemetry Service | Python + FastAPI | Usage analytics |
+| Microservices | Roadmap Service | Python + FastAPI | Personalized roadmaps |
+| Microservices | Knowledge Base Service | Python + ChromaDB | Vector store management |
+| Microservices | Architect Service | Python + FastAPI | Assessment orchestration |
+| Microservices | Ingestion Service | Python + pdfplumber | Document processing |
+| Microservices | Auditor Service | Python + FastAPI | Safety validation |
 | AI | Emotion Classifier | BERT/DistilBERT | Text emotion detection [@devlin2019bert] |
 | AI | ChromaDB Vector Store | ChromaDB 0.5+ | Clinical knowledge retrieval |
 | AI | LLM Service | Groq/Ollama | Response generation |
 | AI | Clinical Auditor | Custom Python | Safety validation |
 | Data | Supabase PostgreSQL | PostgreSQL 15+ | Relational data |
 | Data | Supabase Storage | S3-compatible | Files, audio, images |
+| Data | Supabase Realtime | WebSocket channels | Live community updates |
 
-## 3.2 RAG Pipeline Design
+## 3.5 RAG Pipeline Design
 
-### 3.2.1 Pipeline Architecture
+### 3.5.1 Pipeline Architecture
 
-Figure 3.2: RAG pipeline block diagram.
+Figure 3.3: RAG pipeline block diagram.
 
 ```{mermaid}
 flowchart LR
@@ -97,7 +211,7 @@ flowchart LR
     L --> M[Response Delivery]
 ```
 
-### 3.2.2 Document Processing Algorithm
+### 3.5.2 Document Processing Algorithm
 
 ```
 Algorithm: ProcessClinicalDocuments
@@ -122,7 +236,7 @@ Output: Indexed_documents
 4. Return indexed collection
 ```
 
-### 3.2.3 Retrieval Algorithm
+### 3.5.3 Retrieval Algorithm
 
 ```
 Algorithm: RetrieveClinicalContext
@@ -147,7 +261,7 @@ Output: top_k_passages
 5. Return top_k passages
 ```
 
-### 3.2.4 Embedding Model Configuration
+### 3.5.4 Embedding Model Configuration
 
 Table 3.1: Embedding model specifications.
 
@@ -160,9 +274,9 @@ Table 3.1: Embedding model specifications.
 | HNSW ef_construction | 200 |
 | HNSW M | 16 |
 
-## 3.3 LLM Integration
+## 3.6 LLM Integration
 
-### 3.3.1 Prompt Assembly
+### 3.6.1 Prompt Assembly
 
 The prompt is constructed from four components, following instruction-fine-tuning patterns [@chung2022scaling]:
 
@@ -175,9 +289,9 @@ Prompt Structure:
 [USER] Current user message
 ```
 
-### 3.3.2 LLM Service Architecture
+### 3.6.2 LLM Service Architecture
 
-Figure 3.3: LLM service integration diagram.
+Figure 3.4: LLM service integration diagram.
 
 ```{mermaid}
 sequenceDiagram
@@ -202,7 +316,7 @@ sequenceDiagram
     end
 ```
 
-### 3.3.3 LLM Configuration
+### 3.6.3 LLM Configuration
 
 Table 3.2: LLM service configurations.
 
@@ -215,11 +329,11 @@ Table 3.2: LLM service configurations.
 | Latency | ~2s | ~1s (GPU) |
 | Cost | Per-request | Fixed (GPU rental) |
 
-## 3.4 Emotion Classification
+## 3.7 Emotion Classification
 
-### 3.4.1 Classification Pipeline
+### 3.7.1 Classification Pipeline
 
-Figure 3.4: Emotion classification flow.
+Figure 3.5: Emotion classification flow.
 
 ```{mermaid}
 flowchart LR
@@ -232,7 +346,7 @@ flowchart LR
     F --> H[Confidence Score]
 ```
 
-### 3.4.2 Emotion Categories
+### 3.7.2 Emotion Categories
 
 Table 3.3: Emotion classification categories.
 
@@ -245,7 +359,7 @@ Table 3.3: Emotion classification categories.
 | Hopeful | 4 | Optimistic, motivated | Goal-setting, reinforcement |
 | Distressed | 5 | Severe emotional pain | Crisis protocol, immediate support |
 
-### 3.4.3 Classification Algorithm
+### 3.7.3 Classification Algorithm
 
 ```
 Algorithm: ClassifyEmotion
@@ -270,11 +384,11 @@ Output: emotion_label, confidence_scores
    b. All probabilities: confidence_scores
 ```
 
-## 3.5 Gamification System
+## 3.8 Gamification System
 
-### 3.5.1 Gamification Architecture
+### 3.8.1 Gamification Architecture
 
-Figure 3.5: Gamification state machine.
+Figure 3.6: Gamification state machine.
 
 ```{mermaid}
 stateDiagram-v2
@@ -296,7 +410,7 @@ stateDiagram-v2
     BadgeUnlocked --> RewardDisplayed
 ```
 
-### 3.5.2 XP Calculation Formula
+### 3.8.2 XP Calculation Formula
 
 ```
 XP_total = Base_XP × Streak_Multiplier × Difficulty_Multiplier
@@ -307,7 +421,7 @@ Where:
 - Difficulty_Multiplier: 1.0× to 2.0× based on task difficulty
 ```
 
-### 3.5.3 Level Thresholds
+### 3.8.3 Level Thresholds
 
 Table 3.4: Level progression thresholds.
 
@@ -320,11 +434,11 @@ Table 3.4: Level progression thresholds.
 | 5 | 250 | 700 | Community access |
 | 10 | 500 | 2,450 | Premium features |
 
-## 3.6 Security Architecture
+## 3.9 Security Architecture
 
-### 3.6.1 Authentication Flow
+### 3.9.1 Authentication Flow
 
-Figure 3.6: JWT authentication flow.
+Figure 3.7: JWT authentication flow.
 
 ```{mermaid}
 sequenceDiagram
@@ -345,7 +459,7 @@ sequenceDiagram
     end
 ```
 
-### 3.6.2 Security Layers
+### 3.9.2 Security Layers
 
 Table 3.5: Security measures by layer.
 
@@ -358,7 +472,7 @@ Table 3.5: Security measures by layer.
 | API | Rate Limiting | 10 req/min on /api/assess |
 | Crisis | Keyword Detection | Bilingual (EN/AR) |
 
-### 3.6.3 Clinical Safety Audit
+### 3.9.3 Clinical Safety Audit
 
 ```
 Algorithm: ClinicalAudit
@@ -385,11 +499,11 @@ Output: safety_status, emergency_payload
    a. Return GREEN
 ```
 
-## 3.7 Data Flow Integration
+## 3.10 Data Flow Integration
 
-### 3.7.1 End-to-End Data Flow
+### 3.10.1 End-to-End Data Flow
 
-Figure 3.7: Complete data flow for a chat request.
+Figure 3.8: Complete data flow for a chat request.
 
 ```{mermaid}
 flowchart TD
@@ -414,7 +528,7 @@ flowchart TD
     R --> S[Return to User]
 ```
 
-### 3.7.2 Integration Points
+### 3.10.2 Integration Points
 
 Table 3.6: Service integration matrix.
 
@@ -422,13 +536,18 @@ Table 3.6: Service integration matrix.
 |---------|-----------|-------------|
 | Chat Service | Emotion, RAG, LLM, Auditor | Flutter App |
 | Emotion Classifier | BERT Model | Chat Service |
-| RAG Pipeline | ChromaDB, Embeddings | Chat Service |
+| RAG Pipeline | ChromaDB, Embeddings | Chat Service, Architect |
 | LLM Service | Groq/Ollama | Chat Service |
 | Clinical Auditor | Keyword DB, Sentiment | Chat Service |
-| Assessment | Supabase | Flutter App |
+| Assessment | Supabase | Flutter App, Architect |
 | Journal | Supabase | Flutter App |
+| Architect | Assessment, Auditor | Gateway (roadmap generation) |
+| Ingestion | pdfplumber, Embeddings | Knowledge Base |
+| Knowledge Base | ChromaDB | RAG Pipeline |
+| Roadmap | Supabase, Architect | Flutter App |
+| Telemetry | Supabase | Flutter App |
 
-### 3.7.3 Data Flow Narrative
+### 3.10.3 Data Flow Narrative
 
 When a user sends a message, the system processes it through the following integrated pipeline:
 
@@ -448,28 +567,31 @@ When a user sends a message, the system processes it through the following integ
 
 This flow completes in approximately 3.2 seconds, with 2.2 seconds consumed by LLM generation and the remaining 1.0 seconds distributed across authentication, emotion classification, retrieval, auditing, and persistence.
 
-## 3.8 Implementation Stack
+## 3.11 Implementation Stack
 
 Table 3.7: Complete technology stack.
 
 | Layer | Technology | Version | Purpose |
 |-------|-----------|---------|---------|
-| Frontend | Flutter | 3.19+ | Cross-platform UI |
+| Frontend | Flutter | 3.24.5 | Cross-platform UI |
+| Navigation | GoRouter | 14.6.2 | Declarative routing |
 | State Mgmt | Provider | 6.1.1 | ChangeNotifier |
-| Backend | FastAPI | 0.115+ | REST API |
+| Backend | FastAPI | 0.115+ | REST API gateway |
 | ASGI | Uvicorn | 0.32+ | Async server |
 | Auth | Supabase Auth | 2.12+ | JWT + OAuth2 |
 | Database | PostgreSQL | 15+ | Relational data |
+| Realtime | Supabase Realtime | - | WebSocket channels |
 | Vector DB | ChromaDB | 0.5+ | HNSW search |
 | Embedding | Sentence-Transformers | 2.2+ | all-mpnet-base-v2 |
 | Chat LLM | Groq API | - | llama-3.1-8b-instant |
 | Planned LLM | Ollama | - | qwen2.5:7b / Gemma |
 | PDF | pdfplumber | 0.10+ | Text extraction |
+| Community | Supabase Edge Functions | - | Serverless logic |
 | Container | Docker | 24+ | Deployment |
 | Hosting | DigitalOcean | - | Backend server |
 | GPU | RunPod | - | A100 80GB (planned) |
 
-## 3.9 Hardware Specifications
+## 3.12 Hardware Specifications
 
 Table 3.8: Infrastructure specifications.
 

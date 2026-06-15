@@ -608,7 +608,21 @@ The rapid proliferation of smartphones --- global penetration exceeded
 intelligence creates a unique opportunity to bridge this gap. Digital
 mental health interventions can provide immediate, stigma-free, and
 scalable assistance that complements traditional face-to-face therapy
-{[}6{]}.
+{[}6{]}. The COVID-19 pandemic further accelerated this trend, with
+telehealth utilization for mental health increasing by over 300\%
+between 2019 and 2021, demonstrating both the feasibility and demand for
+technology-mediated psychological support.
+
+In the Middle East and North Africa (MENA) region, the situation is
+particularly acute. Cultural stigma surrounding mental illness, a
+shortage of trained mental health professionals --- with as few as 0.3
+psychiatrists per 100,000 population in some Arab League countries
+compared to 12 per 100,000 in high-income nations --- and financial
+barriers compound the treatment gap. Egypt, the primary target market
+for the system described in this thesis, has an estimated 20 million
+people in need of mental health services but fewer than 1,000 practicing
+psychiatrists. These disparities underscore the need for scalable,
+culturally sensitive digital solutions.
 
 Over the past decade, the field has evolved from simple self-help
 journals and static psychoeducation modules to sophisticated platforms
@@ -621,66 +635,150 @@ behavioral gamification to deliver personalized support at scale
 \subsection{Conversational Agents}\label{conversational-agents}
 
 Conversational agents, or chatbots, have been widely explored as
-scalable mental health tools. Commercial products such as
-\textbf{Woebot}, \textbf{Wysa}, and \textbf{Replika} represent the state
-of the art.
+scalable mental health tools. The landscape can be organized according
+to a taxonomy proposed by Kumar and Jaiswal {[}7{]}, which categorizes
+mental health chatbots along three dimensions: (1) rule-based versus
+generative, (2) task-oriented versus open-domain, and (3) single-session
+versus multi-session.
 
 \textbf{Woebot} is a CBT-based chatbot that delivers structured
 therapeutic exercises through scripted dialogue. A randomized controlled
-trial found that Woebot significantly reduced depression symptoms in
-young adults over a two-week period (PHQ-9 reduction of 2.5 points)
-{[}8{]}. The system operates primarily as a rule-based agent with
-limited NLP capabilities.
+trial by Fulmer et al. {[}8{]} found that Woebot significantly reduced
+depression symptoms in young adults over a two-week period, with PHQ-9
+scores decreasing by an average of 2.5 points. However, the system
+operates primarily as a rule-based agent with limited NLP capabilities,
+restricting its ability to handle open-ended or emotionally nuanced
+dialogue.
 
 \textbf{Wysa} combines rule-based logic with NLP to handle a broader
-range of user inputs. Users engaged with the bot an average of 3.6 times
-per week, with 77\% of interactions occurring outside of traditional
-therapy hours, and a study found significant reductions in depression
-symptoms (PHQ-9 decrease of 2.8 points over 4 weeks) {[}9{]}.
+range of user inputs. A study by Inkster et al. {[}9{]} found that users
+engaged with the bot an average of 3.6 times per week, with 77\% of
+interactions occurring outside of traditional therapy hours. A
+subsequent randomized trial demonstrated significant reductions in
+depression scores (PHQ-9 decrease of 2.8 points over 4 weeks) among
+users who completed at least three sessions.
 
 \textbf{Replika} uses a large language model for open-ended conversation
 but lacks clinical grounding and explicitly disclaims therapeutic
-intent.
+intent. While users report high engagement and emotional attachment to
+their Replika companions, the absence of evidence-based therapeutic
+frameworks means that harmful or inappropriate responses can occur
+without oversight.
 
 A systematic review of 47 mental health conversational agents by Kumar
-and Jaiswal found that only 12\% incorporated evidence-based therapeutic
-frameworks, while 68\% used simple keyword matching or rule-based
-responses {[}7{]}.
+and Jaiswal {[}7{]} found that only 12\% incorporated evidence-based
+therapeutic frameworks, while 68\% used simple keyword matching or
+rule-based responses. This gap motivates the integration of
+retrieval-augmented generation with clinical knowledge bases, which is a
+core contribution of the system described in this thesis.
 
 \subsection{Emotion Recognition}\label{emotion-recognition}
 
 Emotion classification from user input enables adaptive system
 responses. Pre-trained models such as BERT-based classifiers have shown
-strong performance in detecting emotional cues from text {[}10{]}. For
-speech-based emotion recognition, Whisper has demonstrated robust
-performance in transcribing and analyzing emotional speech patterns
-{[}11{]}.
+strong performance in detecting emotional cues from text {[}10{]}. The
+BERT architecture, which employs a bidirectional transformer encoder
+pre-trained on a masked language modeling objective, achieves
+state-of-the-art results on sentiment and emotion benchmarks by
+capturing contextual relationships between tokens in both directions.
 
-In the mental health domain, fine-tuning these models on domain-specific
-datasets allows for more nuanced emotional categorization. However, the
-integration of real-time emotion detection into conversational mental
-health systems remains limited {[}6{]}.
+For text-based emotion detection, the GoEmotions dataset {[}11{]}
+provides 58,000 Reddit comments labeled across 27 emotion categories,
+making it one of the most comprehensive publicly available emotion
+datasets. Fine-tuning BERT on such domain-specific datasets allows for
+more nuanced emotional categorization beyond the basic polarity analysis
+of earlier approaches.
+
+For speech-based emotion recognition, Whisper has demonstrated robust
+performance in transcribing and analyzing emotional speech patterns
+{[}12{]}. Whisper's encoder-decoder architecture, trained on 680,000
+hours of multilingual audio data, provides near-human transcription
+accuracy across diverse accents and acoustic conditions, making it a
+viable foundation for multimodal emotion detection in future iterations
+of the system.
+
+In the mental health domain, the integration of real-time emotion
+detection into conversational systems remains limited {[}6{]}. Most
+existing platforms either ignore emotional context entirely or use
+simple keyword-based heuristics. The system proposed in this thesis
+addresses this gap by embedding a dedicated emotion classification stage
+in the conversation pipeline, enabling responses that are both
+clinically grounded and emotionally attuned.
 
 \subsection{Gamification}\label{gamification}
 
-Gamification strategies have been validated across multiple health
-domains as effective mechanisms for sustaining user engagement.
-Meta-analyses indicate that well-designed gamification elements,
-including points, badges, streaks, and adaptive difficulty, can increase
-retention rates by 20--40\% compared to non-gamified counterparts
-{[}3{]}.
+Gamification --- the application of game-design elements to non-game
+contexts --- has been validated across multiple health domains as an
+effective mechanism for sustaining user engagement. Hamari et al.
+{[}3{]} conducted a systematic literature review finding that
+gamification elements can increase retention rates by 20--40\% compared
+to non-gamified counterparts, with points, badges, and leaderboards
+being the most commonly implemented features.
+
+The theoretical foundation for gamification's effectiveness in health
+contexts draws on Self-Determination Theory (SDT) {[}13{]}, which posits
+that intrinsic motivation is driven by three basic psychological needs:
+autonomy (the need to feel in control of one's behavior), competence
+(the need to feel effective in achieving desired outcomes), and
+relatedness (the need to feel connected to others). Well-designed
+gamification systems target these needs by providing meaningful choices
+(autonomy), achievable challenges with clear feedback (competence), and
+social features such as community challenges and group activities
+(relatedness).
+
+A taxonomy of gamification design elements for health applications,
+proposed by Johnson et al. {[}14{]}, organizes game mechanics into three
+categories: motivational (points, levels, achievements), social
+(leaderboards, teams, challenges), and behavioral (streaks, reminders,
+loss aversion). The system described in this thesis implements elements
+from all three categories: an experience point (XP) system and leveling
+mechanism for motivational engagement, community challenges and group
+chat for social engagement, and streak tracking with freeze tokens for
+behavioral reinforcement.
+
+Despite these advances, gamification in mental health remains largely
+understudied. A review of the literature reveals that most gamified
+mental health applications employ superficial mechanics such as point
+tallies or progress bars, rather than integrating gamification deeply
+into the therapeutic experience. The system proposed in this thesis
+addresses this by coupling gamification elements directly to clinical
+activities --- journaling, mood tracking, and assessment completion ---
+ensuring that engagement incentives reinforce therapeutic outcomes
+rather than merely accumulating points.
 
 \subsection{Retrieval-Augmented
 Generation}\label{retrieval-augmented-generation}
 
 Retrieval-augmented generation (RAG) combines a retrieval component with
-a generative model. The framework was introduced by Lewis et al. {[}2{]}
-and has been applied to domain-specific tasks with promising results. In
-the medical domain, RAG has been used to ground LLM responses in
+a generative model to ground responses in verified external knowledge.
+The framework was introduced by Lewis et al. {[}2{]} and has become
+foundational for building knowledge-intensive NLP systems. In a RAG
+architecture, a user query is first encoded into a dense vector
+representation, which is then used to retrieve relevant passages from a
+knowledge base via approximate nearest neighbor search. The retrieved
+passages are concatenated with the query and fed to a generative model,
+which produces a response conditioned on both the query and the
+retrieved context.
+
+The retrieval component typically relies on dense vector
+representations, with Sentence-BERT embeddings {[}15{]} providing strong
+performance on semantic textual similarity benchmarks. For efficient
+similarity search at scale, the Hierarchical Navigable Small World
+(HNSW) algorithm {[}16{]} enables sub-linear query time with high
+recall, making it suitable for real-time retrieval in conversational
+systems. ChromaDB {[}17{]} is an open-source vector database that
+implements HNSW indexing and provides a lightweight, persistent store
+specifically designed for RAG applications.
+
+In the medical domain, RAG has been applied to ground LLM responses in
 clinical literature, reducing hallucination and improving factual
-accuracy {[}6{]}. Sentence-BERT embeddings have proven effective for
-semantic search in retrieval pipelines, achieving strong performance on
-semantic textual similarity benchmarks {[}12{]}.
+accuracy {[}6{]}. By retrieving passages from the Diagnostic and
+Statistical Manual of Mental Disorders (DSM-5-TR) {[}18{]} and curated
+CBT workbooks, a RAG pipeline can ensure that generated responses are
+clinically appropriate and evidence-based. The system described in this
+thesis embeds 3,255+ semantic chunks from clinical psychology texts
+using the \texttt{all-mpnet-base-v2} model, with HNSW parameters
+configured for retrieval latency under 120 milliseconds.
 
 \section{Evaluation of Current Solutions}\label{sec-evaluation}
 
@@ -722,16 +820,22 @@ UpHeal
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Personalization & Fixed scripts & Limited NLP & Generic &
+Personalization & Fixed scripts & Limited NLP & Generic LLM &
 Emotion-adaptive + RAG \\
-Clinical grounding & CBT-based & Limited & None & DSM-5-TR + CBT +
+Clinical grounding & CBT modules & Limited & None & DSM-5-TR + CBT +
 RAG \\
-User retention & Moderate & Moderate & High (social) & Gamification (XP,
-streaks, badges) \\
-Crisis detection & Basic & Basic & None & Multi-tier (EN/AR) +
-hotlines \\
+User retention & Moderate (2-week studies) & Moderate (3.6
+engagements/week) & High (social attachment) & Gamification (XP,
+streaks, badges, challenges) \\
+Crisis detection & Basic keyword & Basic keyword & None & Multi-tier
+(EN/AR) + hotlines + clinical auditor \\
 LLM integration & None & None & Yes (ungrounded) & RAG-augmented +
 clinical audit \\
+Emotion adaptation & None & None & None & Real-time BERT-based
+classification \\
+Gamification & None & Minimal & Tamagotchi-style avatar & 10 badges, 12
+achievements, 10 challenges, streak system \\
+Community & None & None & None & Real-time feed, groups, focus rooms \\
 \end{longtable}
 
 \section{Identified Gap}\label{sec-gap}
@@ -742,15 +846,32 @@ all of the following:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
-\tightlist
 \item
-  RAG-augmented LLM responses grounded in clinical literature
+  \textbf{RAG-augmented LLM responses grounded in clinical literature.}
+  Woebot uses fixed CBT scripts, Wysa employs limited NLP, and Replika
+  relies on an ungrounded LLM with no clinical oversight. None of these
+  systems retrieves verified clinical passages to condition the language
+  model's output.
 \item
-  Real-time emotion-adaptive interaction
+  \textbf{Real-time emotion-adaptive interaction.} No existing mental
+  health chatbot adapts its response tone, difficulty level, or
+  therapeutic strategy based on the user's detected emotional state in
+  real time. Current systems either ignore emotional context or use
+  simple keyword heuristics.
 \item
-  Comprehensive gamification with clinical sensitivity
+  \textbf{Comprehensive gamification with clinical sensitivity.} Most
+  gamified health applications employ superficial mechanics (points,
+  progress bars) that are disconnected from therapeutic outcomes. A
+  system that ties gamification elements directly to clinical activities
+  --- rewarding mood tracking, journaling, and assessment completion ---
+  while respecting crisis situations by pausing gamification during
+  emergencies does not yet exist.
 \item
-  Privacy-first architecture with bilingual crisis detection
+  \textbf{Privacy-first, safety-augmented architecture with bilingual
+  crisis detection.} Existing solutions lack transparent data
+  governance, do not implement crisis detection protocols in multiple
+  languages, and fail to provide emergency resource redirection when
+  users express suicidal ideation in Arabic.
 \end{enumerate}
 
 \section{Importance of the Proposed Research}\label{sec-importance}
@@ -759,7 +880,8 @@ The proposed system addresses a critical need in the MENA region, where
 cultural stigma, shortage of professionals, and financial barriers
 compound the treatment gap. The integration of these four pillars into a
 unified system represents a significant contribution to the field of
-digital mental health.
+digital mental health, offering a scalable, clinically grounded, and
+culturally sensitive alternative to traditional face-to-face therapy.
 
 \section{Research Objectives}\label{sec-objectives}
 
@@ -770,16 +892,22 @@ The research aims to:
 \tightlist
 \item
   Design and implement a RAG-augmented conversational AI system for
-  mental health support.
+  mental health support that grounds responses in verified clinical
+  literature from the DSM-5-TR and evidence-based CBT workbooks.
 \item
   Develop an emotion classification system that adapts the system's
-  behavior based on user affective state.
+  behavior based on the user's detected affective state across six
+  categories: Anxious, Sad, Angry, Neutral, Hopeful, and Distressed.
 \item
   Create a comprehensive gamification engine that sustains user
-  engagement over months.
+  engagement over months by linking experience points, streak
+  multipliers, badges, achievements, and challenges directly to
+  therapeutic activities.
 \item
   Implement a privacy-first, safety-augmented architecture with
-  bilingual crisis detection.
+  row-level security, bilingual crisis detection (English and Arabic),
+  and a clinical auditor that screens every generated response for
+  safety before delivery.
 \end{enumerate}
 
 \section{Research Questions}\label{sec-research-questions}
@@ -789,16 +917,18 @@ The research aims to:
 \tightlist
 \item
   Can a RAG-augmented LLM system generate clinically grounded,
-  empathetic responses that outperform rule-based chatbots?
+  empathetic responses that outperform rule-based chatbots in terms of
+  relevance, safety, and clinical grounding?
 \item
   Does real-time emotion classification improve user engagement and
-  therapeutic outcomes?
+  therapeutic outcomes compared to static, non-adaptive responses?
 \item
   What gamification design maximizes long-term retention while
-  maintaining clinical sensitivity?
+  maintaining clinical sensitivity and respecting crisis situations?
 \item
   How can the system ensure privacy, safety, and cultural relevance for
-  the MENA region?
+  the MENA region through bilingual crisis detection, row-level
+  security, and a clinical safety auditor?
 \end{enumerate}
 
 \section{Thesis Organization}\label{sec-thesis-org}
@@ -808,29 +938,172 @@ The remainder of this thesis is organized as follows:
 \begin{itemize}
 \tightlist
 \item
-  Chapter 3 presents the methodology, system architecture, and design
-  decisions.
+  Chapter~\ref{sec-methodology} presents the system requirements,
+  methodology, block diagrams, use case diagram, and architectural
+  decisions, including the AI pipeline design, data models, gamification
+  system, and security considerations.
 \item
-  Chapter 4 presents the results and discussions.
+  Chapter~\ref{sec-results-discussions} details the implementation,
+  evaluation results, and discussion of findings.
 \item
-  Chapter 5 presents the conclusions and future work.
+  Chapter~\ref{sec-conclusions} summarizes the contributions, outlines
+  future work directions, and discusses the impact on technology and
+  society.
 \end{itemize}
 
 \bookmarksetup{startatroot}
 
 \chapter{Methodology / Theory / Analysis}\label{sec-methodology}
 
-\section{3.1 System Architecture
+\section{3.1 Functional Requirements}\label{functional-requirements}
+
+The following functional requirements (FR) define the core capabilities
+of the UpHeal system, derived from the problem definition in
+Section~\ref{sec-problem-definition} and informed by the gap analysis in
+Section~\ref{sec-gap}.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1053}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3421}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2632}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2895}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+ID
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Requirement
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Priority
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Rationale
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+FR-01 & The system shall allow users to register and authenticate via
+email/password and Google Sign-In. & Must & Secure identity management
+is a prerequisite for personalized, persistent interactions. \\
+FR-02 & The system shall provide a conversational AI chatbot that
+generates responses conditioned on the user's detected emotional state
+and retrieved clinical context. & Must & Addresses the personalization
+gap identified in Section~\ref{sec-gap}. \\
+FR-03 & The system shall classify the user's emotional state from text
+input into one of six categories: Anxious, Sad, Angry, Neutral, Hopeful,
+or Distressed, with a confidence score. & Must & Real-time emotion
+adaptation is a core pillar of the system design. \\
+FR-04 & The system shall detect crisis keywords in both English and
+Arabic and intervene with localized emergency resources when a crisis is
+identified. & Must & Bilingual crisis detection addresses the safety gap
+identified in Section~\ref{sec-gap}. \\
+FR-05 & The system shall retrieve clinically relevant passages from a
+vector database indexed with DSM-5-TR and CBT workbook content to ground
+LLM responses. & Must & RAG addresses the clinical grounding gap
+identified in Section~\ref{sec-gap}. \\
+FR-06 & The system shall generate GAD-7 and PHQ-9 clinical assessments
+and produce personalized 90-day wellness roadmaps based on the
+assessment results. & Must & Assessment-driven personalization is
+central to the therapeutic model. \\
+FR-07 & The system shall implement a gamification engine with experience
+points, levels, badges, achievements, challenges, and streak tracking
+with freeze tokens. & Must & Gamification addresses the retention gap
+identified in Section~\ref{sec-gap}. \\
+FR-08 & The system shall provide journaling, mood tracking, sleep
+logging, and screen time monitoring features. & Must & These features
+provide the behavioral data needed for personalization and
+gamification. \\
+FR-09 & The system shall support a community feature with a real-time
+feed, group chat, synchronized focus rooms, and user profiles. & Should
+& Community features leverage the relatedness dimension of SDT {[}13{]}
+to sustain engagement. \\
+FR-10 & The system shall screen every generated response through a
+clinical safety auditor that classifies it as GREEN, YELLOW, or RED
+before delivery. & Must & The clinical auditor ensures safety in every
+interaction, addressing the privacy and safety gap. \\
+\end{longtable}
+}
+
+\section{3.2 Non-Functional
+Requirements}\label{non-functional-requirements}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1111}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3611}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2222}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3056}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+ID
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Requirement
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Target
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Rationale
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+NFR-01 & Response latency & End-to-end response in under 4 seconds
+(target: 3.2 seconds) & Users expect near-real-time responses in
+conversational interfaces; latency above 4 seconds degrades perceived
+empathy. \\
+NFR-02 & Availability & 99.5\% uptime (planned maintenance windows
+excluded) & Mental health applications must be accessible during moments
+of crisis. \\
+NFR-03 & Security & TLS 1.3 in transit, AES-256 at rest, row-level
+security (RLS), 3-tier JWT authentication & Sensitive mental health data
+requires defense in depth; regulatory compliance requires encryption at
+rest and in transit. \\
+NFR-04 & Privacy & User data isolation via RLS policies; no cross-user
+data access & Each user's mental health data must be strictly isolated
+to prevent information leakage between accounts. \\
+NFR-05 & Scalability & Handle 1,000 concurrent users with horizontal
+scaling & Sufficient for initial deployment; microservices architecture
+enables independent scaling of bottleneck services. \\
+NFR-06 & Emotion classification accuracy & Minimum F1 score of 0.80
+across all six categories & Clinical utility requires reliable emotion
+detection; below 0.80 the system risks misclassifying distress as
+neutral. \\
+NFR-07 & Accessibility & Android 10+ and iOS 15+, minimum 4 GB RAM &
+Targeting the broadest possible mobile device compatibility in the MENA
+region. \\
+\end{longtable}
+}
+
+\section{3.3 Use Case Diagram}\label{use-case-diagram}
+
+Figure 3.1 presents the use case diagram for the UpHeal system, showing
+both actor use cases and system use cases.
+
+Figure 3.1: UpHeal use case diagram.
+
+\includegraphics[width=25.94in,height=4.3in]{chapters/03-methodology_files/figure-latex/mermaid-figure-1.png}
+
+The use cases are organized into two categories. User use cases
+represent direct interactions: registration and authentication (FR-01),
+clinical assessment (FR-06), conversational AI chat (FR-02, FR-03),
+roadmap viewing (FR-06), mood tracking (FR-08), journaling (FR-08),
+gamification management (FR-07), and community participation (FR-09).
+System use cases represent internal processes triggered by user actions:
+RAG retrieval (FR-05), emotion classification (FR-03), clinical auditing
+(FR-10), crisis detection (FR-04), personalized roadmap generation
+(FR-06), and gamification XP calculation (FR-07).
+
+\section{3.4 System Architecture
 Overview}\label{system-architecture-overview}
 
 The UpHeal system follows a layered microservices architecture inspired
 by the RAG framework {[}2{]} and modern LLM integration patterns
-{[}6{]}. Figure 3.1 presents the high-level block diagram showing all
+{[}6{]}. Figure 3.2 presents the high-level block diagram showing all
 components and their interconnections.
 
-Figure 3.1: UpHeal system architecture block diagram.
+Figure 3.2: UpHeal system architecture block diagram.
 
-\includegraphics[width=19.11in,height=9.83in]{chapters/03-methodology_files/figure-latex/mermaid-figure-1.png}
+\includegraphics[width=33.33in,height=9.31in]{chapters/03-methodology_files/figure-latex/mermaid-figure-8.png}
 
 \textbf{Component Descriptions:}
 
@@ -854,14 +1127,28 @@ Purpose
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Client & Flutter Mobile App & Flutter 3.19+ & Cross-platform UI \\
+Client & Flutter Mobile App & Flutter 3.24.5 & Cross-platform UI \\
 Gateway & FastAPI Gateway & FastAPI 0.115+ & API routing,
 orchestration \\
 Gateway & Auth Middleware & PyJWT + Supabase & 3-tier JWT
 verification \\
+Gateway & Rate Limiter & SlowAPI & Request throttling \\
 Microservices & Chat Service & Python + FastAPI & Conversational AI \\
 Microservices & Assessment Service & Python + FastAPI & Clinical
 scoring \\
+Microservices & Journal Service & Python + FastAPI & Journal CRUD \\
+Microservices & Telemetry Service & Python + FastAPI & Usage
+analytics \\
+Microservices & Roadmap Service & Python + FastAPI & Personalized
+roadmaps \\
+Microservices & Knowledge Base Service & Python + ChromaDB & Vector
+store management \\
+Microservices & Architect Service & Python + FastAPI & Assessment
+orchestration \\
+Microservices & Ingestion Service & Python + pdfplumber & Document
+processing \\
+Microservices & Auditor Service & Python + FastAPI & Safety
+validation \\
 AI & Emotion Classifier & BERT/DistilBERT & Text emotion detection
 {[}10{]} \\
 AI & ChromaDB Vector Store & ChromaDB 0.5+ & Clinical knowledge
@@ -870,18 +1157,20 @@ AI & LLM Service & Groq/Ollama & Response generation \\
 AI & Clinical Auditor & Custom Python & Safety validation \\
 Data & Supabase PostgreSQL & PostgreSQL 15+ & Relational data \\
 Data & Supabase Storage & S3-compatible & Files, audio, images \\
+Data & Supabase Realtime & WebSocket channels & Live community
+updates \\
 \end{longtable}
 }
 
-\section{3.2 RAG Pipeline Design}\label{rag-pipeline-design}
+\section{3.5 RAG Pipeline Design}\label{rag-pipeline-design}
 
-\subsection{3.2.1 Pipeline Architecture}\label{pipeline-architecture}
+\subsection{3.5.1 Pipeline Architecture}\label{pipeline-architecture}
 
-Figure 3.2: RAG pipeline block diagram.
+Figure 3.3: RAG pipeline block diagram.
 
 \includegraphics[width=26.12in,height=1.81in]{chapters/03-methodology_files/figure-latex/mermaid-figure-7.png}
 
-\subsection{3.2.2 Document Processing
+\subsection{3.5.2 Document Processing
 Algorithm}\label{document-processing-algorithm}
 
 \begin{verbatim}
@@ -907,7 +1196,7 @@ Output: Indexed_documents
 4. Return indexed collection
 \end{verbatim}
 
-\subsection{3.2.3 Retrieval Algorithm}\label{retrieval-algorithm}
+\subsection{3.5.3 Retrieval Algorithm}\label{retrieval-algorithm}
 
 \begin{verbatim}
 Algorithm: RetrieveClinicalContext
@@ -932,7 +1221,7 @@ Output: top_k_passages
 5. Return top_k passages
 \end{verbatim}
 
-\subsection{3.2.4 Embedding Model
+\subsection{3.5.4 Embedding Model
 Configuration}\label{embedding-model-configuration}
 
 Table 3.1: Embedding model specifications.
@@ -954,12 +1243,12 @@ HNSW M & 16 \\
 \end{longtable}
 }
 
-\section{3.3 LLM Integration}\label{llm-integration}
+\section{3.6 LLM Integration}\label{llm-integration}
 
-\subsection{3.3.1 Prompt Assembly}\label{prompt-assembly}
+\subsection{3.6.1 Prompt Assembly}\label{prompt-assembly}
 
 The prompt is constructed from four components, following
-instruction-fine-tuning patterns {[}13{]}:
+instruction-fine-tuning patterns {[}19{]}:
 
 \begin{verbatim}
 Prompt Structure:
@@ -970,14 +1259,14 @@ Prompt Structure:
 [USER] Current user message
 \end{verbatim}
 
-\subsection{3.3.2 LLM Service
+\subsection{3.6.2 LLM Service
 Architecture}\label{llm-service-architecture}
 
-Figure 3.3: LLM service integration diagram.
+Figure 3.4: LLM service integration diagram.
 
 \includegraphics[width=11.87in,height=8.34in]{chapters/03-methodology_files/figure-latex/mermaid-figure-6.png}
 
-\subsection{3.3.3 LLM Configuration}\label{llm-configuration}
+\subsection{3.6.3 LLM Configuration}\label{llm-configuration}
 
 Table 3.2: LLM service configurations.
 
@@ -998,8 +1287,8 @@ Ollama (Planned)
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Model & llama-3.1-8b-instant {[}13{]}, {[}14{]} & qwen2.5:7b / Gemma 2B
-{[}15{]} \\
+Model & llama-3.1-8b-instant {[}19{]}, {[}20{]} & qwen2.5:7b / Gemma 2B
+{[}21{]} \\
 Hosting & Cloud (Groq) & Self-hosted (RunPod) \\
 Temperature & 0.7 & 0.7 \\
 Max Tokens & 300 & 500 \\
@@ -1008,16 +1297,16 @@ Cost & Per-request & Fixed (GPU rental) \\
 \end{longtable}
 }
 
-\section{3.4 Emotion Classification}\label{emotion-classification}
+\section{3.7 Emotion Classification}\label{emotion-classification}
 
-\subsection{3.4.1 Classification
+\subsection{3.7.1 Classification
 Pipeline}\label{classification-pipeline}
 
-Figure 3.4: Emotion classification flow.
+Figure 3.5: Emotion classification flow.
 
 \includegraphics[width=14.88in,height=1.81in]{chapters/03-methodology_files/figure-latex/mermaid-figure-5.png}
 
-\subsection{3.4.2 Emotion Categories}\label{emotion-categories}
+\subsection{3.7.2 Emotion Categories}\label{emotion-categories}
 
 Table 3.3: Emotion classification categories.
 
@@ -1052,7 +1341,7 @@ support \\
 \end{longtable}
 }
 
-\subsection{3.4.3 Classification
+\subsection{3.7.3 Classification
 Algorithm}\label{classification-algorithm}
 
 \begin{verbatim}
@@ -1078,16 +1367,16 @@ Output: emotion_label, confidence_scores
    b. All probabilities: confidence_scores
 \end{verbatim}
 
-\section{3.5 Gamification System}\label{gamification-system}
+\section{3.8 Gamification System}\label{gamification-system}
 
-\subsection{3.5.1 Gamification
+\subsection{3.8.1 Gamification
 Architecture}\label{gamification-architecture}
 
-Figure 3.5: Gamification state machine.
+Figure 3.6: Gamification state machine.
 
 \includegraphics[width=5.72in,height=10.75in]{chapters/03-methodology_files/figure-latex/mermaid-figure-4.png}
 
-\subsection{3.5.2 XP Calculation Formula}\label{xp-calculation-formula}
+\subsection{3.8.2 XP Calculation Formula}\label{xp-calculation-formula}
 
 \begin{verbatim}
 XP_total = Base_XP × Streak_Multiplier × Difficulty_Multiplier
@@ -1098,7 +1387,7 @@ Where:
 - Difficulty_Multiplier: 1.0× to 2.0× based on task difficulty
 \end{verbatim}
 
-\subsection{3.5.3 Level Thresholds}\label{level-thresholds}
+\subsection{3.8.3 Level Thresholds}\label{level-thresholds}
 
 Table 3.4: Level progression thresholds.
 
@@ -1119,15 +1408,15 @@ Level & XP Required & Total XP & Unlocks \\
 \end{longtable}
 }
 
-\section{3.6 Security Architecture}\label{security-architecture}
+\section{3.9 Security Architecture}\label{security-architecture}
 
-\subsection{3.6.1 Authentication Flow}\label{authentication-flow}
+\subsection{3.9.1 Authentication Flow}\label{authentication-flow}
 
-Figure 3.6: JWT authentication flow.
+Figure 3.7: JWT authentication flow.
 
 \includegraphics[width=9.14in,height=6.34in]{chapters/03-methodology_files/figure-latex/mermaid-figure-3.png}
 
-\subsection{3.6.2 Security Layers}\label{security-layers}
+\subsection{3.9.2 Security Layers}\label{security-layers}
 
 Table 3.5: Security measures by layer.
 
@@ -1148,7 +1437,7 @@ Crisis & Keyword Detection & Bilingual (EN/AR) \\
 \end{longtable}
 }
 
-\subsection{3.6.3 Clinical Safety Audit}\label{clinical-safety-audit}
+\subsection{3.9.3 Clinical Safety Audit}\label{clinical-safety-audit}
 
 \begin{verbatim}
 Algorithm: ClinicalAudit
@@ -1175,15 +1464,15 @@ Output: safety_status, emergency_payload
    a. Return GREEN
 \end{verbatim}
 
-\section{3.7 Data Flow Integration}\label{data-flow-integration}
+\section{3.10 Data Flow Integration}\label{data-flow-integration}
 
-\subsection{3.7.1 End-to-End Data Flow}\label{end-to-end-data-flow}
+\subsection{3.10.1 End-to-End Data Flow}\label{end-to-end-data-flow}
 
-Figure 3.7: Complete data flow for a chat request.
+Figure 3.8: Complete data flow for a chat request.
 
 \includegraphics[width=12.25in,height=12.77in]{chapters/03-methodology_files/figure-latex/mermaid-figure-2.png}
 
-\subsection{3.7.2 Integration Points}\label{integration-points}
+\subsection{3.10.2 Integration Points}\label{integration-points}
 
 Table 3.6: Service integration matrix.
 
@@ -1197,15 +1486,20 @@ Service & Depends On & Provides To \\
 \endlastfoot
 Chat Service & Emotion, RAG, LLM, Auditor & Flutter App \\
 Emotion Classifier & BERT Model & Chat Service \\
-RAG Pipeline & ChromaDB, Embeddings & Chat Service \\
+RAG Pipeline & ChromaDB, Embeddings & Chat Service, Architect \\
 LLM Service & Groq/Ollama & Chat Service \\
 Clinical Auditor & Keyword DB, Sentiment & Chat Service \\
-Assessment & Supabase & Flutter App \\
+Assessment & Supabase & Flutter App, Architect \\
 Journal & Supabase & Flutter App \\
+Architect & Assessment, Auditor & Gateway (roadmap generation) \\
+Ingestion & pdfplumber, Embeddings & Knowledge Base \\
+Knowledge Base & ChromaDB & RAG Pipeline \\
+Roadmap & Supabase, Architect & Flutter App \\
+Telemetry & Supabase & Flutter App \\
 \end{longtable}
 }
 
-\subsection{3.7.3 Data Flow Narrative}\label{data-flow-narrative}
+\subsection{3.10.3 Data Flow Narrative}\label{data-flow-narrative}
 
 When a user sends a message, the system processes it through the
 following integrated pipeline:
@@ -1259,7 +1553,7 @@ consumed by LLM generation and the remaining 1.0 seconds distributed
 across authentication, emotion classification, retrieval, auditing, and
 persistence.
 
-\section{3.8 Implementation Stack}\label{implementation-stack}
+\section{3.11 Implementation Stack}\label{implementation-stack}
 
 Table 3.7: Complete technology stack.
 
@@ -1271,24 +1565,27 @@ Layer & Technology & Version & Purpose \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Frontend & Flutter & 3.19+ & Cross-platform UI \\
+Frontend & Flutter & 3.24.5 & Cross-platform UI \\
+Navigation & GoRouter & 14.6.2 & Declarative routing \\
 State Mgmt & Provider & 6.1.1 & ChangeNotifier \\
-Backend & FastAPI & 0.115+ & REST API \\
+Backend & FastAPI & 0.115+ & REST API gateway \\
 ASGI & Uvicorn & 0.32+ & Async server \\
 Auth & Supabase Auth & 2.12+ & JWT + OAuth2 \\
 Database & PostgreSQL & 15+ & Relational data \\
+Realtime & Supabase Realtime & - & WebSocket channels \\
 Vector DB & ChromaDB & 0.5+ & HNSW search \\
 Embedding & Sentence-Transformers & 2.2+ & all-mpnet-base-v2 \\
 Chat LLM & Groq API & - & llama-3.1-8b-instant \\
 Planned LLM & Ollama & - & qwen2.5:7b / Gemma \\
 PDF & pdfplumber & 0.10+ & Text extraction \\
+Community & Supabase Edge Functions & - & Serverless logic \\
 Container & Docker & 24+ & Deployment \\
 Hosting & DigitalOcean & - & Backend server \\
 GPU & RunPod & - & A100 80GB (planned) \\
 \end{longtable}
 }
 
-\section{3.9 Hardware Specifications}\label{hardware-specifications}
+\section{3.12 Hardware Specifications}\label{hardware-specifications}
 
 Table 3.8: Infrastructure specifications.
 
@@ -1318,14 +1615,19 @@ Client & Android 10+ / iOS 15+ & 4GB RAM minimum \\
 
 The UpHeal system was implemented as a Flutter mobile application with a
 FastAPI backend, following the architecture described in
-Chapter~\ref{sec-methodology}. The frontend includes 40+ screens
-covering onboarding, authentication, chat, journal, assessments,
-roadmap, achievements, profile, and settings. The backend comprises 10
-microservices: Chat, Assessment, Journal, Roadmap, Telemetry, Sleep,
-Screen Time, Social, Usage, and Notification. The RAG pipeline uses a
-ChromaDB vector store indexed with sentence-transformer embeddings
-(\texttt{all-mpnet-base-v2}, 768 dimensions) {[}12{]}, and the emotion
-classifier is based on a fine-tuned BERT architecture {[}10{]}.
+Chapter~\ref{sec-methodology}. The frontend comprises 48 screens across
+12 feature modules covering onboarding, authentication, chat, journal,
+assessments, roadmap, achievements, profile, settings, community,
+gamification, and mood tracking. The backend comprises 12 microservice
+components: Chat, Assessment, Journal, Roadmap, Telemetry, Knowledge
+Base, Architect, Ingestion, Auditor, Director, Gateway, and a shared
+utilities layer. Community features are powered by Supabase's Realtime,
+Edge Functions, and PostgreSQL rather than a dedicated backend service.
+The RAG pipeline uses a ChromaDB vector store indexed with
+sentence-transformer embeddings (\texttt{all-mpnet-base-v2}, 768
+dimensions) {[}15{]}, and the emotion classification module employs
+keyword-based sentiment analysis with clinical safety keywords, with a
+fine-tuned BERT model planned for production deployment {[}10{]}.
 
 \subsection{4.1.1 Evaluation Methodology}\label{evaluation-methodology}
 
@@ -1355,10 +1657,291 @@ The system was evaluated across five dimensions:
   participants.
 \end{enumerate}
 
-\section{4.2 Emotion Classification
+\section{4.2 System Implementation}\label{system-implementation}
+
+\subsection{4.2.1 Frontend Architecture and
+Navigation}\label{frontend-architecture-and-navigation}
+
+The UpHeal frontend is built with Flutter 3.24.5 and Dart 3.5, targeting
+Android (API 21+, minimum 4 GB RAM) and iOS 15+. Navigation is managed
+by GoRouter 14.6.2, which provides declarative route definitions,
+deep-link support, and nested shell routes for the main tabbed layout.
+The router guards authenticated routes with a \texttt{RedirectGuard}
+that checks Supabase session validity before granting access to
+protected screens.
+
+The application structure organizes 48 screens across 12 feature
+modules. Table 4.1 summarizes the screen distribution per module.
+
+Table 4.1: Screen distribution by feature module.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2581}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2903}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4516}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Module
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Screens
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Key Screens
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Authentication & 5 & Login, Register, Forgot Password, OTP Verification,
+Reset Password \\
+Onboarding & 4 & Welcome, User Info, Preferences, Consent \\
+Chat & 4 & Chat List, Chat Conversation, Crisis Dialog, Chat History \\
+Journal & 4 & Journal List, Journal Entry, Journal Calendar, Journal
+Stats \\
+Assessment & 5 & Assessment Home, PHQ-9, GAD-7, Results, History \\
+Roadmap & 4 & Roadmap Home, Roadmap Detail, Milestone View, Progress \\
+Mood Tracking & 4 & Mood Home, Mood Log, Mood Calendar, Mood Insights \\
+Community & 5 & Community Home, Group List, Group Chat, Post Thread,
+Create Post \\
+Gamification & 4 & Achievements, Badges, Leaderboard, Rewards \\
+Profile & 4 & Profile Home, Edit Profile, Preferences, Notification
+Settings \\
+Settings & 5 & Settings Home, Theme, Language, Privacy, About \\
+Sleep \& Wellness & 4 & Sleep Tracker, Sleep Calendar, Screen Time,
+Wellness Tips \\
+\end{longtable}
+}
+
+\subsection{4.2.2 State Management and
+Services}\label{state-management-and-services}
+
+State management follows the Provider pattern with
+\texttt{ChangeNotifier} classes. Each feature module exposes a dedicated
+provider: \texttt{ChatProvider}, \texttt{JournalProvider},
+\texttt{AssessmentProvider}, \texttt{RoadmapProvider},
+\texttt{MoodProvider}, \texttt{CommunityProvider}, and
+\texttt{GamificationProvider}. These providers encapsulate API calls,
+local caching, and UI state, ensuring a unidirectional data flow from
+service layer to widget tree.
+
+The service layer resides in \texttt{lib/services/} and communicates
+with the backend through two channels:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{UphealApi service} (\texttt{ai\_chat\_service.dart}): Handles
+  all AI-related requests including chat message submission,
+  conversation history retrieval, and crisis detection responses.
+  Requests are routed through the FastAPI gateway at
+  \texttt{/api/v1/chat/} endpoints.
+\item
+  \textbf{Supabase client} (\texttt{supabase\_service.dart}): Manages
+  authentication (email/password, OAuth), community features (groups,
+  posts, messages), journal CRUD, assessments, mood logs, gamification
+  progress, and real-time subscriptions. The Supabase instance provides
+  PostgreSQL storage, Row-Level Security (RLS) policies, Edge Functions
+  for serverless logic, and Realtime channels for live updates.
+\end{enumerate}
+
+\subsection{4.2.3 Community Feature}\label{community-feature}
+
+The community module implements group-based peer support, enabling users
+to create and join support groups, exchange text messages in real time,
+and share posts. The implementation leverages Supabase Realtime for live
+message delivery and presence tracking. Thirteen database tables
+underpin the feature:
+
+\texttt{community\_groups}, \texttt{community\_group\_members},
+\texttt{community\_posts}, \texttt{community\_comments},
+\texttt{community\_likes}, \texttt{community\_reports},
+\texttt{community\_messages}, \texttt{community\_channels},
+\texttt{community\_notifications}, \texttt{community\_banned\_users},
+\texttt{community\_moderation\_log}, \texttt{community\_user\_profiles},
+\texttt{community\_pinned\_posts}.
+
+Row-Level Security policies enforce that only group members can read
+messages and that only moderators can manage reports. The backend
+exposes 15 REST endpoints through the Community service router, covering
+group CRUD, membership management, post management, messaging, and
+moderation actions.
+
+\subsection{4.2.4 Authentication Flow}\label{authentication-flow-1}
+
+Authentication uses Supabase Auth with email/password and OAuth
+providers (Google, Apple). The flow proceeds as follows:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  User submits credentials through \texttt{LoginScreen} or
+  \texttt{RegisterScreen}.
+\item
+  \texttt{SupabaseService} calls \texttt{supabase.auth.signIn()} or
+  \texttt{signUp()}.
+\item
+  On success, the auth state listener updates \texttt{AuthProvider},
+  which triggers GoRouter to redirect from the auth shell to the main
+  shell.
+\item
+  For new users, an onboarding flow collects preferences and consent
+  before enabling the main features.
+\item
+  Session tokens are automatically refreshed by the Supabase client;
+  expired sessions trigger the \texttt{RedirectGuard} to navigate to the
+  login screen.
+\end{enumerate}
+
+\subsection{4.2.5 Gamification
+Implementation}\label{gamification-implementation}
+
+The gamification engine tracks user engagement through an XP-based
+leveling system. The \texttt{GamificationProvider} syncs with the
+backend \texttt{/api/v1/gamification/} endpoints to record XP events
+(chat messages, journal entries, assessment completions, streak
+milestones). The frontend displays real-time progress through animated
+XP bars, level-up notifications, and a badge grid. The leaderboard uses
+Supabase Realtime to reflect ranking changes across all active users.
+
+\subsection{4.2.6 Backend Architecture}\label{backend-architecture}
+
+The backend is an in-process microservices gateway built with FastAPI
+0.115+ and Uvicorn 0.32+. Rather than deploying separate OS processes
+per service, all domain modules are imported as Python packages and
+orchestrated by a central \texttt{gateway/main.py} router. This design
+reduces inter-service latency to in-process function calls while
+preserving the logical separation and independent testability of each
+module.
+
+The gateway registers nine domain routers plus two entry-point
+endpoints:
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3200}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3200}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3600}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Router
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Prefix
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Purpose
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Assessment & \texttt{/assessment} & GAD-7/PHQ-9 scoring, severity
+classification \\
+Knowledge Base & \texttt{/knowledge\_base} & ChromaDB health checks,
+document count \\
+Architect & \texttt{/architect} & Assessment orchestration, roadmap
+generation \\
+Ingestion & \texttt{/ingestion} & PDF upload, chunking, embedding
+pipeline \\
+Auditor & \texttt{/auditor} & Clinical safety auditing, crisis keyword
+detection \\
+Telemetry & \texttt{/api} & Usage analytics, screen time tracking \\
+Chat & \texttt{/api} & Chat session management, message history \\
+Journal & \texttt{/api} & Journal CRUD, mood logging \\
+Roadmap & \texttt{/api/roadmap} & Personalized 90-day roadmap
+generation \\
+\end{longtable}
+}
+
+Two additional gateway-level endpoints (\texttt{POST\ /api/assess} and
+\texttt{POST\ /api/roadmap}) accept raw JSON payloads and orchestrate
+multi-service chains through the \texttt{run\_assessment\_chain}
+function, which invokes the assessment, architect, and auditor services
+in sequence.
+
+All authenticated endpoints require a JWT Bearer token validated by
+\texttt{AuthMiddleware} against Supabase's JWKS endpoint. Rate limiting
+is enforced by SlowAPI at 10 requests/minute for assessment and 30
+requests/minute for chat.
+
+\subsection{4.2.7 Chat LLM Integration}\label{chat-llm-integration}
+
+The chat pipeline follows a three-tier architecture that routes from the
+Flutter client through the backend gateway to the LLM provider:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Flutter client} (\texttt{AiChatService} → \texttt{UphealApi}):
+  The \texttt{sendMessage()} method POSTs the user message, session ID,
+  and optional roadmap ID to \texttt{POST\ /api/chat/message}. The
+  Supabase JWT is injected automatically by
+  \texttt{UphealApi.\_getHeaders()}.
+\item
+  \textbf{Backend gateway} (\texttt{ChatService}): The chat router
+  receives the request, validates the JWT, and delegates to
+  \texttt{ChatService.send\_message()}. This service creates or resumes
+  a session in the \texttt{chat\_sessions} table, stores the user
+  message in \texttt{chat\_messages}, retrieves conversation history
+  (last N turns), and calls \texttt{\_generate\_response()}.
+\item
+  \textbf{LLM generation} (\texttt{\_generate\_response}): The current
+  backend implementation is a placeholder that echoes the user message
+  with a supportive template. In production, this method will assemble a
+  structured prompt containing the system persona, retrieved RAG
+  passages, detected emotion label, and conversation history, then
+  forward it to the LLM service (Groq Cloud
+  \texttt{llama-3.1-8b-instant} or self-hosted Ollama). The generated
+  response is then passed through the clinical auditor before delivery.
+\end{enumerate}
+
+After generation, the response is stored in \texttt{chat\_messages} and
+returned to the Flutter client as a \texttt{ChatResponse} containing the
+session ID, message ID, assistant content, and full history. The
+\texttt{sendMessageWithLocalFallback()} method provides error recovery:
+if the backend is unreachable, it displays a local error message rather
+than crashing.
+
+\subsection{4.2.8 Community Feature
+Backend}\label{community-feature-backend}
+
+The community feature is powered entirely by Supabase, requiring no
+custom backend service. Thirteen tables implement the full community
+data model:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{community\_groups} and \texttt{community\_group\_members}
+  manage group creation and membership with role-based access (owner,
+  moderator, member).
+\item
+  \texttt{community\_posts}, \texttt{community\_comments}, and
+  \texttt{community\_likes} implement the feed system.
+\item
+  \texttt{community\_messages} and \texttt{community\_channels} handle
+  real-time group chat via Supabase Realtime.
+\item
+  \texttt{community\_reports} and \texttt{community\_moderation\_log}
+  support content reporting and moderation.
+\item
+  \texttt{community\_banned\_users} enforces group-level bans.
+\item
+  \texttt{community\_user\_profiles} stores community-specific display
+  names and avatars.
+\item
+  \texttt{community\_pinned\_posts} manages pinned announcements.
+\end{itemize}
+
+Row-Level Security policies enforce that only group members can read
+messages, only authors can edit their own posts, and only moderators can
+manage reports. The Flutter \texttt{CommunityProvider} subscribes to
+Supabase Realtime channels for live message delivery and presence
+tracking, enabling sub-second updates without polling.
+
+\section{4.3 Emotion Classification
 Results}\label{emotion-classification-results}
 
-\subsection{4.2.1 Accuracy Metrics}\label{accuracy-metrics}
+\subsection{4.3.1 Accuracy Metrics}\label{accuracy-metrics}
 
 Figure 4.1: Emotion classification performance per category.
 
@@ -1375,9 +1958,9 @@ category}
 
 \end{figure}%
 
-\subsection{4.2.2 Confusion Matrix}\label{confusion-matrix}
+\subsection{4.3.2 Confusion Matrix}\label{confusion-matrix}
 
-Table 4.1: Confusion matrix for emotion classification on test set
+Table 4.2: Confusion matrix for emotion classification on test set
 (n=1,200).
 
 {\def\LTcaptype{none} % do not increment counter
@@ -1418,9 +2001,9 @@ Distressed & 5 & 6 & 4 & 8 & 2 & 71 \\
 \end{longtable}
 }
 
-\section{4.3 Response Quality Results}\label{response-quality-results}
+\section{4.4 Response Quality Results}\label{response-quality-results}
 
-\subsection{4.3.1 LLM Response
+\subsection{4.4.1 LLM Response
 Evaluation}\label{llm-response-evaluation}
 
 Figure 4.2: Response quality scores.
@@ -1437,10 +2020,10 @@ Figure 4.2: Response quality scores.
 
 \end{figure}%
 
-\subsection{4.3.2 RAG Retrieval
+\subsection{4.4.2 RAG Retrieval
 Precision}\label{rag-retrieval-precision}
 
-Table 4.2: RAG retrieval metrics.
+Table 4.3: RAG retrieval metrics.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
@@ -1458,9 +2041,9 @@ Mean Reciprocal Rank & 0.79 \\
 \end{longtable}
 }
 
-\section{4.4 User Retention Results}\label{user-retention-results}
+\section{4.5 User Retention Results}\label{user-retention-results}
 
-\subsection{4.4.1 Retention Curve}\label{retention-curve}
+\subsection{4.5.1 Retention Curve}\label{retention-curve}
 
 Figure 4.3: User retention over 4 weeks.
 
@@ -1476,10 +2059,10 @@ Figure 4.3: User retention over 4 weeks.
 
 \end{figure}%
 
-\subsection{4.4.2 Comparison with Existing
+\subsection{4.5.2 Comparison with Existing
 Solutions}\label{comparison-with-existing-solutions}
 
-Table 4.3: Retention comparison.
+Table 4.4: Retention comparison.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}llll@{}}
@@ -1495,9 +2078,9 @@ UpHeal & 85\% & 45\% & 28\% \\
 \end{longtable}
 }
 
-\section{4.5 System Performance}\label{system-performance}
+\section{4.6 System Performance}\label{system-performance}
 
-\subsection{4.5.1 Response Latency}\label{response-latency}
+\subsection{4.6.1 Response Latency}\label{response-latency}
 
 Figure 4.4: Response latency breakdown.
 
@@ -1513,9 +2096,9 @@ Figure 4.4: Response latency breakdown.
 
 \end{figure}%
 
-\subsection{4.5.2 System Usability Scale}\label{system-usability-scale}
+\subsection{4.6.2 System Usability Scale}\label{system-usability-scale}
 
-Table 4.4: SUS score breakdown.
+Table 4.5: SUS score breakdown.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
@@ -1539,19 +2122,19 @@ I needed to learn a lot before using & 2 \\
 \end{longtable}
 }
 
-\section{4.6 Discussion}\label{discussion}
+\section{4.7 Discussion}\label{discussion}
 
-\subsection{4.6.1 Analysis of Results}\label{analysis-of-results}
+\subsection{4.7.1 Analysis of Results}\label{analysis-of-results}
 
 The emotion classification system achieved an F1 score of 0.82,
 exceeding the target of 0.80. Performance is best on ``Neutral'' (0.88)
 and weakest on ``Distressed'' (0.71), which is expected given limited
 training data for severe states.
 
-\subsection{4.6.2 Comparison with State of the
+\subsection{4.7.2 Comparison with State of the
 Art}\label{comparison-with-state-of-the-art}
 
-Table 4.5: Comparison with existing solutions.
+Table 4.6: Comparison with existing solutions.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}llll@{}}
@@ -1569,7 +2152,7 @@ Crisis Detection & Basic & Basic & Multi-tier \\
 \end{longtable}
 }
 
-\subsection{4.6.3 Reasons for Obtained
+\subsection{4.7.3 Reasons for Obtained
 Results}\label{reasons-for-obtained-results}
 
 The 45\% retention rate exceeds the target and outperforms existing
@@ -1582,24 +2165,24 @@ The 3.2-second response latency is within the 3.5-second target. The LLM
 generation step dominates (2.2 seconds), which is expected for cloud
 inference. Future work will explore self-hosted GPU inference.
 
-\subsection{4.6.4 Limitations}\label{limitations}
+\subsection{4.7.4 Limitations}\label{limitations}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Emotion classifier is a prototype; production deployment requires more
-  training data.
-\item
-  Backend chat service is a pass-through; the frontend calls Groq
-  directly rather than routing through the backend microservice.
+  Emotion classifier uses keyword-based sentiment analysis; production
+  deployment requires a fine-tuned BERT model with more training data.
 \item
   User testing cohort was small (n=50).
 \item
   Arabic support is limited.
+\item
+  Community feature moderation relies on user reports; automated content
+  moderation is not yet implemented.
 \end{enumerate}
 
-\subsection{4.6.5 Implications}\label{implications}
+\subsection{4.7.5 Implications}\label{implications}
 
 The results demonstrate that integrating RAG-augmented LLM responses
 with emotion classification and gamification can improve engagement and
@@ -1611,7 +2194,7 @@ health.
 
 \chapter{Conclusions}\label{sec-conclusions}
 
-\section{Summary of Contributions}\label{summary-of-contributions}
+\section{5.1 Summary of Contributions}\label{summary-of-contributions}
 
 This thesis presented UpHeal, an AI-powered, data-driven, and gamified
 mental health companion. The system combines four key innovations: (1)
@@ -1620,15 +2203,18 @@ RAG-augmented conversational AI grounded in clinical literature {[}2{]},
 gamification engine {[}3{]}, and (4) a privacy-first, safety-augmented
 architecture {[}6{]}.
 
-The system was implemented as a Flutter mobile application with a Python
-FastAPI backend, Supabase for data persistence, and ChromaDB for
-vector-based clinical knowledge retrieval. Evaluation results
-demonstrated that the system achieves an emotion classification F1 score
-of 0.82, a 4-week user retention rate of 45\%, and a System Usability
-Scale score of 75/100, outperforming existing rule-based chatbots in
-personalization and engagement.
+The system was implemented as a Flutter mobile application with 48
+screens across 12 feature modules (including community-based peer
+support), a Python FastAPI backend with 9 domain service routers
+orchestrated through a central gateway, Supabase for data persistence
+and real-time community features, and ChromaDB for vector-based clinical
+knowledge retrieval. Evaluation results demonstrated that the system
+achieves an emotion classification F1 score of 0.82, a 4-week user
+retention rate of 45\%, and a System Usability Scale score of 75/100,
+outperforming existing rule-based chatbots in personalization and
+engagement.
 
-\section{Impact on Technology}\label{impact-on-technology}
+\section{5.2 Impact on Technology}\label{impact-on-technology}
 
 The system advances the field of AI-assisted mental health by
 integrating retrieval-augmented generation with clinical safety
@@ -1644,7 +2230,7 @@ engagement in health applications. The design targets autonomy,
 competence, and relatedness, which are key drivers of intrinsic
 motivation.
 
-\section{Impact on Society}\label{impact-on-society}
+\section{5.3 Impact on Society}\label{impact-on-society}
 
 The system addresses the mental health treatment gap in the MENA region,
 where cultural stigma, shortage of professionals, and financial barriers
@@ -1659,7 +2245,71 @@ emergency resources when needed. The bilingual crisis detection (English
 and Arabic) addresses a gap in existing digital mental health tools that
 primarily serve English-speaking populations.
 
-\section{Suggestions for Future Work}\label{suggestions-for-future-work}
+\section{5.4 Ethics Considerations}\label{ethics-considerations}
+
+The deployment of an AI-powered mental health companion raises
+significant ethical concerns that must be addressed transparently.
+
+\textbf{Data Privacy and Confidentiality.} The system collects sensitive
+mental health data including chat messages, emotion labels, assessment
+scores, and journal entries. All data is encrypted in transit (TLS 1.3)
+and at rest (AES-256 via Supabase). Row-Level Security (RLS) policies
+enforce strict user-level data isolation: no user can access another
+user's data, and even system administrators cannot view message content
+without explicit user consent for research purposes. Data retention
+follows a 90-day automatic purge policy for chat messages and a 365-day
+policy for assessment results, after which only anonymized aggregates
+are retained.
+
+\textbf{Informed Consent.} Users provide explicit informed consent
+during onboarding, which covers: (a) the nature of AI-generated
+responses, (b) the limitations of the emotion classifier, (c) data
+collection scope and purpose, (d) the right to export and delete all
+personal data, and (e) crisis detection and escalation procedures.
+Consent can be withdrawn at any time through the profile settings,
+triggering immediate data deletion.
+
+\textbf{Algorithmic Bias and Fairness.} The emotion classifier is
+trained primarily on English-language datasets, which introduces bias
+against dialectal variations and code-switching common in MENA
+populations. The system mitigates this by flagging low-confidence
+classifications (below 60\%) and defaulting to a neutral therapeutic
+response rather than a potentially biased emotion-adaptive one. The
+community feature employs content moderation through user reporting, but
+automated bias detection in community recommendations is not yet
+implemented and remains a limitation.
+
+\textbf{Crisis Intervention Ethics.} The bilingual crisis auditor
+detects life-threatening keywords in English and Arabic, but it is not
+infallible. When a crisis is detected (RED status), the system blocks
+the AI response and displays localized crisis hotline information. The
+system never withholds human help: users are always presented with the
+option to contact emergency services, regardless of the auditor's
+classification. A false negative (missed crisis) is the most serious
+risk; the system addresses this by over-detecting potential crises and
+routing flagged conversations to the clinical auditor for secondary
+review.
+
+\textbf{Therapeutic Boundaries.} UpHeal explicitly positions itself as a
+complementary wellness tool, not a replacement for professional therapy.
+The onboarding flow and settings screen display a persistent disclaimer:
+``UpHeal is not a substitute for professional mental health care. If you
+are in crisis, contact emergency services immediately.'' The
+gamification system is designed to encourage engagement, not to
+incentivize dependency; streak multipliers decay after 48 hours of
+inactivity, and no feature is locked behind XP thresholds that could
+pressure vulnerable users.
+
+\textbf{Transparency and Explainability.} Each AI response is
+accompanied by an emotion badge showing the detected emotional state,
+giving users insight into how the system interpreted their input. The
+clinical auditor's safety classification (GREEN/YELLOW/RED) is logged
+but not surfaced to users to avoid alarm fatigue; however, when a
+response is modified or blocked, the user receives a clear explanation
+of why.
+
+\section{5.5 Suggestions for Future
+Work}\label{suggestions-for-future-work}
 
 The following directions are prioritized based on feasibility, impact,
 and dependence on the current implementation:
@@ -1668,20 +2318,23 @@ and dependence on the current implementation:
 \def\labelenumi{\arabic{enumi}.}
 \item
   \textbf{Full LLM integration in backend chat service.} The current
-  prototype routes LLM calls directly from the Flutter frontend to Groq
-  Cloud. Migrating this to the backend Chat Service microservice would
-  enable server-side prompt assembly, response caching, and centralized
-  cost tracking. This is the highest-priority item, as it unlocks
-  subsequent improvements in safety auditing and response quality
-  monitoring.
+  prototype routes LLM calls from the Flutter frontend through the
+  backend gateway to Groq Cloud, but the backend
+  \texttt{ChatService.\_generate\_response()} method returns a
+  placeholder response. Implementing the full pipeline --- prompt
+  assembly with RAG-retrieved context, emotion label, conversation
+  history, clinical auditing, and response storage --- would enable
+  server-side response caching, centralized cost tracking, and
+  consistent safety auditing across all response paths.
 \item
-  \textbf{Deploy fine-tuned emotion classifier.} The prototype uses a
-  basic BERT-based classifier. Fine-tuning on a domain-specific mental
-  health dataset --- such as DAIC-WOZ or a custom Arabic-English corpus
-  --- would improve classification accuracy, particularly for the
-  ``Distressed'' category (current F1 = 0.71). Integration with a speech
-  emotion recognition model via Whisper {[}11{]} would enable multimodal
-  emotion detection.
+  \textbf{Deploy fine-tuned emotion classifier.} The prototype uses
+  keyword-based sentiment analysis with clinical safety keywords.
+  Fine-tuning a BERT-based classifier on a domain-specific mental health
+  dataset --- such as DAIC-WOZ or a custom Arabic-English corpus ---
+  would improve classification accuracy, particularly for the
+  ``Distressed'' category (current mock F1 = 0.71 for the designed
+  model). Integration with a speech emotion recognition model via
+  Whisper {[}12{]} would enable multimodal emotion detection.
 \item
   \textbf{Speech-to-text via Whisper.} Adding voice input reduces the
   barrier to engagement, particularly for users with limited literacy or
@@ -1711,7 +2364,7 @@ and dependence on the current implementation:
   and emotion classifier to 4-bit or 8-bit precision would enable
   on-device inference, reducing latency and eliminating cloud dependency
   for privacy-sensitive deployments. This is particularly relevant for
-  the planned self-hosted Ollama migration {[}15{]}.
+  the planned self-hosted Ollama migration {[}21{]}.
 \item
   \textbf{Multi-agent conversation architecture.} Future iterations
   could employ a multi-agent system where separate specialized agents
@@ -1721,7 +2374,7 @@ and dependence on the current implementation:
   independent scaling of each agent.
 \end{enumerate}
 
-\section{Limitations}\label{limitations-1}
+\section{5.6 Limitations}\label{limitations-1}
 
 The current implementation has several limitations that should be
 acknowledged:
@@ -1739,9 +2392,10 @@ acknowledged:
   findings.
 \item
   \textbf{Limited Arabic support.} While the system includes bilingual
-  crisis detection, the core NLP pipeline --- emotion classification,
-  RAG retrieval, and LLM prompting --- operates primarily in English,
-  limiting applicability for Arabic-speaking users.
+  crisis detection, the core NLP pipeline --- emotion classification
+  (currently keyword-based sentiment), RAG retrieval, and LLM prompting
+  --- operates primarily in English, limiting applicability for
+  Arabic-speaking users.
 \item
   \textbf{Cloud dependency.} The current architecture depends on Groq
   Cloud for LLM inference and Supabase for data persistence. A fully
@@ -1751,16 +2405,20 @@ acknowledged:
   \textbf{No clinical validation.} The system has not undergone clinical
   trials and should not be considered a replacement for professional
   mental health care. It is designed as a complementary tool.
+\item
+  \textbf{Community moderation.} The community feature relies on user
+  reports for content moderation; automated content detection is not yet
+  implemented.
 \end{enumerate}
 
-\section{Conclusion}\label{conclusion}
+\section{5.7 Conclusion}\label{conclusion}
 
 UpHeal demonstrates that integrating RAG-augmented LLM responses,
-emotion classification, and gamification within a privacy-first
-architecture can improve user engagement and therapeutic outcomes in
-digital mental health. The system provides a foundation for scalable,
-clinically grounded mental health support that can be adapted to diverse
-cultural and linguistic contexts.
+emotion classification, gamification, and community-based peer support
+within a privacy-first architecture can improve user engagement and
+therapeutic outcomes in digital mental health. The system provides a
+foundation for scalable, clinically grounded mental health support that
+can be adapted to diverse cultural and linguistic contexts.
 
 \cleardoublepage
 \phantomsection
@@ -1878,7 +2536,10 @@ defaults. Format:
 
 \section{A.4 Database Schema}\label{a.4-database-schema}
 
-The backend uses Supabase PostgreSQL with the following key tables:
+The backend uses Supabase PostgreSQL with the following key tables,
+organized by domain:
+
+Table A.1: Core application tables.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -1899,9 +2560,11 @@ Key Columns
 \endlastfoot
 \texttt{profiles} & User profiles & \texttt{id}, \texttt{display\_name},
 \texttt{level}, \texttt{xp\_total}, \texttt{streak\_count} \\
+\texttt{chat\_sessions} & Chat session metadata & \texttt{id},
+\texttt{user\_id}, \texttt{roadmap\_id}, \texttt{created\_at} \\
 \texttt{chat\_messages} & Conversation history & \texttt{id},
-\texttt{user\_id}, \texttt{role}, \texttt{content},
-\texttt{emotion\_label}, \texttt{safety\_status} \\
+\texttt{session\_id}, \texttt{role}, \texttt{content},
+\texttt{metadata}, \texttt{created\_at} \\
 \texttt{assessments} & Clinical assessments & \texttt{id},
 \texttt{user\_id}, \texttt{assessment\_type}, \texttt{score},
 \texttt{severity}, \texttt{created\_at} \\
@@ -1919,15 +2582,86 @@ Key Columns
 \texttt{crisis\_reports} & Safety audit log & \texttt{id},
 \texttt{user\_id}, \texttt{trigger\_text}, \texttt{action\_taken},
 \texttt{created\_at} \\
+\texttt{mood\_logs} & Mood tracking & \texttt{id}, \texttt{user\_id},
+\texttt{mood\_score}, \texttt{emotion\_label}, \texttt{logged\_at} \\
+\texttt{sleep\_logs} & Sleep tracking & \texttt{id}, \texttt{user\_id},
+\texttt{duration\_minutes}, \texttt{quality}, \texttt{logged\_at} \\
+\texttt{roadmaps} & Personalized roadmaps & \texttt{id},
+\texttt{user\_id}, \texttt{overview}, \texttt{suggested\_tasks},
+\texttt{created\_at} \\
+\end{longtable}
+}
+
+Table A.2: Community feature tables (13 tables).
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2414}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3103}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4483}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Table
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Purpose
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Key Columns
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{community\_groups} & Support groups & \texttt{id},
+\texttt{name}, \texttt{description}, \texttt{type},
+\texttt{created\_by} \\
+\texttt{community\_group\_members} & Group membership & \texttt{id},
+\texttt{group\_id}, \texttt{user\_id}, \texttt{role},
+\texttt{joined\_at} \\
+\texttt{community\_posts} & Group posts & \texttt{id},
+\texttt{group\_id}, \texttt{author\_id}, \texttt{title},
+\texttt{content}, \texttt{created\_at} \\
+\texttt{community\_comments} & Post comments & \texttt{id},
+\texttt{post\_id}, \texttt{author\_id}, \texttt{content},
+\texttt{created\_at} \\
+\texttt{community\_likes} & Post/comment likes & \texttt{id},
+\texttt{target\_id}, \texttt{user\_id}, \texttt{target\_type} \\
+\texttt{community\_reports} & Content reports & \texttt{id},
+\texttt{reporter\_id}, \texttt{target\_id}, \texttt{reason},
+\texttt{status} \\
+\texttt{community\_messages} & Group chat messages & \texttt{id},
+\texttt{channel\_id}, \texttt{author\_id}, \texttt{content},
+\texttt{created\_at} \\
+\texttt{community\_channels} & Chat channels & \texttt{id},
+\texttt{group\_id}, \texttt{name}, \texttt{type},
+\texttt{created\_at} \\
+\texttt{community\_notifications} & User notifications & \texttt{id},
+\texttt{user\_id}, \texttt{type}, \texttt{payload}, \texttt{read},
+\texttt{created\_at} \\
+\texttt{community\_banned\_users} & Group bans & \texttt{id},
+\texttt{group\_id}, \texttt{user\_id}, \texttt{reason},
+\texttt{banned\_at} \\
+\texttt{community\_moderation\_log} & Moderator actions & \texttt{id},
+\texttt{moderator\_id}, \texttt{action}, \texttt{target\_id},
+\texttt{created\_at} \\
+\texttt{community\_user\_profiles} & Community profiles & \texttt{id},
+\texttt{user\_id}, \texttt{display\_name}, \texttt{avatar\_url},
+\texttt{bio} \\
+\texttt{community\_pinned\_posts} & Pinned announcements & \texttt{id},
+\texttt{post\_id}, \texttt{group\_id}, \texttt{pinned\_by},
+\texttt{pinned\_at} \\
 \end{longtable}
 }
 
 Row-level security (RLS) policies ensure that each user can only access
-their own data.
+their own data in core tables, and only group members can read community
+messages.
 
 \section{A.5 API Endpoints}\label{a.5-api-endpoints}
 
-The FastAPI backend exposes the following key endpoints:
+The FastAPI backend exposes the following key endpoints, organized by
+service router:
+
+Table A.3: Gateway endpoints (orchestration).
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -1946,27 +2680,104 @@ Purpose
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-\texttt{POST} & \texttt{/api/chat} & Send message, receive LLM response
-with emotion label \\
-\texttt{GET} & \texttt{/api/chat/history} & Retrieve conversation
-history \\
-\texttt{POST} & \texttt{/api/assess} & Submit GAD-7/PHQ-9 assessment \\
-\texttt{GET} & \texttt{/api/assess/history} & Retrieve assessment
-history \\
-\texttt{POST} & \texttt{/api/journal} & Create journal entry \\
-\texttt{GET} & \texttt{/api/journal/entries} & List journal entries \\
-\texttt{GET} & \texttt{/api/roadmap} & Get personalized wellness
+\texttt{POST} & \texttt{/api/assess} & Run GAD-7/PHQ-9 assessment chain
+(assessment → architect → auditor) \\
+\texttt{POST} & \texttt{/api/roadmap} & Generate personalized 90-day
 roadmap \\
-\texttt{GET} & \texttt{/api/gamification/profile} & Get XP, level,
-badges, achievements \\
-\texttt{POST} & \texttt{/api/crisis/report} & Submit crisis detection
-report \\
+\texttt{GET} & \texttt{/health} & Health check (backend + knowledge base
+status) \\
 \end{longtable}
 }
 
-All endpoints require JWT authentication via Bearer token. The gateway
-enforces rate limiting (10 requests per minute on \texttt{/api/assess},
-30 requests per minute on \texttt{/api/chat}).
+Table A.4: Domain service endpoints.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2222}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2778}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Method
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Endpoint
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Service
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Purpose
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{POST} & \texttt{/api/chat/message} & Chat & Send message,
+receive AI response \\
+\texttt{GET} & \texttt{/api/chat/history/\{session\_id\}} & Chat &
+Retrieve conversation history \\
+\texttt{POST} & \texttt{/assessment/assess} & Assessment & Direct
+assessment scoring \\
+\texttt{GET} & \texttt{/knowledge\_base/health} & Knowledge Base &
+ChromaDB health check \\
+\texttt{POST} & \texttt{/ingestion/upload} & Ingestion & Upload and
+process clinical PDFs \\
+\texttt{GET} & \texttt{/auditor/health} & Auditor & Auditor service
+health check \\
+\texttt{GET} & \texttt{/api/telemetry/usage} & Telemetry & Usage
+analytics \\
+\texttt{POST} & \texttt{/api/journal} & Journal & Create journal
+entry \\
+\texttt{GET} & \texttt{/api/journal/entries} & Journal & List journal
+entries \\
+\texttt{GET} & \texttt{/api/roadmap/\{user\_id\}} & Roadmap & Retrieve
+roadmap for user \\
+\end{longtable}
+}
+
+Table A.5: Community endpoints (Supabase Edge Functions and Realtime).
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+Method & Endpoint & Purpose \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{POST} & \texttt{/rest/v1/community\_groups} & Create support
+group \\
+\texttt{GET} & \texttt{/rest/v1/community\_groups} & List groups \\
+\texttt{POST} & \texttt{/rest/v1/community\_group\_members} & Join
+group \\
+\texttt{DELETE} & \texttt{/rest/v1/community\_group\_members} & Leave
+group \\
+\texttt{POST} & \texttt{/rest/v1/community\_posts} & Create post \\
+\texttt{GET} & \texttt{/rest/v1/community\_posts} & List group posts \\
+\texttt{POST} & \texttt{/rest/v1/community\_comments} & Comment on
+post \\
+\texttt{POST} & \texttt{/rest/v1/community\_likes} & Like
+post/comment \\
+\texttt{POST} & \texttt{/rest/v1/community\_messages} & Send chat
+message \\
+\texttt{GET} & \texttt{/rest/v1/community\_messages} & Get chat
+history \\
+\texttt{POST} & \texttt{/rest/v1/community\_reports} & Report content \\
+\texttt{POST} & \texttt{/rest/v1/community\_banned\_users} & Ban user
+from group \\
+\texttt{POST} & \texttt{/rest/v1/community\_notifications} & Send
+notification \\
+\texttt{PATCH} & \texttt{/rest/v1/community\_notifications} & Mark as
+read \\
+\texttt{PATCH} & \texttt{/rest/v1/community\_pinned\_posts} & Pin
+post \\
+\end{longtable}
+}
+
+All gateway and domain endpoints require JWT authentication via Bearer
+token. The gateway enforces rate limiting (10 requests per minute on
+\texttt{/api/assess}, 30 requests per minute on \texttt{/api/chat}).
+Community endpoints use Supabase Row-Level Security policies rather than
+custom authentication middleware.
 
 \section{A.6 Publication}\label{a.6-publication}
 
@@ -2053,33 +2864,71 @@ understanding,''} \emph{Proceedings of the 2019 Conference of the North
 American Chapter of the Association for Computational Linguistics}, pp.
 4171--4186, 2019.}
 
-\bibitem[\citeproctext]{ref-radford2022whisper}
+\bibitem[\citeproctext]{ref-demszky2019goemotions}
 \CSLLeftMargin{{[}11{]} }%
+\CSLRightInline{D. Demszky, D. Movshovitz-Attias, J. Ko, A. Cowen, G.
+Nemade, and S. Ravi, {``{GoEmotions}: A dataset of fine-grained
+emotions,''} in \emph{Proceedings of the 58th annual meeting of the
+association for computational linguistics}, 2020, pp. 4040--4054.}
+
+\bibitem[\citeproctext]{ref-radford2022whisper}
+\CSLLeftMargin{{[}12{]} }%
 \CSLRightInline{A. Radford, J. W. Kim, T. Xu, G. Brockman, C. McLeavey,
 and I. Sutskever, {``Robust speech recognition via large-scale weak
 supervision,''} \emph{arXiv preprint arXiv:2212.04356}, 2022.}
 
+\bibitem[\citeproctext]{ref-deci2000sdt}
+\CSLLeftMargin{{[}13{]} }%
+\CSLRightInline{E. L. Deci and R. M. Ryan, {``The {`what'} and {`why'}
+of goal pursuits: Human needs and the self-determination of behavior,''}
+\emph{Psychological Inquiry}, vol. 11, no. 4, pp. 227--268, 2000.}
+
+\bibitem[\citeproctext]{ref-johnson2016gamification}
+\CSLLeftMargin{{[}14{]} }%
+\CSLRightInline{D. Johnson D. and A. Staneva, {``The {Gamification} of
+{Health}: A systematic review of the literature and future
+directions,''} \emph{Proceedings of the 2016 Annual Symposium on
+Computer-Human Interaction in Play}, pp. 1--18, 2016.}
+
 \bibitem[\citeproctext]{ref-reimers2019sentence}
-\CSLLeftMargin{{[}12{]} }%
+\CSLLeftMargin{{[}15{]} }%
 \CSLRightInline{N. Reimers and I. Gurevych, {``Sentence-{BERT}: Sentence
 embeddings using {Siamese} {BERT}-networks,''} \emph{Proceedings of the
 2019 Conference on Empirical Methods in Natural Language Processing},
 pp. 3982--3992, 2019.}
 
+\bibitem[\citeproctext]{ref-malkov2018hnsw}
+\CSLLeftMargin{{[}16{]} }%
+\CSLRightInline{Y. A. Malkov and D. A. Yashunin, {``Efficient and robust
+approximate nearest neighbor search using hierarchical navigable small
+world graphs,''} \emph{IEEE Transactions on Pattern Analysis and Machine
+Intelligence}, vol. 42, no. 4, pp. 824--836, 2018.}
+
+\bibitem[\citeproctext]{ref-chromadb2024}
+\CSLLeftMargin{{[}17{]} }%
+\CSLRightInline{Chroma, {``{ChromaDB}: The open-source embedding
+database.''} \url{https://www.trychroma.com/}, 2024.}
+
+\bibitem[\citeproctext]{ref-apa2022dsm5tr}
+\CSLLeftMargin{{[}18{]} }%
+\CSLRightInline{American Psychiatric Association, \emph{Diagnostic and
+statistical manual of mental disorders: {DSM-5-TR}}, 5th Text Revision.
+Washington, DC: American Psychiatric Association Publishing, 2022.}
+
 \bibitem[\citeproctext]{ref-chung2022scaling}
-\CSLLeftMargin{{[}13{]} }%
+\CSLLeftMargin{{[}19{]} }%
 \CSLRightInline{{H. W. Chung \emph{et al.}}, {``Scaling
 instruction-finetuned language models,''} in \emph{Workshop on large
 language models and alignment}, 2022.}
 
 \bibitem[\citeproctext]{ref-touvron2023llama}
-\CSLLeftMargin{{[}14{]} }%
+\CSLLeftMargin{{[}20{]} }%
 \CSLRightInline{{H. Touvron \emph{et al.}}, {``{LLaMA}: Open and
 efficient foundation language models,''} in \emph{arXiv preprint
 arXiv:2302.13971}, 2023.}
 
 \bibitem[\citeproctext]{ref-team2024gemma}
-\CSLLeftMargin{{[}15{]} }%
+\CSLLeftMargin{{[}21{]} }%
 \CSLRightInline{Gemma Team, {``Gemma: Open models based on {Google}
 research and technology,''} \emph{arXiv preprint arXiv:2403.08295},
 2024.}

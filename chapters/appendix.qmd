@@ -72,38 +72,93 @@ The script supports reading from CSV files in the `results/` directory. If CSV f
 
 ## A.4 Database Schema
 
-The backend uses Supabase PostgreSQL with the following key tables:
+The backend uses Supabase PostgreSQL with the following key tables, organized by domain:
+
+Table A.1: Core application tables.
 
 | Table | Purpose | Key Columns |
 |-------|---------|-------------|
 | `profiles` | User profiles | `id`, `display_name`, `level`, `xp_total`, `streak_count` |
-| `chat_messages` | Conversation history | `id`, `user_id`, `role`, `content`, `emotion_label`, `safety_status` |
+| `chat_sessions` | Chat session metadata | `id`, `user_id`, `roadmap_id`, `created_at` |
+| `chat_messages` | Conversation history | `id`, `session_id`, `role`, `content`, `metadata`, `created_at` |
 | `assessments` | Clinical assessments | `id`, `user_id`, `assessment_type`, `score`, `severity`, `created_at` |
 | `journal_entries` | User journaling | `id`, `user_id`, `title`, `content`, `mood_rating` |
 | `badges` | Earned badges | `id`, `user_id`, `badge_id`, `earned_at` |
 | `achievements` | Unlocked achievements | `id`, `user_id`, `achievement_id`, `progress`, `unlocked_at` |
 | `challenges` | Active challenges | `id`, `user_id`, `challenge_id`, `progress`, `expires_at` |
 | `crisis_reports` | Safety audit log | `id`, `user_id`, `trigger_text`, `action_taken`, `created_at` |
+| `mood_logs` | Mood tracking | `id`, `user_id`, `mood_score`, `emotion_label`, `logged_at` |
+| `sleep_logs` | Sleep tracking | `id`, `user_id`, `duration_minutes`, `quality`, `logged_at` |
+| `roadmaps` | Personalized roadmaps | `id`, `user_id`, `overview`, `suggested_tasks`, `created_at` |
 
-Row-level security (RLS) policies ensure that each user can only access their own data.
+Table A.2: Community feature tables (13 tables).
+
+| Table | Purpose | Key Columns |
+|-------|---------|-------------|
+| `community_groups` | Support groups | `id`, `name`, `description`, `type`, `created_by` |
+| `community_group_members` | Group membership | `id`, `group_id`, `user_id`, `role`, `joined_at` |
+| `community_posts` | Group posts | `id`, `group_id`, `author_id`, `title`, `content`, `created_at` |
+| `community_comments` | Post comments | `id`, `post_id`, `author_id`, `content`, `created_at` |
+| `community_likes` | Post/comment likes | `id`, `target_id`, `user_id`, `target_type` |
+| `community_reports` | Content reports | `id`, `reporter_id`, `target_id`, `reason`, `status` |
+| `community_messages` | Group chat messages | `id`, `channel_id`, `author_id`, `content`, `created_at` |
+| `community_channels` | Chat channels | `id`, `group_id`, `name`, `type`, `created_at` |
+| `community_notifications` | User notifications | `id`, `user_id`, `type`, `payload`, `read`, `created_at` |
+| `community_banned_users` | Group bans | `id`, `group_id`, `user_id`, `reason`, `banned_at` |
+| `community_moderation_log` | Moderator actions | `id`, `moderator_id`, `action`, `target_id`, `created_at` |
+| `community_user_profiles` | Community profiles | `id`, `user_id`, `display_name`, `avatar_url`, `bio` |
+| `community_pinned_posts` | Pinned announcements | `id`, `post_id`, `group_id`, `pinned_by`, `pinned_at` |
+
+Row-level security (RLS) policies ensure that each user can only access their own data in core tables, and only group members can read community messages.
 
 ## A.5 API Endpoints
 
-The FastAPI backend exposes the following key endpoints:
+The FastAPI backend exposes the following key endpoints, organized by service router:
+
+Table A.3: Gateway endpoints (orchestration).
 
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
-| `POST` | `/api/chat` | Send message, receive LLM response with emotion label |
-| `GET` | `/api/chat/history` | Retrieve conversation history |
-| `POST` | `/api/assess` | Submit GAD-7/PHQ-9 assessment |
-| `GET` | `/api/assess/history` | Retrieve assessment history |
-| `POST` | `/api/journal` | Create journal entry |
-| `GET` | `/api/journal/entries` | List journal entries |
-| `GET` | `/api/roadmap` | Get personalized wellness roadmap |
-| `GET` | `/api/gamification/profile` | Get XP, level, badges, achievements |
-| `POST` | `/api/crisis/report` | Submit crisis detection report |
+| `POST` | `/api/assess` | Run GAD-7/PHQ-9 assessment chain (assessment → architect → auditor) |
+| `POST` | `/api/roadmap` | Generate personalized 90-day roadmap |
+| `GET` | `/health` | Health check (backend + knowledge base status) |
 
-All endpoints require JWT authentication via Bearer token. The gateway enforces rate limiting (10 requests per minute on `/api/assess`, 30 requests per minute on `/api/chat`).
+Table A.4: Domain service endpoints.
+
+| Method | Endpoint | Service | Purpose |
+|--------|----------|---------|---------|
+| `POST` | `/api/chat/message` | Chat | Send message, receive AI response |
+| `GET` | `/api/chat/history/{session_id}` | Chat | Retrieve conversation history |
+| `POST` | `/assessment/assess` | Assessment | Direct assessment scoring |
+| `GET` | `/knowledge_base/health` | Knowledge Base | ChromaDB health check |
+| `POST` | `/ingestion/upload` | Ingestion | Upload and process clinical PDFs |
+| `GET` | `/auditor/health` | Auditor | Auditor service health check |
+| `GET` | `/api/telemetry/usage` | Telemetry | Usage analytics |
+| `POST` | `/api/journal` | Journal | Create journal entry |
+| `GET` | `/api/journal/entries` | Journal | List journal entries |
+| `GET` | `/api/roadmap/{user_id}` | Roadmap | Retrieve roadmap for user |
+
+Table A.5: Community endpoints (Supabase Edge Functions and Realtime).
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| `POST` | `/rest/v1/community_groups` | Create support group |
+| `GET` | `/rest/v1/community_groups` | List groups |
+| `POST` | `/rest/v1/community_group_members` | Join group |
+| `DELETE` | `/rest/v1/community_group_members` | Leave group |
+| `POST` | `/rest/v1/community_posts` | Create post |
+| `GET` | `/rest/v1/community_posts` | List group posts |
+| `POST` | `/rest/v1/community_comments` | Comment on post |
+| `POST` | `/rest/v1/community_likes` | Like post/comment |
+| `POST` | `/rest/v1/community_messages` | Send chat message |
+| `GET` | `/rest/v1/community_messages` | Get chat history |
+| `POST` | `/rest/v1/community_reports` | Report content |
+| `POST` | `/rest/v1/community_banned_users` | Ban user from group |
+| `POST` | `/rest/v1/community_notifications` | Send notification |
+| `PATCH` | `/rest/v1/community_notifications` | Mark as read |
+| `PATCH` | `/rest/v1/community_pinned_posts` | Pin post |
+
+All gateway and domain endpoints require JWT authentication via Bearer token. The gateway enforces rate limiting (10 requests per minute on `/api/assess`, 30 requests per minute on `/api/chat`). Community endpoints use Supabase Row-Level Security policies rather than custom authentication middleware.
 
 ## A.6 Publication
 
