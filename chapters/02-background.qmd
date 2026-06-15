@@ -26,9 +26,9 @@ A systematic review of 47 mental health conversational agents by Kumar and Jaisw
 
 ### Emotion Recognition
 
-Emotion classification from user input enables adaptive system responses. Pre-trained models such as BERT-based classifiers have shown strong performance in detecting emotional cues from text [@devlin2019bert]. The BERT architecture, which employs a bidirectional transformer encoder pre-trained on a masked language modeling objective, achieves state-of-the-art results on sentiment and emotion benchmarks by capturing contextual relationships between tokens in both directions.
+Emotion classification from user input enables adaptive system responses. Pre-trained models such as BERT-based classifiers have shown strong performance in detecting emotional cues from text [@devlin2019bert]. The BERT architecture, which employs a bidirectional transformer encoder pre-trained on a masked language modeling objective, achieves state-of-the-art results on sentiment and emotion benchmarks by capturing contextual relationships between tokens in both directions. The HuggingFace Transformers library [@wolf2020transformers] provides the standard implementation used to fine-tune and deploy these models in production pipelines.
 
-For text-based emotion detection, the GoEmotions dataset [@demszky2019goemotions] provides 58,000 Reddit comments labeled across 27 emotion categories, making it one of the most comprehensive publicly available emotion datasets. Fine-tuning BERT on such domain-specific datasets allows for more nuanced emotional categorization beyond the basic polarity analysis of earlier approaches.
+For text-based emotion detection, the GoEmotions dataset [@demszky2019goemotions] provides 58,000 Reddit comments labeled across 27 emotion categories, making it one of the most comprehensive publicly available emotion datasets. EmoBank [@bostrom2020emobank] offers an additional dimensional emotion annotation resource that can support valence-arousal modeling. Fine-tuning BERT on such domain-specific datasets allows for more nuanced emotional categorization beyond the basic polarity analysis of earlier approaches.
 
 For speech-based emotion recognition, Whisper has demonstrated robust performance in transcribing and analyzing emotional speech patterns [@radford2022whisper]. Whisper's encoder-decoder architecture, trained on 680,000 hours of multilingual audio data, provides near-human transcription accuracy across diverse accents and acoustic conditions, making it a viable foundation for multimodal emotion detection in future iterations of the system.
 
@@ -63,7 +63,7 @@ Table: Comparison of existing digital mental health solutions. {#tbl-comparison}
 | User retention | Moderate (2-week studies) | Moderate (3.6 engagements/week) | High (social attachment) | Gamification (XP, streaks, badges, challenges) |
 | Crisis detection | Basic keyword | Basic keyword | None | Multi-tier (EN/AR) + hotlines + clinical auditor |
 | LLM integration | None | None | Yes (ungrounded) | RAG-augmented + clinical audit |
-| Emotion adaptation | None | None | None | Real-time BERT-based classification |
+| Emotion adaptation | None | None | None | Keyword-based sentiment (BERT planned) |
 | Gamification | None | Minimal | Tamagotchi-style avatar | 10 badges, 12 achievements, 10 challenges, streak system |
 | Community | None | None | None | Real-time feed, groups, focus rooms |
 

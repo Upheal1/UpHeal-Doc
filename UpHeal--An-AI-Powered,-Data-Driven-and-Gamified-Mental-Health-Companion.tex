@@ -527,9 +527,12 @@ system adjusts task difficulty, modifies response tone, and prioritizes
 calming interventions such as guided breathing exercises. When the
 system detects crisis keywords --- in both English and Arabic --- it
 triggers a mandatory redirection to emergency resources with localized
-hotline numbers. Emotion classification is powered by a fine-tuned model
-that processes text input, with future support for voice-based detection
-via Whisper speech-to-text transcription.
+hotline numbers. Emotion classification is designed around a fine-tuned
+BERT model that processes text input; the current implementation uses
+keyword-based sentiment analysis with clinical safety keywords, with the
+BERT-based classifier planned for production deployment and future
+support for voice-based detection via Whisper speech-to-text
+transcription.
 
 \textbf{Pillar 3: Comprehensive gamification engine.} UpHeal implements
 a multi-layered gamification system designed to sustain engagement over
@@ -681,17 +684,22 @@ BERT architecture, which employs a bidirectional transformer encoder
 pre-trained on a masked language modeling objective, achieves
 state-of-the-art results on sentiment and emotion benchmarks by
 capturing contextual relationships between tokens in both directions.
+The HuggingFace Transformers library {[}11{]} provides the standard
+implementation used to fine-tune and deploy these models in production
+pipelines.
 
-For text-based emotion detection, the GoEmotions dataset {[}11{]}
+For text-based emotion detection, the GoEmotions dataset {[}12{]}
 provides 58,000 Reddit comments labeled across 27 emotion categories,
 making it one of the most comprehensive publicly available emotion
-datasets. Fine-tuning BERT on such domain-specific datasets allows for
-more nuanced emotional categorization beyond the basic polarity analysis
-of earlier approaches.
+datasets. EmoBank {[}13{]} offers an additional dimensional emotion
+annotation resource that can support valence-arousal modeling.
+Fine-tuning BERT on such domain-specific datasets allows for more
+nuanced emotional categorization beyond the basic polarity analysis of
+earlier approaches.
 
 For speech-based emotion recognition, Whisper has demonstrated robust
 performance in transcribing and analyzing emotional speech patterns
-{[}12{]}. Whisper's encoder-decoder architecture, trained on 680,000
+{[}14{]}. Whisper's encoder-decoder architecture, trained on 680,000
 hours of multilingual audio data, provides near-human transcription
 accuracy across diverse accents and acoustic conditions, making it a
 viable foundation for multimodal emotion detection in future iterations
@@ -716,7 +724,7 @@ to non-gamified counterparts, with points, badges, and leaderboards
 being the most commonly implemented features.
 
 The theoretical foundation for gamification's effectiveness in health
-contexts draws on Self-Determination Theory (SDT) {[}13{]}, which posits
+contexts draws on Self-Determination Theory (SDT) {[}15{]}, which posits
 that intrinsic motivation is driven by three basic psychological needs:
 autonomy (the need to feel in control of one's behavior), competence
 (the need to feel effective in achieving desired outcomes), and
@@ -727,7 +735,7 @@ social features such as community challenges and group activities
 (relatedness).
 
 A taxonomy of gamification design elements for health applications,
-proposed by Johnson et al. {[}14{]}, organizes game mechanics into three
+proposed by Johnson et al. {[}16{]}, organizes game mechanics into three
 categories: motivational (points, levels, achievements), social
 (leaderboards, teams, challenges), and behavioral (streaks, reminders,
 loss aversion). The system described in this thesis implements elements
@@ -761,19 +769,19 @@ which produces a response conditioned on both the query and the
 retrieved context.
 
 The retrieval component typically relies on dense vector
-representations, with Sentence-BERT embeddings {[}15{]} providing strong
+representations, with Sentence-BERT embeddings {[}17{]} providing strong
 performance on semantic textual similarity benchmarks. For efficient
 similarity search at scale, the Hierarchical Navigable Small World
-(HNSW) algorithm {[}16{]} enables sub-linear query time with high
+(HNSW) algorithm {[}18{]} enables sub-linear query time with high
 recall, making it suitable for real-time retrieval in conversational
-systems. ChromaDB {[}17{]} is an open-source vector database that
+systems. ChromaDB {[}19{]} is an open-source vector database that
 implements HNSW indexing and provides a lightweight, persistent store
 specifically designed for RAG applications.
 
 In the medical domain, RAG has been applied to ground LLM responses in
 clinical literature, reducing hallucination and improving factual
 accuracy {[}6{]}. By retrieving passages from the Diagnostic and
-Statistical Manual of Mental Disorders (DSM-5-TR) {[}18{]} and curated
+Statistical Manual of Mental Disorders (DSM-5-TR) {[}20{]} and curated
 CBT workbooks, a RAG pipeline can ensure that generated responses are
 clinically appropriate and evidence-based. The system described in this
 thesis embeds 3,255+ semantic chunks from clinical psychology texts
@@ -831,8 +839,8 @@ Crisis detection & Basic keyword & Basic keyword & None & Multi-tier
 (EN/AR) + hotlines + clinical auditor \\
 LLM integration & None & None & Yes (ungrounded) & RAG-augmented +
 clinical audit \\
-Emotion adaptation & None & None & None & Real-time BERT-based
-classification \\
+Emotion adaptation & None & None & None & Keyword-based sentiment (BERT
+planned) \\
 Gamification & None & Minimal & Tamagotchi-style avatar & 10 badges, 12
 achievements, 10 challenges, streak system \\
 Community & None & None & None & Real-time feed, groups, focus rooms \\
@@ -1015,7 +1023,7 @@ provide the behavioral data needed for personalization and
 gamification. \\
 FR-09 & The system shall support a community feature with a real-time
 feed, group chat, synchronized focus rooms, and user profiles. & Should
-& Community features leverage the relatedness dimension of SDT {[}13{]}
+& Community features leverage the relatedness dimension of SDT {[}15{]}
 to sustain engagement. \\
 FR-10 & The system shall screen every generated response through a
 clinical safety auditor that classifies it as GREEN, YELLOW, or RED
@@ -1079,9 +1087,18 @@ region. \\
 Figure 3.1 presents the use case diagram for the UpHeal system, showing
 both actor use cases and system use cases.
 
-Figure 3.1: UpHeal use case diagram.
+\begin{figure}
 
-\includegraphics[width=25.94in,height=4.3in]{chapters/03-methodology_files/figure-latex/mermaid-figure-1.png}
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/03-methodology_files/figure-pdf/fig-use-case-output-1.pdf}}
+
+}
+
+\caption{\label{fig-use-case}UpHeal use case diagram showing 8 user use
+cases and 6 system use cases}
+
+\end{figure}%
 
 The use cases are organized into two categories. User use cases
 represent direct interactions: registration and authentication (FR-01),
@@ -1101,9 +1118,18 @@ by the RAG framework {[}2{]} and modern LLM integration patterns
 {[}6{]}. Figure 3.2 presents the high-level block diagram showing all
 components and their interconnections.
 
-Figure 3.2: UpHeal system architecture block diagram.
+\begin{figure}
 
-\includegraphics[width=33.33in,height=9.31in]{chapters/03-methodology_files/figure-latex/mermaid-figure-8.png}
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/03-methodology_files/figure-pdf/fig-architecture-output-1.pdf}}
+
+}
+
+\caption{\label{fig-architecture}UpHeal system architecture block
+diagram}
+
+\end{figure}%
 
 \textbf{Component Descriptions:}
 
@@ -1166,9 +1192,17 @@ updates \\
 
 \subsection{3.5.1 Pipeline Architecture}\label{pipeline-architecture}
 
-Figure 3.3: RAG pipeline block diagram.
+\begin{figure}
 
-\includegraphics[width=26.12in,height=1.81in]{chapters/03-methodology_files/figure-latex/mermaid-figure-7.png}
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/03-methodology_files/figure-pdf/fig-rag-pipeline-output-1.pdf}}
+
+}
+
+\caption{\label{fig-rag-pipeline}RAG pipeline block diagram}
+
+\end{figure}%
 
 \subsection{3.5.2 Document Processing
 Algorithm}\label{document-processing-algorithm}
@@ -1179,7 +1213,7 @@ Input: PDF_files[]
 Output: Indexed_documents
 
 1. For each PDF in PDF_files:
-   a. Extract text using pdfplumber
+   a. Extract text using pdfplumber [@hutton2022pdfplumber]
    b. Filter noise (bibliography, headers, footers)
    c. Normalize Unicode
    
@@ -1248,7 +1282,7 @@ HNSW M & 16 \\
 \subsection{3.6.1 Prompt Assembly}\label{prompt-assembly}
 
 The prompt is constructed from four components, following
-instruction-fine-tuning patterns {[}19{]}:
+instruction-fine-tuning patterns {[}21{]}:
 
 \begin{verbatim}
 Prompt Structure:
@@ -1262,9 +1296,18 @@ Prompt Structure:
 \subsection{3.6.2 LLM Service
 Architecture}\label{llm-service-architecture}
 
-Figure 3.4: LLM service integration diagram.
+\begin{figure}
 
-\includegraphics[width=11.87in,height=8.34in]{chapters/03-methodology_files/figure-latex/mermaid-figure-6.png}
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/03-methodology_files/figure-pdf/fig-llm-service-output-1.pdf}}
+
+}
+
+\caption{\label{fig-llm-service}LLM service integration sequence
+diagram}
+
+\end{figure}%
 
 \subsection{3.6.3 LLM Configuration}\label{llm-configuration}
 
@@ -1287,8 +1330,8 @@ Ollama (Planned)
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Model & llama-3.1-8b-instant {[}19{]}, {[}20{]} & qwen2.5:7b / Gemma 2B
-{[}21{]} \\
+Model & llama-3.1-8b-instant {[}21{]}, {[}22{]} & qwen2.5:7b / Gemma 2B
+{[}23{]} \\
 Hosting & Cloud (Groq) & Self-hosted (RunPod) \\
 Temperature & 0.7 & 0.7 \\
 Max Tokens & 300 & 500 \\
@@ -1302,9 +1345,17 @@ Cost & Per-request & Fixed (GPU rental) \\
 \subsection{3.7.1 Classification
 Pipeline}\label{classification-pipeline}
 
-Figure 3.5: Emotion classification flow.
+\begin{figure}
 
-\includegraphics[width=14.88in,height=1.81in]{chapters/03-methodology_files/figure-latex/mermaid-figure-5.png}
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/03-methodology_files/figure-pdf/fig-emotion-pipeline-output-1.pdf}}
+
+}
+
+\caption{\label{fig-emotion-pipeline}Emotion classification pipeline}
+
+\end{figure}%
 
 \subsection{3.7.2 Emotion Categories}\label{emotion-categories}
 
@@ -1367,14 +1418,30 @@ Output: emotion_label, confidence_scores
    b. All probabilities: confidence_scores
 \end{verbatim}
 
+\begin{quote}
+\textbf{Design vs.~implementation note:} Section 3.7 describes the
+designed emotion classification pipeline. The current production
+implementation uses keyword-based sentiment analysis with clinical
+safety keywords within the auditor service, while the BERT-based
+classifier remains planned for future deployment.
+\end{quote}
+
 \section{3.8 Gamification System}\label{gamification-system}
 
 \subsection{3.8.1 Gamification
 Architecture}\label{gamification-architecture}
 
-Figure 3.6: Gamification state machine.
+\begin{figure}
 
-\includegraphics[width=5.72in,height=10.75in]{chapters/03-methodology_files/figure-latex/mermaid-figure-4.png}
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/03-methodology_files/figure-pdf/fig-gamification-state-output-1.pdf}}
+
+}
+
+\caption{\label{fig-gamification-state}Gamification state machine}
+
+\end{figure}%
 
 \subsection{3.8.2 XP Calculation Formula}\label{xp-calculation-formula}
 
@@ -1412,9 +1479,17 @@ Level & XP Required & Total XP & Unlocks \\
 
 \subsection{3.9.1 Authentication Flow}\label{authentication-flow}
 
-Figure 3.7: JWT authentication flow.
+\begin{figure}
 
-\includegraphics[width=9.14in,height=6.34in]{chapters/03-methodology_files/figure-latex/mermaid-figure-3.png}
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/03-methodology_files/figure-pdf/fig-auth-flow-output-1.pdf}}
+
+}
+
+\caption{\label{fig-auth-flow}JWT authentication flow}
+
+\end{figure}%
 
 \subsection{3.9.2 Security Layers}\label{security-layers}
 
@@ -1468,9 +1543,17 @@ Output: safety_status, emergency_payload
 
 \subsection{3.10.1 End-to-End Data Flow}\label{end-to-end-data-flow}
 
-Figure 3.8: Complete data flow for a chat request.
+\begin{figure}
 
-\includegraphics[width=12.25in,height=12.77in]{chapters/03-methodology_files/figure-latex/mermaid-figure-2.png}
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/03-methodology_files/figure-pdf/fig-data-flow-output-1.pdf}}
+
+}
+
+\caption{\label{fig-data-flow}Complete data flow for a chat request}
+
+\end{figure}%
 
 \subsection{3.10.2 Integration Points}\label{integration-points}
 
@@ -1585,6 +1668,10 @@ GPU & RunPod & - & A100 80GB (planned) \\
 \end{longtable}
 }
 
+The frontend is built with Flutter {[}24{]}, the API gateway with
+FastAPI {[}25{]}, and authentication, database, and real-time services
+are provided by Supabase {[}26{]}.
+
 \section{3.12 Hardware Specifications}\label{hardware-specifications}
 
 Table 3.8: Infrastructure specifications.
@@ -1607,6 +1694,141 @@ Client & Android 10+ / iOS 15+ & 4GB RAM minimum \\
 \end{longtable}
 }
 
+\section{3.13 Data Models}\label{data-models}
+
+\subsection{3.13.1 Core Application
+Tables}\label{core-application-tables}
+
+The system uses 12 core tables in Supabase PostgreSQL to support the
+primary therapeutic workflow.
+
+Table 3.9: Core application data models.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1707}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3171}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2927}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2195}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Table
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Primary Key
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Key Fields
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Purpose
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+profiles & id (UUID) & display\_name, level, xp\_total, streak\_count,
+freeze\_tokens & User profile and gamification state \\
+chat\_sessions & id (UUID) & user\_id, roadmap\_id, created\_at & Chat
+session metadata \\
+chat\_messages & id (UUID) & session\_id, role, content, emotion\_label,
+safety\_status, created\_at & Conversation messages \\
+assessments & id (UUID) & user\_id, assessment\_type, score, severity,
+created\_at & Clinical assessment records \\
+journal\_entries & id (UUID) & user\_id, title, content, mood\_rating,
+created\_at & User journaling \\
+mood\_logs & id (UUID) & user\_id, mood\_score, emotion\_label,
+logged\_at & Mood tracking \\
+sleep\_logs & id (UUID) & user\_id, duration\_minutes, quality,
+logged\_at & Sleep tracking \\
+roadmaps & id (UUID) & user\_id, overview, suggested\_tasks, status &
+Personalized roadmaps \\
+badges & id (UUID) & user\_id, badge\_id, earned\_at & Earned badges \\
+achievements & id (UUID) & user\_id, achievement\_id, progress,
+unlocked\_at & Achievement tracking \\
+challenges & id (UUID) & user\_id, challenge\_id, progress, expires\_at
+& Active challenges \\
+crisis\_reports & id (UUID) & user\_id, trigger\_text, action\_taken,
+created\_at & Safety audit log \\
+\end{longtable}
+}
+
+\subsection{3.13.2 Community Tables}\label{community-tables}
+
+Thirteen tables implement the community feature data model, supporting
+groups, posts, comments, real-time channels, moderation, and
+notifications.
+
+Table 3.10: Community data models.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1707}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3171}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2927}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2195}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Table
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Primary Key
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Key Fields
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Purpose
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+community\_groups & id (UUID) & name, description, type, created\_by &
+Support groups and communities \\
+community\_group\_members & id (UUID) & group\_id, user\_id, role,
+joined\_at & Membership with role-based access \\
+community\_posts & id (UUID) & group\_id, author\_id, title, content,
+created\_at & Group posts and announcements \\
+community\_comments & id (UUID) & post\_id, author\_id, content,
+created\_at & Post comments \\
+community\_likes & id (UUID) & target\_id, user\_id, target\_type,
+created\_at & Likes on posts/comments \\
+community\_reports & id (UUID) & reporter\_id, target\_id, reason,
+status, created\_at & Content moderation reports \\
+community\_messages & id (UUID) & channel\_id, author\_id, content,
+created\_at & Group chat messages \\
+community\_channels & id (UUID) & group\_id, name, type, created\_at &
+Chat channels within groups \\
+community\_notifications & id (UUID) & user\_id, type, payload, read,
+created\_at & User notifications \\
+community\_banned\_users & id (UUID) & group\_id, user\_id, reason,
+banned\_at & Group-level user bans \\
+community\_moderation\_log & id (UUID) & moderator\_id, action,
+target\_id, created\_at & Moderator action history \\
+community\_user\_profiles & id (UUID) & user\_id, display\_name,
+avatar\_url, bio & Community-specific profiles \\
+community\_pinned\_posts & id (UUID) & post\_id, group\_id, pinned\_by,
+pinned\_at & Pinned announcements \\
+\end{longtable}
+}
+
+\subsection{3.13.3 Entity Relationships}\label{entity-relationships}
+
+Figure 3.9 shows the primary entity relationships between core and
+community tables. Each core table is linked to \texttt{profiles} through
+\texttt{user\_id} with row-level security enforcing user isolation.
+Community tables form a separate subgraph anchored on
+\texttt{community\_groups}, with \texttt{community\_group\_members}
+bridging users to groups.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/03-methodology_files/figure-pdf/fig-er-diagram-output-1.pdf}}
+
+}
+
+\caption{\label{fig-er-diagram}Entity relationship diagram for core and
+community tables}
+
+\end{figure}%
+
 \bookmarksetup{startatroot}
 
 \chapter{Results and Discussions}\label{sec-results-discussions}
@@ -1625,7 +1847,7 @@ utilities layer. Community features are powered by Supabase's Realtime,
 Edge Functions, and PostgreSQL rather than a dedicated backend service.
 The RAG pipeline uses a ChromaDB vector store indexed with
 sentence-transformer embeddings (\texttt{all-mpnet-base-v2}, 768
-dimensions) {[}15{]}, and the emotion classification module employs
+dimensions) {[}17{]}, and the emotion classification module employs
 keyword-based sentiment analysis with clinical safety keywords, with a
 fine-tuned BERT model planned for production deployment {[}10{]}.
 
@@ -1656,6 +1878,10 @@ The system was evaluated across five dimensions:
   pipeline stage, and System Usability Scale (SUS) score from 20
   participants.
 \end{enumerate}
+
+The clinical assessments use the PHQ-9 {[}27{]} and GAD-7 {[}28{]}
+instruments, which are widely validated for depression and generalized
+anxiety screening in digital health applications.
 
 \section{4.2 System Implementation}\label{system-implementation}
 
@@ -1733,8 +1959,8 @@ with the backend through two channels:
   \textbf{UphealApi service} (\texttt{ai\_chat\_service.dart}): Handles
   all AI-related requests including chat message submission,
   conversation history retrieval, and crisis detection responses.
-  Requests are routed through the FastAPI gateway at
-  \texttt{/api/v1/chat/} endpoints.
+  Requests are routed through the FastAPI gateway at \texttt{/api/chat/}
+  endpoints.
 \item
   \textbf{Supabase client} (\texttt{supabase\_service.dart}): Manages
   authentication (email/password, OAuth), community features (groups,
@@ -1941,6 +2167,16 @@ tracking, enabling sub-second updates without polling.
 \section{4.3 Emotion Classification
 Results}\label{emotion-classification-results}
 
+\begin{quote}
+\textbf{Disclaimer:} The evaluation results presented in Sections
+4.3--4.8 are generated from a simulated evaluation using the designed
+system model. The emotion classification metrics, response quality
+scores, retention rates, and performance benchmarks reflect target or
+model-projected values rather than data from a live user study. Actual
+results may differ upon deployment with real participants and
+institutional review.
+\end{quote}
+
 \subsection{4.3.1 Accuracy Metrics}\label{accuracy-metrics}
 
 Figure 4.1: Emotion classification performance per category.
@@ -2041,9 +2277,119 @@ Mean Reciprocal Rank & 0.79 \\
 \end{longtable}
 }
 
-\section{4.5 User Retention Results}\label{user-retention-results}
+\section{4.5 Testing}\label{testing}
 
-\subsection{4.5.1 Retention Curve}\label{retention-curve}
+\subsection{4.5.1 Backend Test Suite}\label{backend-test-suite}
+
+The backend test suite comprises 27 pytest files organized across the AI
+pipeline, clinical safety, data access, authentication, and
+infrastructure categories. The tests validate both unit behavior and
+end-to-end service contracts.
+
+Table 4.4: Backend test categories.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2703}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3243}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4054}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Category
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Test Files
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Primary Focus
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Architect Pipeline & \texttt{test\_architect.py},
+\texttt{test\_orchestration.py}, \texttt{test\_reranking.py},
+\texttt{test\_pipeline\_retrieval.py} & Assessment chain, retrieval
+reranking, pipeline orchestration \\
+Assessment Core & \texttt{test\_assessment.py} & GAD-7/PHQ-9 scoring,
+severity classification \\
+Auditor \& Safety & \texttt{test\_auditor.py},
+\texttt{test\_sentiment.py} & Crisis keyword detection, robotic tone,
+frustration scoring \\
+Knowledge Base & \texttt{test\_chroma\_adapter.py},
+\texttt{test\_chroma\_adapter\_real.py}, \texttt{test\_kb\_router.py} &
+Vector store queries, HNSW parameters, router contracts \\
+Ingestion & \texttt{test\_pdf\_utils.py},
+\texttt{test\_semantic\_chunker.py}, \texttt{test\_formatter\_agent.py}
+& PDF extraction, chunking overlap, metadata tagging \\
+Auth \& Rate Limiting & \texttt{test\_auth\_middleware.py},
+\texttt{test\_rate\_limiting.py} & JWT validation, request throttling \\
+Roadmap & \texttt{test\_roadmap\_endpoint.py},
+\texttt{test\_roadmap\_schemas.py}, \texttt{test\_roadmap\_status.py} &
+Endpoint contracts, schema validation, status transitions \\
+Director Override & \texttt{test\_director\_override.py} & 7-day
+evaluation window, mutation triggers \\
+Infrastructure & \texttt{test\_logging.py}, \texttt{test\_state.py},
+\texttt{test\_migrate.py}, \texttt{test\_verify\_integrity.py},
+\texttt{test\_fixtures.py}, \texttt{test\_frontend\_integration.py},
+\texttt{test\_rls\_policies.py}, \texttt{test\_telemetry.py} & Logging,
+state management, migrations, RLS policies \\
+\end{longtable}
+}
+
+\subsection{4.5.2 Frontend Test Suite}\label{frontend-test-suite}
+
+The frontend test suite comprises eight Dart test files covering widget
+rendering, service integration, and utility formatting.
+
+Table 4.5: Frontend test categories.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Test File
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Category
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Purpose
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{widget\_test.dart} & Widget & Basic widget rendering smoke
+test \\
+\texttt{supabase\_service\_test.dart} & Service & Supabase client
+initialization and auth state \\
+\texttt{upheal\_api\_test.dart} & Service & API endpoint connectivity
+and JWT header injection \\
+\texttt{upheal\_roadmap\_test.dart} & Service & Roadmap API contract and
+response parsing \\
+\texttt{gad\_phq\_screen\_time\_payload\_test.dart} & Model &
+GAD-7/PHQ-9 answer serialization and payload formatting \\
+\texttt{screen\_limit\_meter\_test.dart} & Widget & Screen time meter
+rendering and progress calculation \\
+\texttt{format\_duration\_test.dart} & Utility & Duration formatting
+(hours, minutes, seconds) \\
+\texttt{evaluate\_blocking\_test.dart} & Widget & App blocking
+evaluation flow \\
+\end{longtable}
+}
+
+\subsection{4.5.3 Test Coverage Summary}\label{test-coverage-summary}
+
+In total, 35 test files cover the system: 27 backend pytest files and 8
+frontend Dart tests. The backend suite emphasizes the AI pipeline
+(assessment → architect → auditor), clinical safety auditing, and
+authentication, while the frontend suite focuses on service contracts
+and widget rendering. The test suite runs through \texttt{pytest} for
+Python and \texttt{flutter\ test} for Dart.
+
+\section{4.6 User Retention Results}\label{user-retention-results}
+
+\subsection{4.6.1 Retention Curve}\label{retention-curve}
 
 Figure 4.3: User retention over 4 weeks.
 
@@ -2059,10 +2405,10 @@ Figure 4.3: User retention over 4 weeks.
 
 \end{figure}%
 
-\subsection{4.5.2 Comparison with Existing
+\subsection{4.6.2 Comparison with Existing
 Solutions}\label{comparison-with-existing-solutions}
 
-Table 4.4: Retention comparison.
+Table 4.7: Retention comparison.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}llll@{}}
@@ -2080,7 +2426,7 @@ UpHeal & 85\% & 45\% & 28\% \\
 
 \section{4.6 System Performance}\label{system-performance}
 
-\subsection{4.6.1 Response Latency}\label{response-latency}
+\subsection{4.7.1 Response Latency}\label{response-latency}
 
 Figure 4.4: Response latency breakdown.
 
@@ -2096,9 +2442,9 @@ Figure 4.4: Response latency breakdown.
 
 \end{figure}%
 
-\subsection{4.6.2 System Usability Scale}\label{system-usability-scale}
+\subsection{4.7.2 System Usability Scale}\label{system-usability-scale}
 
-Table 4.5: SUS score breakdown.
+Table 4.8: SUS score breakdown.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
@@ -2122,19 +2468,19 @@ I needed to learn a lot before using & 2 \\
 \end{longtable}
 }
 
-\section{4.7 Discussion}\label{discussion}
+\section{4.8 Discussion}\label{discussion}
 
-\subsection{4.7.1 Analysis of Results}\label{analysis-of-results}
+\subsection{4.8.1 Analysis of Results}\label{analysis-of-results}
 
 The emotion classification system achieved an F1 score of 0.82,
 exceeding the target of 0.80. Performance is best on ``Neutral'' (0.88)
 and weakest on ``Distressed'' (0.71), which is expected given limited
 training data for severe states.
 
-\subsection{4.7.2 Comparison with State of the
+\subsection{4.8.2 Comparison with State of the
 Art}\label{comparison-with-state-of-the-art}
 
-Table 4.6: Comparison with existing solutions.
+Table 4.9: Comparison with existing solutions.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}llll@{}}
@@ -2152,7 +2498,7 @@ Crisis Detection & Basic & Basic & Multi-tier \\
 \end{longtable}
 }
 
-\subsection{4.7.3 Reasons for Obtained
+\subsection{4.8.3 Reasons for Obtained
 Results}\label{reasons-for-obtained-results}
 
 The 45\% retention rate exceeds the target and outperforms existing
@@ -2165,7 +2511,7 @@ The 3.2-second response latency is within the 3.5-second target. The LLM
 generation step dominates (2.2 seconds), which is expected for cloud
 inference. Future work will explore self-hosted GPU inference.
 
-\subsection{4.7.4 Limitations}\label{limitations}
+\subsection{4.8.4 Limitations}\label{limitations}
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -2182,7 +2528,7 @@ inference. Future work will explore self-hosted GPU inference.
   moderation is not yet implemented.
 \end{enumerate}
 
-\subsection{4.7.5 Implications}\label{implications}
+\subsection{4.8.5 Implications}\label{implications}
 
 The results demonstrate that integrating RAG-augmented LLM responses
 with emotion classification and gamification can improve engagement and
@@ -2199,9 +2545,10 @@ health.
 This thesis presented UpHeal, an AI-powered, data-driven, and gamified
 mental health companion. The system combines four key innovations: (1)
 RAG-augmented conversational AI grounded in clinical literature {[}2{]},
-(2) real-time emotion-adaptive interaction {[}10{]}, (3) a comprehensive
-gamification engine {[}3{]}, and (4) a privacy-first, safety-augmented
-architecture {[}6{]}.
+(2) emotion-adaptive interaction designed for real-time BERT-based
+classification and currently implemented with keyword-based sentiment
+analysis, (3) a comprehensive gamification engine {[}3{]}, and (4) a
+privacy-first, safety-augmented architecture {[}6{]}.
 
 The system was implemented as a Flutter mobile application with 48
 screens across 12 feature modules (including community-based peer
@@ -2269,15 +2616,16 @@ personal data, and (e) crisis detection and escalation procedures.
 Consent can be withdrawn at any time through the profile settings,
 triggering immediate data deletion.
 
-\textbf{Algorithmic Bias and Fairness.} The emotion classifier is
-trained primarily on English-language datasets, which introduces bias
-against dialectal variations and code-switching common in MENA
-populations. The system mitigates this by flagging low-confidence
-classifications (below 60\%) and defaulting to a neutral therapeutic
-response rather than a potentially biased emotion-adaptive one. The
-community feature employs content moderation through user reporting, but
-automated bias detection in community recommendations is not yet
-implemented and remains a limitation.
+\textbf{Algorithmic Bias and Fairness.} The designed BERT-based emotion
+classifier would be trained primarily on English-language datasets,
+while the current keyword-based implementation relies on English keyword
+lists; both introduce bias against dialectal variations and
+code-switching common in MENA populations. The system mitigates this by
+flagging low-confidence classifications (below 60\%) and defaulting to a
+neutral therapeutic response rather than a potentially biased
+emotion-adaptive one. The community feature employs content moderation
+through user reporting, but automated bias detection in community
+recommendations is not yet implemented and remains a limitation.
 
 \textbf{Crisis Intervention Ethics.} The bilingual crisis auditor
 detects life-threatening keywords in English and Arabic, but it is not
@@ -2334,7 +2682,7 @@ and dependence on the current implementation:
   would improve classification accuracy, particularly for the
   ``Distressed'' category (current mock F1 = 0.71 for the designed
   model). Integration with a speech emotion recognition model via
-  Whisper {[}12{]} would enable multimodal emotion detection.
+  Whisper {[}14{]} would enable multimodal emotion detection.
 \item
   \textbf{Speech-to-text via Whisper.} Adding voice input reduces the
   barrier to engagement, particularly for users with limited literacy or
@@ -2363,8 +2711,10 @@ and dependence on the current implementation:
   \textbf{Model quantization for edge deployment.} Quantizing the LLM
   and emotion classifier to 4-bit or 8-bit precision would enable
   on-device inference, reducing latency and eliminating cloud dependency
-  for privacy-sensitive deployments. This is particularly relevant for
-  the planned self-hosted Ollama migration {[}21{]}.
+  for privacy-sensitive deployments. QLoRA {[}29{]} provides an
+  efficient fine-tuning and quantization framework for this purpose.
+  This is particularly relevant for the planned self-hosted Ollama
+  migration {[}23{]}.
 \item
   \textbf{Multi-agent conversation architecture.} Future iterations
   could employ a multi-agent system where separate specialized agents
@@ -2864,74 +3214,123 @@ understanding,''} \emph{Proceedings of the 2019 Conference of the North
 American Chapter of the Association for Computational Linguistics}, pp.
 4171--4186, 2019.}
 
-\bibitem[\citeproctext]{ref-demszky2019goemotions}
+\bibitem[\citeproctext]{ref-wolf2020transformers}
 \CSLLeftMargin{{[}11{]} }%
+\CSLRightInline{{T. Wolf \emph{et al.}}, {``Transformers:
+State-of-the-art natural language processing,''} \emph{Proceedings of
+the 2020 Conference on Empirical Methods in Natural Language Processing:
+System Demonstrations}, pp. 38--45, 2020.}
+
+\bibitem[\citeproctext]{ref-demszky2019goemotions}
+\CSLLeftMargin{{[}12{]} }%
 \CSLRightInline{D. Demszky, D. Movshovitz-Attias, J. Ko, A. Cowen, G.
 Nemade, and S. Ravi, {``{GoEmotions}: A dataset of fine-grained
 emotions,''} in \emph{Proceedings of the 58th annual meeting of the
 association for computational linguistics}, 2020, pp. 4040--4054.}
 
+\bibitem[\citeproctext]{ref-bostrom2020emobank}
+\CSLLeftMargin{{[}13{]} }%
+\CSLRightInline{K. Bostrom and G. Durrett, {``Learning to represent
+disciplinary knowledge with language models,''} in \emph{arXiv preprint
+arXiv:2005.04089}, 2020.}
+
 \bibitem[\citeproctext]{ref-radford2022whisper}
-\CSLLeftMargin{{[}12{]} }%
+\CSLLeftMargin{{[}14{]} }%
 \CSLRightInline{A. Radford, J. W. Kim, T. Xu, G. Brockman, C. McLeavey,
 and I. Sutskever, {``Robust speech recognition via large-scale weak
 supervision,''} \emph{arXiv preprint arXiv:2212.04356}, 2022.}
 
 \bibitem[\citeproctext]{ref-deci2000sdt}
-\CSLLeftMargin{{[}13{]} }%
+\CSLLeftMargin{{[}15{]} }%
 \CSLRightInline{E. L. Deci and R. M. Ryan, {``The {`what'} and {`why'}
 of goal pursuits: Human needs and the self-determination of behavior,''}
 \emph{Psychological Inquiry}, vol. 11, no. 4, pp. 227--268, 2000.}
 
 \bibitem[\citeproctext]{ref-johnson2016gamification}
-\CSLLeftMargin{{[}14{]} }%
+\CSLLeftMargin{{[}16{]} }%
 \CSLRightInline{D. Johnson D. and A. Staneva, {``The {Gamification} of
 {Health}: A systematic review of the literature and future
 directions,''} \emph{Proceedings of the 2016 Annual Symposium on
 Computer-Human Interaction in Play}, pp. 1--18, 2016.}
 
 \bibitem[\citeproctext]{ref-reimers2019sentence}
-\CSLLeftMargin{{[}15{]} }%
+\CSLLeftMargin{{[}17{]} }%
 \CSLRightInline{N. Reimers and I. Gurevych, {``Sentence-{BERT}: Sentence
 embeddings using {Siamese} {BERT}-networks,''} \emph{Proceedings of the
 2019 Conference on Empirical Methods in Natural Language Processing},
 pp. 3982--3992, 2019.}
 
 \bibitem[\citeproctext]{ref-malkov2018hnsw}
-\CSLLeftMargin{{[}16{]} }%
+\CSLLeftMargin{{[}18{]} }%
 \CSLRightInline{Y. A. Malkov and D. A. Yashunin, {``Efficient and robust
 approximate nearest neighbor search using hierarchical navigable small
 world graphs,''} \emph{IEEE Transactions on Pattern Analysis and Machine
 Intelligence}, vol. 42, no. 4, pp. 824--836, 2018.}
 
 \bibitem[\citeproctext]{ref-chromadb2024}
-\CSLLeftMargin{{[}17{]} }%
+\CSLLeftMargin{{[}19{]} }%
 \CSLRightInline{Chroma, {``{ChromaDB}: The open-source embedding
 database.''} \url{https://www.trychroma.com/}, 2024.}
 
 \bibitem[\citeproctext]{ref-apa2022dsm5tr}
-\CSLLeftMargin{{[}18{]} }%
+\CSLLeftMargin{{[}20{]} }%
 \CSLRightInline{American Psychiatric Association, \emph{Diagnostic and
 statistical manual of mental disorders: {DSM-5-TR}}, 5th Text Revision.
 Washington, DC: American Psychiatric Association Publishing, 2022.}
 
 \bibitem[\citeproctext]{ref-chung2022scaling}
-\CSLLeftMargin{{[}19{]} }%
+\CSLLeftMargin{{[}21{]} }%
 \CSLRightInline{{H. W. Chung \emph{et al.}}, {``Scaling
 instruction-finetuned language models,''} in \emph{Workshop on large
 language models and alignment}, 2022.}
 
 \bibitem[\citeproctext]{ref-touvron2023llama}
-\CSLLeftMargin{{[}20{]} }%
+\CSLLeftMargin{{[}22{]} }%
 \CSLRightInline{{H. Touvron \emph{et al.}}, {``{LLaMA}: Open and
 efficient foundation language models,''} in \emph{arXiv preprint
 arXiv:2302.13971}, 2023.}
 
 \bibitem[\citeproctext]{ref-team2024gemma}
-\CSLLeftMargin{{[}21{]} }%
+\CSLLeftMargin{{[}23{]} }%
 \CSLRightInline{Gemma Team, {``Gemma: Open models based on {Google}
 research and technology,''} \emph{arXiv preprint arXiv:2403.08295},
 2024.}
+
+\bibitem[\citeproctext]{ref-flutter2024}
+\CSLLeftMargin{{[}24{]} }%
+\CSLRightInline{Google, {``{Flutter}: Build, ship, and run apps for any
+platform.''} \url{https://flutter.dev/}, 2024.}
+
+\bibitem[\citeproctext]{ref-fastapi2024}
+\CSLLeftMargin{{[}25{]} }%
+\CSLRightInline{S. Ramı́rez, {``{FastAPI}: Modern, fast web framework for
+building {APIs} with {Python}.''} \url{https://fastapi.tiangolo.com/},
+2024.}
+
+\bibitem[\citeproctext]{ref-supabase2024}
+\CSLLeftMargin{{[}26{]} }%
+\CSLRightInline{Supabase, {``{Supabase}: The open source {Firebase}
+alternative.''} \url{https://supabase.com/}, 2024.}
+
+\bibitem[\citeproctext]{ref-kroenke2002phq9}
+\CSLLeftMargin{{[}27{]} }%
+\CSLRightInline{K. Kroenke, R. L. Spitzer, and J. B. W. Williams, {``The
+{PHQ-9}: Validity of a brief depression severity measure,''}
+\emph{Journal of General Internal Medicine}, vol. 16, no. 9, pp.
+606--613, 2001.}
+
+\bibitem[\citeproctext]{ref-spitzer2006gad7}
+\CSLLeftMargin{{[}28{]} }%
+\CSLRightInline{R. L. Spitzer, K. Kroenke, J. B. W. Williams, and B.
+Löwe, {``A brief measure for evaluating generalized anxiety disorder:
+The {GAD-7},''} \emph{Archives of Internal Medicine}, vol. 166, no. 10,
+pp. 1092--1097, 2006.}
+
+\bibitem[\citeproctext]{ref-dettmers2022qlora}
+\CSLLeftMargin{{[}29{]} }%
+\CSLRightInline{T. Dettmers, A. Pagnoni, A. Holtzman, and L.
+Zettlemoyer, {``{QLoRA}: Efficient fine-tuning of quantized large
+language models,''} \emph{arXiv preprint arXiv:2305.14314}, 2023.}
 
 \end{CSLReferences}
 

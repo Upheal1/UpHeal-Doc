@@ -14,6 +14,8 @@ The system was evaluated across five dimensions:
 4. **User retention**: Weekly active user rates over a 12-week period, measured through application telemetry from 50 beta testers.
 5. **System performance**: End-to-end response latency decomposed by pipeline stage, and System Usability Scale (SUS) score from 20 participants.
 
+The clinical assessments use the PHQ-9 [@kroenke2002phq9] and GAD-7 [@spitzer2006gad7] instruments, which are widely validated for depression and generalized anxiety screening in digital health applications.
+
 ## 4.2 System Implementation
 
 ### 4.2.1 Frontend Architecture and Navigation
@@ -45,7 +47,7 @@ State management follows the Provider pattern with `ChangeNotifier` classes. Eac
 
 The service layer resides in `lib/services/` and communicates with the backend through two channels:
 
-1. **UphealApi service** (`ai_chat_service.dart`): Handles all AI-related requests including chat message submission, conversation history retrieval, and crisis detection responses. Requests are routed through the FastAPI gateway at `/api/v1/chat/` endpoints.
+1. **UphealApi service** (`ai_chat_service.dart`): Handles all AI-related requests including chat message submission, conversation history retrieval, and crisis detection responses. Requests are routed through the FastAPI gateway at `/api/chat/` endpoints.
 
 2. **Supabase client** (`supabase_service.dart`): Manages authentication (email/password, OAuth), community features (groups, posts, messages), journal CRUD, assessments, mood logs, gamification progress, and real-time subscriptions. The Supabase instance provides PostgreSQL storage, Row-Level Security (RLS) policies, Edge Functions for serverless logic, and Realtime channels for live updates.
 
@@ -120,6 +122,8 @@ The community feature is powered entirely by Supabase, requiring no custom backe
 Row-Level Security policies enforce that only group members can read messages, only authors can edit their own posts, and only moderators can manage reports. The Flutter `CommunityProvider` subscribes to Supabase Realtime channels for live message delivery and presence tracking, enabling sub-second updates without polling.
 
 ## 4.3 Emotion Classification Results
+
+> **Disclaimer:** The evaluation results presented in Sections 4.3–4.8 are generated from a simulated evaluation using the designed system model. The emotion classification metrics, response quality scores, retention rates, and performance benchmarks reflect target or model-projected values rather than data from a live user study. Actual results may differ upon deployment with real participants and institutional review.
 
 ### 4.3.1 Accuracy Metrics
 
@@ -205,9 +209,50 @@ Table 4.3: RAG retrieval metrics.
 | Recall@10 | 0.85 |
 | Mean Reciprocal Rank | 0.79 |
 
-## 4.5 User Retention Results
+## 4.5 Testing
 
-### 4.5.1 Retention Curve
+### 4.5.1 Backend Test Suite
+
+The backend test suite comprises 27 pytest files organized across the AI pipeline, clinical safety, data access, authentication, and infrastructure categories. The tests validate both unit behavior and end-to-end service contracts.
+
+Table 4.4: Backend test categories.
+
+| Category | Test Files | Primary Focus |
+|----------|------------|---------------|
+| Architect Pipeline | `test_architect.py`, `test_orchestration.py`, `test_reranking.py`, `test_pipeline_retrieval.py` | Assessment chain, retrieval reranking, pipeline orchestration |
+| Assessment Core | `test_assessment.py` | GAD-7/PHQ-9 scoring, severity classification |
+| Auditor & Safety | `test_auditor.py`, `test_sentiment.py` | Crisis keyword detection, robotic tone, frustration scoring |
+| Knowledge Base | `test_chroma_adapter.py`, `test_chroma_adapter_real.py`, `test_kb_router.py` | Vector store queries, HNSW parameters, router contracts |
+| Ingestion | `test_pdf_utils.py`, `test_semantic_chunker.py`, `test_formatter_agent.py` | PDF extraction, chunking overlap, metadata tagging |
+| Auth & Rate Limiting | `test_auth_middleware.py`, `test_rate_limiting.py` | JWT validation, request throttling |
+| Roadmap | `test_roadmap_endpoint.py`, `test_roadmap_schemas.py`, `test_roadmap_status.py` | Endpoint contracts, schema validation, status transitions |
+| Director Override | `test_director_override.py` | 7-day evaluation window, mutation triggers |
+| Infrastructure | `test_logging.py`, `test_state.py`, `test_migrate.py`, `test_verify_integrity.py`, `test_fixtures.py`, `test_frontend_integration.py`, `test_rls_policies.py`, `test_telemetry.py` | Logging, state management, migrations, RLS policies |
+
+### 4.5.2 Frontend Test Suite
+
+The frontend test suite comprises eight Dart test files covering widget rendering, service integration, and utility formatting.
+
+Table 4.5: Frontend test categories.
+
+| Test File | Category | Purpose |
+|-----------|----------|---------|
+| `widget_test.dart` | Widget | Basic widget rendering smoke test |
+| `supabase_service_test.dart` | Service | Supabase client initialization and auth state |
+| `upheal_api_test.dart` | Service | API endpoint connectivity and JWT header injection |
+| `upheal_roadmap_test.dart` | Service | Roadmap API contract and response parsing |
+| `gad_phq_screen_time_payload_test.dart` | Model | GAD-7/PHQ-9 answer serialization and payload formatting |
+| `screen_limit_meter_test.dart` | Widget | Screen time meter rendering and progress calculation |
+| `format_duration_test.dart` | Utility | Duration formatting (hours, minutes, seconds) |
+| `evaluate_blocking_test.dart` | Widget | App blocking evaluation flow |
+
+### 4.5.3 Test Coverage Summary
+
+In total, 35 test files cover the system: 27 backend pytest files and 8 frontend Dart tests. The backend suite emphasizes the AI pipeline (assessment → architect → auditor), clinical safety auditing, and authentication, while the frontend suite focuses on service contracts and widget rendering. The test suite runs through `pytest` for Python and `flutter test` for Dart.
+
+## 4.6 User Retention Results
+
+### 4.6.1 Retention Curve
 
 Figure 4.3: User retention over 4 weeks.
 
@@ -233,9 +278,9 @@ plt.tight_layout()
 plt.show()
 ```
 
-### 4.5.2 Comparison with Existing Solutions
+### 4.6.2 Comparison with Existing Solutions
 
-Table 4.4: Retention comparison.
+Table 4.7: Retention comparison.
 
 | Solution | 1-Week | 4-Week | 12-Week |
 |----------|--------|--------|---------|
@@ -245,7 +290,7 @@ Table 4.4: Retention comparison.
 
 ## 4.6 System Performance
 
-### 4.6.1 Response Latency
+### 4.7.1 Response Latency
 
 Figure 4.4: Response latency breakdown.
 
@@ -269,9 +314,9 @@ plt.tight_layout()
 plt.show()
 ```
 
-### 4.6.2 System Usability Scale
+### 4.7.2 System Usability Scale
 
-Table 4.5: SUS score breakdown.
+Table 4.8: SUS score breakdown.
 
 | SUS Item | Score (1-5) |
 |----------|-------------|
@@ -287,15 +332,15 @@ Table 4.5: SUS score breakdown.
 | I needed to learn a lot before using | 2 |
 | **Total SUS Score** | **75/100** |
 
-## 4.7 Discussion
+## 4.8 Discussion
 
-### 4.7.1 Analysis of Results
+### 4.8.1 Analysis of Results
 
 The emotion classification system achieved an F1 score of 0.82, exceeding the target of 0.80. Performance is best on "Neutral" (0.88) and weakest on "Distressed" (0.71), which is expected given limited training data for severe states.
 
-### 4.7.2 Comparison with State of the Art
+### 4.8.2 Comparison with State of the Art
 
-Table 4.6: Comparison with existing solutions.
+Table 4.9: Comparison with existing solutions.
 
 | Metric | Woebot | Wysa | UpHeal |
 |--------|--------|------|--------|
@@ -305,19 +350,19 @@ Table 4.6: Comparison with existing solutions.
 | Response Latency | 2s | 3s | 3.2s |
 | Crisis Detection | Basic | Basic | Multi-tier |
 
-### 4.7.3 Reasons for Obtained Results
+### 4.8.3 Reasons for Obtained Results
 
 The 45% retention rate exceeds the target and outperforms existing solutions [@woebot2021; @inkster2018empath]. This is attributed to the gamification engine providing immediate positive reinforcement through XP bursts, level-ups, and streak milestones, consistent with findings from the gamification meta-analysis by Hamari et al. [@hamari2016gamification].
 
 The 3.2-second response latency is within the 3.5-second target. The LLM generation step dominates (2.2 seconds), which is expected for cloud inference. Future work will explore self-hosted GPU inference.
 
-### 4.7.4 Limitations
+### 4.8.4 Limitations
 
 1. Emotion classifier uses keyword-based sentiment analysis; production deployment requires a fine-tuned BERT model with more training data.
 2. User testing cohort was small (n=50).
 3. Arabic support is limited.
 4. Community feature moderation relies on user reports; automated content moderation is not yet implemented.
 
-### 4.7.5 Implications
+### 4.8.5 Implications
 
 The results demonstrate that integrating RAG-augmented LLM responses with emotion classification and gamification can improve engagement and outcomes compared to rule-based chatbots. The clinical safety auditor ensures safe responses, addressing a key concern in AI-assisted mental health.
