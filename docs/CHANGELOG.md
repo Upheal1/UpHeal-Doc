@@ -185,3 +185,36 @@ This file tracks all major changes to the thesis documentation. Use the format:
 - `docs/CHANGELOG.md`
 - `chapters/03-methodology_files/figure-pdf/fig-methodology-output-1.pdf`
 - `chapters/03-methodology_files/figure-pdf/fig-architecture-output-1.pdf`
+
+---
+
+## 2026-06-16 — OpenCode (Figure Enhancements)
+
+### Changed
+- Resized all matplotlib figures to fit within tight page margins:
+  - Ch3 methodology flow: 7×6 → 5×5.5 in
+  - Ch3 architecture diagram: 8×7 → 6×5 in, compact 3-column layout
+  - Ch4 fine-tuning loss: 6×3.5 → 5×3 in
+  - Ch4 RAG source distribution: 6×4 → 4.5×3 in with side legend
+  - Ch4 voice latency: 6×3.5 → 5×3 in
+  - Ch4 response quality: 6×3 → 5×2.8 in
+- Reduced font sizes and adjusted label placement for readability
+- Added global LaTeX figure scaling (`\setkeys{Gin}{width=0.95\linewidth,keepaspectratio}`) to prevent any figure from exceeding text width
+- Fixed duplicated section heading and table numbering in Ch4
+- Added acknowledgements from `Acknowledgements.docx`
+
+### Why
+- Previous figures were rendered at sizes larger than the text width and appeared clipped in the PDF
+- Smaller, consistently scaled figures preserve readability while staying within the 35–50 page budget
+
+### Affected Files
+- `_quarto.yml`
+- `chapters/03-methodology.qmd`
+- `chapters/04-results-discussions.qmd`
+- `acknowledgements.qmd`
+- `chapters/03-methodology_files/figure-pdf/fig-methodology-output-1.pdf`
+- `chapters/03-methodology_files/figure-pdf/fig-architecture-output-1.pdf`
+- `chapters/04-results-discussions_files/figure-pdf/fig-finetuning-loss-output-1.pdf`
+- `chapters/04-results-discussions_files/figure-pdf/fig-rag-sources-output-1.pdf`
+- `chapters/04-results-discussions_files/figure-pdf/fig-voice-latency-output-1.pdf`
+- `chapters/04-results-discussions_files/figure-pdf/fig-response-quality-output-1.pdf`

@@ -119,6 +119,10 @@
 | Expand security architecture | ✅ | 2026-06-15 | ZTA, data classification, on-device + visual detection, service continuity, AI pipeline security |
 | Integrate LLM-focused Ch2/Ch3 rewrite | ✅ | 2026-06-16 | Replaced with Gemma 3 27B, QLoRA, Qdrant, Whisper, Chatterbox; 38 pages |
 | Review all references | ✅ | 2026-06-16 | 50+ references; all cited |
-| Update Ch4 implementation results | ⬜ | | Still describes initial prototype; needs rewrite for new architecture |
+| Update Ch4 implementation results | ✅ | 2026-06-16 | Rewritten for new architecture with simulated evaluation; 36 pages |
+| Enhance all figures | ✅ | 2026-06-16 | Resized, adjusted fonts, added global figure scaling to prevent clipping |
+| Update acknowledgements | ✅ | 2026-06-16 | Added clinical collaborators from Acknowledgements.docx |
+| Final formatting pass | ✅ | 2026-06-16 | Cross-refs verified, page count 36, all figures fit |
+| Supervisor sign-off | ⬜ | | |
 | Final formatting pass | ✅ | 2026-06-15 | Cross-refs verified, style guide check passed |
 | Supervisor sign-off | ⬜ | | |
