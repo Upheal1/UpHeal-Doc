@@ -1,4 +1,4 @@
-# Conclusions {#sec-conclusions}
+# CONCLUSIONS {#sec-conclusions}
 
 ## 5.1 Summary of Contributions
 

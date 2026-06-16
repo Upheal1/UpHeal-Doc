@@ -30,24 +30,102 @@ csl: styles/ieee.csl
 format:
   pdf:
     documentclass: report
-    classoption: [12pt, a4paper]
+    classoption: [12pt, a4paper, openany]
     toc: true
     toc-depth: 3
     number-sections: true
-    lof: true
-    lot: true
+    lof: false
+    lot: false
     include-in-header:
       text: |
-        \usepackage{fancyhdr}
+        % === FONT CONFIGURATION ===
+        \usepackage{fontspec}
+        \setmainfont{Times New Roman}
+
+        % === SPACING ===
         \usepackage{setspace}
-        \onehalfspacing
+        \singlespacing
+
+        % === MARGINS (tight to reduce page count) ===
+        \usepackage[a4paper, top=0.9in, bottom=0.9in, left=0.65in, right=0.65in]{geometry}
+
+        % === HEADING FORMAT ===
+        \usepackage{titlesec}
+        % Chapters: 16pt Bold
+        \titleformat{\chapter}[display]
+          {\normalfont\fontsize{16}{19}\bfseries}
+          {\chaptertitlename\ \thechapter}{10pt}{}
+        % Sections: 14pt Bold
+        \titleformat{\section}
+          {\normalfont\fontsize{14}{17}\bfseries}
+          {\thesection}{1em}{}
+        % Subsections: 14pt Underlined
+        \titleformat{\subsection}
+          {\normalfont\fontsize{14}{17}}
+          {\thesubsection}{1em}{\underline}
+
+        % === PAGE NUMBERING (all pages except cover) ===
+        \usepackage{fancyhdr}
         \pagestyle{fancy}
         \fancyhf{}
         \fancyhead[R]{\thepage}
         \renewcommand{\headrulewidth}{0pt}
+        \fancypagestyle{plain}{
+          \fancyhf{}
+          \fancyhead[R]{\thepage}
+          \renewcommand{\headrulewidth}{0pt}
+        }
+
+        % === PARAGRAPH SPACING ===
+        \setlength{\parskip}{0pt plus 1pt}
+        \setlength{\parindent}{12pt}
+
+        % === TIGHT LISTS ===
+        \usepackage{enumitem}
+        \setlist{nosep}
+
+        % === DISABLE DEFAULT TITLE PAGE (we provide custom cover pages) ===
+        \let\maketitle\relax
     include-before-body:
       text: |
+        % Outer cover: Title + University Logo + Academic Year only
         \thispagestyle{empty}
+        \begin{titlepage}
+          \centering
+          \vspace*{2cm}
+          {\fontsize{18}{22}\selectfont\textbf{UpHeal: An AI-Powered, Data-Driven and Gamified Mental Health Companion}\par}
+          \vspace{2cm}
+          % University logo placeholder - replace logo-filename.pdf with actual file
+          % \includegraphics[width=4cm]{images/university-logo.pdf}\par
+          \vspace{0.5cm}
+          {\Large Pharos University in Alexandria}\par
+          \vfill
+          {\large Academic Year 2025--2026}\par
+        \end{titlepage}
+
+        % Inner title page: full metadata
+        \thispagestyle{empty}
+        \begin{titlepage}
+          \centering
+          \vspace*{2cm}
+          {\fontsize{18}{22}\selectfont\textbf{UpHeal: An AI-Powered, Data-Driven and Gamified Mental Health Companion}\par}
+          \vspace{1.5cm}
+          {\large Graduation Project Thesis}\par
+          \vspace{1cm}
+          {\large Submitted to the Department of Computer Science \& AI}\par
+          {\large Faculty of Computer Science \& Artificial Intelligence}\par
+          {\large Pharos University in Alexandria}\par
+          \vspace{1.5cm}
+          {\large By}\par
+          \vspace{0.5cm}
+          {\normalsize
+          Hozaifa Moustafa, Ahmed Osama, Devide Hany, Malak Yasser,\\
+          Abdalrahman Osama, Yahya Amr, Ahmed Zakaria\par}
+          \vspace{1cm}
+          {\large Supervisor: Dr. Sahar Ghanem}\par
+          \vfill
+          {\large June 2026}\par
+        \end{titlepage}
     pdf-engine: xelatex
     keep-tex: true
   docx:

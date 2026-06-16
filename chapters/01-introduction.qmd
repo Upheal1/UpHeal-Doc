@@ -1,4 +1,4 @@
-# Introduction {#sec-introduction}
+# INTRODUCTION {#sec-introduction}
 
 ## Background and Motivation {#sec-background-motivation}
 

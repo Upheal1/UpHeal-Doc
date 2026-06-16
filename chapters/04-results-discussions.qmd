@@ -1,4 +1,4 @@
-# Results and Discussions {#sec-results-discussions}
+# IMPLEMENTATION & RESULTS {#sec-results-discussions}
 
 ## 4.1 Experimental Setup
 
@@ -144,7 +144,7 @@ f1 = [0.82, 0.78, 0.75, 0.88, 0.79, 0.71]
 x = np.arange(len(emotions))
 width = 0.25
 
-fig, ax = plt.subplots(figsize=(8, 5))
+fig, ax = plt.subplots(figsize=(6.00, 3.75))
 ax.bar(x - width, precision, width, label="Precision", color="#4C8BF5")
 ax.bar(x, recall, width, label="Recall", color="#34A853")
 ax.bar(x + width, f1, width, label="F1", color="#FBBC05")
@@ -186,7 +186,7 @@ import matplotlib.pyplot as plt
 metrics = ["Relevance", "Empathy", "Safety", "Grounding", "Clarity"]
 scores = [3.8, 4.1, 4.5, 3.9, 4.2]
 
-fig, ax = plt.subplots(figsize=(8, 4))
+fig, ax = plt.subplots(figsize=(6.00, 3.00))
 bars = ax.barh(metrics, scores, color=["#4C8BF5", "#34A853", "#FBBC05", "#EA4335", "#9C27B0"])
 ax.set_xlabel("Score (1-5)")
 ax.set_title("Response Quality Evaluation")
@@ -211,44 +211,16 @@ Table 4.3: RAG retrieval metrics.
 
 ## 4.5 Testing
 
-### 4.5.1 Backend Test Suite
+The system is covered by 35 test files: 27 backend pytest files and 8 frontend Dart tests. Backend tests cover the AI pipeline (assessment → architect → auditor), clinical safety auditing, authentication, rate limiting, and RLS policies. Frontend tests cover widget rendering, service integration, and utility formatting.
 
-The backend test suite comprises 27 pytest files organized across the AI pipeline, clinical safety, data access, authentication, and infrastructure categories. The tests validate both unit behavior and end-to-end service contracts.
+Table 4.4: Test coverage summary.
 
-Table 4.4: Backend test categories.
+| Layer | Count | Focus Areas |
+|-------|-------|-------------|
+| Backend | 27 pytest files | Architect pipeline, assessment scoring, auditor safety, knowledge base, ingestion, auth, rate limiting, roadmap, RLS |
+| Frontend | 8 Dart tests | Widget rendering, Supabase service, API connectivity, roadmap parsing, model serialization, utility formatting |
 
-| Category | Test Files | Primary Focus |
-|----------|------------|---------------|
-| Architect Pipeline | `test_architect.py`, `test_orchestration.py`, `test_reranking.py`, `test_pipeline_retrieval.py` | Assessment chain, retrieval reranking, pipeline orchestration |
-| Assessment Core | `test_assessment.py` | GAD-7/PHQ-9 scoring, severity classification |
-| Auditor & Safety | `test_auditor.py`, `test_sentiment.py` | Crisis keyword detection, robotic tone, frustration scoring |
-| Knowledge Base | `test_chroma_adapter.py`, `test_chroma_adapter_real.py`, `test_kb_router.py` | Vector store queries, HNSW parameters, router contracts |
-| Ingestion | `test_pdf_utils.py`, `test_semantic_chunker.py`, `test_formatter_agent.py` | PDF extraction, chunking overlap, metadata tagging |
-| Auth & Rate Limiting | `test_auth_middleware.py`, `test_rate_limiting.py` | JWT validation, request throttling |
-| Roadmap | `test_roadmap_endpoint.py`, `test_roadmap_schemas.py`, `test_roadmap_status.py` | Endpoint contracts, schema validation, status transitions |
-| Director Override | `test_director_override.py` | 7-day evaluation window, mutation triggers |
-| Infrastructure | `test_logging.py`, `test_state.py`, `test_migrate.py`, `test_verify_integrity.py`, `test_fixtures.py`, `test_frontend_integration.py`, `test_rls_policies.py`, `test_telemetry.py` | Logging, state management, migrations, RLS policies |
-
-### 4.5.2 Frontend Test Suite
-
-The frontend test suite comprises eight Dart test files covering widget rendering, service integration, and utility formatting.
-
-Table 4.5: Frontend test categories.
-
-| Test File | Category | Purpose |
-|-----------|----------|---------|
-| `widget_test.dart` | Widget | Basic widget rendering smoke test |
-| `supabase_service_test.dart` | Service | Supabase client initialization and auth state |
-| `upheal_api_test.dart` | Service | API endpoint connectivity and JWT header injection |
-| `upheal_roadmap_test.dart` | Service | Roadmap API contract and response parsing |
-| `gad_phq_screen_time_payload_test.dart` | Model | GAD-7/PHQ-9 answer serialization and payload formatting |
-| `screen_limit_meter_test.dart` | Widget | Screen time meter rendering and progress calculation |
-| `format_duration_test.dart` | Utility | Duration formatting (hours, minutes, seconds) |
-| `evaluate_blocking_test.dart` | Widget | App blocking evaluation flow |
-
-### 4.5.3 Test Coverage Summary
-
-In total, 35 test files cover the system: 27 backend pytest files and 8 frontend Dart tests. The backend suite emphasizes the AI pipeline (assessment → architect → auditor), clinical safety auditing, and authentication, while the frontend suite focuses on service contracts and widget rendering. The test suite runs through `pytest` for Python and `flutter test` for Dart.
+The suites run via `pytest` and `flutter test` respectively.
 
 ## 4.6 User Retention Results
 
@@ -265,7 +237,7 @@ import matplotlib.pyplot as plt
 weeks = [1, 2, 3, 4, 8, 12]
 retention = [85, 72, 58, 45, 32, 28]
 
-fig, ax = plt.subplots(figsize=(7, 4))
+fig, ax = plt.subplots(figsize=(5.25, 3.00))
 ax.plot(weeks, retention, marker="o", linewidth=2, color="#EA4335", markersize=8)
 ax.set_xlabel("Week")
 ax.set_ylabel("Retention Rate (%)")
@@ -288,7 +260,7 @@ Table 4.7: Retention comparison.
 | Wysa | 70% | 38% | 22% |
 | UpHeal | 85% | 45% | 28% |
 
-## 4.6 System Performance
+## 4.7 System Performance
 
 ### 4.7.1 Response Latency
 
@@ -303,7 +275,7 @@ import matplotlib.pyplot as plt
 components = ["Auth", "Emotion", "RAG", "LLM", "Audit", "Total"]
 latency = [50, 180, 120, 2200, 500, 3000]
 
-fig, ax = plt.subplots(figsize=(7, 4))
+fig, ax = plt.subplots(figsize=(5.25, 3.00))
 colors = ["#4C8BF5", "#34A853", "#FBBC05", "#EA4335", "#9C27B0", "#607D8B"]
 bars = ax.barh(components, latency, color=colors)
 ax.set_xlabel("Latency (ms)")
@@ -334,11 +306,7 @@ Table 4.8: SUS score breakdown.
 
 ## 4.8 Discussion
 
-### 4.8.1 Analysis of Results
-
-The emotion classification system achieved an F1 score of 0.82, exceeding the target of 0.80. Performance is best on "Neutral" (0.88) and weakest on "Distressed" (0.71), which is expected given limited training data for severe states.
-
-### 4.8.2 Comparison with State of the Art
+The emotion classifier achieved an F1 score of 0.82, exceeding the 0.80 target, with strongest performance on "Neutral" (0.88) and weakest on "Distressed" (0.71) due to limited severe-state training data.
 
 Table 4.9: Comparison with existing solutions.
 
@@ -350,19 +318,4 @@ Table 4.9: Comparison with existing solutions.
 | Response Latency | 2s | 3s | 3.2s |
 | Crisis Detection | Basic | Basic | Multi-tier |
 
-### 4.8.3 Reasons for Obtained Results
-
-The 45% retention rate exceeds the target and outperforms existing solutions [@woebot2021; @inkster2018empath]. This is attributed to the gamification engine providing immediate positive reinforcement through XP bursts, level-ups, and streak milestones, consistent with findings from the gamification meta-analysis by Hamari et al. [@hamari2016gamification].
-
-The 3.2-second response latency is within the 3.5-second target. The LLM generation step dominates (2.2 seconds), which is expected for cloud inference. Future work will explore self-hosted GPU inference.
-
-### 4.8.4 Limitations
-
-1. Emotion classifier uses keyword-based sentiment analysis; production deployment requires a fine-tuned BERT model with more training data.
-2. User testing cohort was small (n=50).
-3. Arabic support is limited.
-4. Community feature moderation relies on user reports; automated content moderation is not yet implemented.
-
-### 4.8.5 Implications
-
-The results demonstrate that integrating RAG-augmented LLM responses with emotion classification and gamification can improve engagement and outcomes compared to rule-based chatbots. The clinical safety auditor ensures safe responses, addressing a key concern in AI-assisted mental health.
+The 45% retention rate exceeds existing solutions and is attributed to the gamification engine's immediate positive reinforcement through XP bursts, level-ups, and streak milestones [@hamari2016gamification]. The 3.2-second latency is within target, dominated by cloud LLM inference. Limitations include the keyword-based emotion classifier, a small testing cohort (n=50), limited Arabic support, and reliance on user reports for community moderation. Overall, the integration of RAG, emotion classification, and gamification demonstrates improved engagement over rule-based chatbots, while the clinical auditor addresses safety concerns in AI-assisted mental health.

@@ -1,16 +1,8 @@
-# Background (Survey) {#sec-background}
+# LITERATURE REVIEW {#sec-background}
 
-## Introduction to Digital Mental Health {#sec-digital-mh-intro}
+## Existing Solutions {#sec-state-of-art}
 
-Mental health disorders represent one of the leading causes of disability worldwide. The World Health Organization estimates that one in every eight people globally lives with a mental health condition, yet the median coverage of mental health services in low- and middle-income countries remains below 25% [@who2021mental]. A systematic review by Baumeister et al. found that digital mental health interventions show moderate to large effect sizes for depression (g = 0.54) and anxiety (g = 0.61) compared to control conditions [@baumeister2021digital].
-
-The rapid proliferation of smartphones — global penetration exceeded 6.8 billion devices in 2023 — combined with advances in artificial intelligence creates a unique opportunity to bridge this gap. Digital mental health interventions can provide immediate, stigma-free, and scalable assistance that complements traditional face-to-face therapy [@toufique2023llm]. The COVID-19 pandemic further accelerated this trend, with telehealth utilization for mental health increasing by over 300% between 2019 and 2021, demonstrating both the feasibility and demand for technology-mediated psychological support.
-
-In the Middle East and North Africa (MENA) region, the situation is particularly acute. Cultural stigma surrounding mental illness, a shortage of trained mental health professionals — with as few as 0.3 psychiatrists per 100,000 population in some Arab League countries compared to 12 per 100,000 in high-income nations — and financial barriers compound the treatment gap. Egypt, the primary target market for the system described in this thesis, has an estimated 20 million people in need of mental health services but fewer than 1,000 practicing psychiatrists. These disparities underscore the need for scalable, culturally sensitive digital solutions.
-
-Over the past decade, the field has evolved from simple self-help journals and static psychoeducation modules to sophisticated platforms that leverage natural language processing, emotion recognition, and behavioral gamification to deliver personalized support at scale [@kumar2023mental].
-
-## Current State of the Art {#sec-state-of-art}
+Mental health disorders are a leading cause of disability worldwide. WHO estimates one in eight people lives with a mental health condition, yet service coverage in low- and middle-income countries remains below 25% [@who2021mental]. In Egypt and the MENA region, stigma, a shortage of professionals, and financial barriers widen the treatment gap. Egypt has an estimated 20 million people in need of mental health services but fewer than 1,000 practicing psychiatrists. Smartphone proliferation and AI advances create an opportunity for scalable digital interventions [@toufique2023llm].
 
 ### Conversational Agents
 
@@ -67,7 +59,7 @@ Table: Comparison of existing digital mental health solutions. {#tbl-comparison}
 | Gamification | None | Minimal | Tamagotchi-style avatar | 10 badges, 12 achievements, 10 challenges, streak system |
 | Community | None | None | None | Real-time feed, groups, focus rooms |
 
-## Identified Gap {#sec-gap}
+## Gap Analysis {#sec-gap}
 
 The analysis reveals that while existing solutions address individual aspects of digital mental health support, no existing system integrates all of the following:
 
@@ -79,30 +71,3 @@ The analysis reveals that while existing solutions address individual aspects of
 
 4.  **Privacy-first, safety-augmented architecture with bilingual crisis detection.** Existing solutions lack transparent data governance, do not implement crisis detection protocols in multiple languages, and fail to provide emergency resource redirection when users express suicidal ideation in Arabic.
 
-## Importance of the Proposed Research {#sec-importance}
-
-The proposed system addresses a critical need in the MENA region, where cultural stigma, shortage of professionals, and financial barriers compound the treatment gap. The integration of these four pillars into a unified system represents a significant contribution to the field of digital mental health, offering a scalable, clinically grounded, and culturally sensitive alternative to traditional face-to-face therapy.
-
-## Research Objectives {#sec-objectives}
-
-The research aims to:
-
-1.  Design and implement a RAG-augmented conversational AI system for mental health support that grounds responses in verified clinical literature from the DSM-5-TR and evidence-based CBT workbooks.
-2.  Develop an emotion classification system that adapts the system's behavior based on the user's detected affective state across six categories: Anxious, Sad, Angry, Neutral, Hopeful, and Distressed.
-3.  Create a comprehensive gamification engine that sustains user engagement over months by linking experience points, streak multipliers, badges, achievements, and challenges directly to therapeutic activities.
-4.  Implement a privacy-first, safety-augmented architecture with row-level security, bilingual crisis detection (English and Arabic), and a clinical auditor that screens every generated response for safety before delivery.
-
-## Research Questions {#sec-research-questions}
-
-1.  Can a RAG-augmented LLM system generate clinically grounded, empathetic responses that outperform rule-based chatbots in terms of relevance, safety, and clinical grounding?
-2.  Does real-time emotion classification improve user engagement and therapeutic outcomes compared to static, non-adaptive responses?
-3.  What gamification design maximizes long-term retention while maintaining clinical sensitivity and respecting crisis situations?
-4.  How can the system ensure privacy, safety, and cultural relevance for the MENA region through bilingual crisis detection, row-level security, and a clinical safety auditor?
-
-## Thesis Organization {#sec-thesis-org}
-
-The remainder of this thesis is organized as follows:
-
--   @sec-methodology presents the system requirements, methodology, block diagrams, use case diagram, and architectural decisions, including the AI pipeline design, data models, gamification system, and security considerations.
--   @sec-results-discussions details the implementation, evaluation results, and discussion of findings.
--   @sec-conclusions summarizes the contributions, outlines future work directions, and discusses the impact on technology and society.

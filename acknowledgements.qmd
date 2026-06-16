@@ -1,21 +1,3 @@
 # Acknowledgements {.unnumbered}
 
-We would like to express our sincere gratitude to our project supervisor, **Dr. Sahar Ghanem**, for her guidance, support, and invaluable feedback throughout this graduation project.
-
-We extend our appreciation to the **Faculty of Computer Science & Artificial Intelligence** at **Pharos University in Alexandria** for providing the resources, environment, and academic framework that made this work possible.
-
-This project was developed by a team of seven students:
-
-- **Hozaifa Moustafa** (Data Science Department)
-- **Ahmed Osama** (Artificial Intelligence Department)
-- **Devide Hany** (Cyber Security Department)
-- **Malak Yasser** (Cyber Security Department)
-- **Abdalrahman Osama** (Computer Science Department)
-- **Yahya Amr** (Computer Science Department)
-- **Ahmed Zakaria** (Computer Science Department)
-
-Each team member contributed their expertise across frontend development, backend architecture, RAG pipeline design, LLM integration, database management, and security implementation.
-
-Special thanks to our families and friends for their unwavering encouragement during the development of this graduation project.
-
-We also acknowledge the open-source community for the tools and libraries that formed the foundation of this system: Flutter, FastAPI, Supabase, ChromaDB, Sentence-Transformers, and the many other projects that make this work possible.
+We sincerely thank our supervisor, **Dr. Sahar Ghanem**, for her guidance and support throughout this graduation project. We also thank the **Faculty of Computer Science & Artificial Intelligence at Pharos University in Alexandria** for providing the academic environment that made this work possible.

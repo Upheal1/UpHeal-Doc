@@ -1,49 +1,3 @@
-# Preface {.unnumbered}
-
-::: {.center}
-**UpHeal: An AI-Powered, Data-Driven and Gamified Mental Health Companion**
-
-**Graduation Project Thesis**
-
-Submitted to
-
-**Department of Computer Science & AI**
-
-Faculty of Computer Science & Artificial Intelligence
-
-Pharos University in Alexandria
-
-June 2026
-:::
-
-::: {.center}
-**UpHeal: An AI-Powered, Data-Driven and Gamified Mental Health Companion**
-
-By
-
-Hozaifa Moustafa
-
-Ahmed Osama
-
-Devide Hany
-
-Malak Yasser
-
-Abdalrahman Osama
-
-Yahya Amr
-
-Ahmed Zakaria
-:::
-
-::: {.center}
-**Supervisor**
-
-Dr. Sahar Ghanem
-:::
-
-\newpage
-
 # Abstract {.unnumbered}
 
 Mental health disorders represent a leading cause of disability worldwide, yet access to timely care remains limited, particularly in low- and middle-income countries. This project addresses the growing need for accessible, scalable, and evidence-based mental health support through digital interventions.
@@ -54,4 +8,4 @@ The methodology involves designing and implementing UpHeal, an AI-powered mental
 
 The results demonstrate that the system achieves an emotion classification F1 score of 0.82, a 4-week user retention rate of 45%, and a System Usability Scale score of 75/100. The RAG pipeline retrieves clinical passages with 88% precision, and the clinical safety auditor successfully detects crisis keywords in both English and Arabic.
 
-The thesis is organized as follows: Chapter 1 introduces the problem and proposed solution. Chapter 2 surveys the background and related work. Chapter 3 presents the methodology and system design. Chapter 4 presents the results and discussions. Chapter 5 provides the conclusions and future work.
+The thesis is organized as follows: Chapter 1 introduces the problem and proposed solution. Chapter 2 surveys the background and related work. Chapter 3 presents the system design. Chapter 4 presents the implementation and results. Chapter 5 provides the conclusions, ethics considerations, and future work.
