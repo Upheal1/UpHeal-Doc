@@ -1,0 +1,317 @@
+%% ============================================================================
+%% LUMOS — Graduation Project Thesis Template
+%% Compiled with: XeLaTeX (recommended) or LuaLaTeX
+%% Conforms to: IEEE Format / Template 2 specifications on A4 paper
+%% Font: Times New Roman | Spacing: Single | Base: 12pt
+%% CRITICAL: KTH logo is strictly banned from this document.
+%% ============================================================================
+
+\documentclass[12pt,a4paper,oneside,openany]{report}
+
+%% ---------------------------------------------------------------------------
+%%  PACKAGES
+%% ---------------------------------------------------------------------------
+\usepackage[margin=2.5cm]{geometry}              % A4 margins per IEEE Template 2
+\usepackage{fontspec}                              % XeLaTeX / LuaLaTeX font selection
+\usepackage{setspace}                              % \singlespacing control
+\usepackage{graphicx}                              % \includegraphics
+\usepackage{subcaption}                            % \subcaption for subfigures
+\usepackage{amsmath,amssymb}                       % math support
+\usepackage{booktabs}                               % \toprule, \midrule, \bottomrule
+\usepackage{enumitem}                               % compact lists
+\usepackage{xcolor}                                 % color support
+\usepackage{caption}                                % caption formatting
+\usepackage{float}                                  % [H] float placement
+\usepackage{tabularx}                                % auto-width tables
+\usepackage{titlesec}                                % heading formatting
+\usepackage[normalem]{ulem}                          % \uline for underlined headings
+\usepackage{fancyhdr}                                % headers and footers
+\usepackage{tocloft}                                 % TOC formatting
+\usepackage[backend=biber,style=ieee]{biblatex}     % IEEE bibliography
+\usepackage{url}                                    % URL line breaking
+\usepackage{letltxmacro}                             % save \includegraphics before override
+\usepackage{xparse}                                 % robust command definitions
+
+%% ---------------------------------------------------------------------------
+%%  FONT CONFIGURATION — Times New Roman via fontspec
+%% ---------------------------------------------------------------------------
+\setmainfont{Times New Roman}
+\setsansfont{Times New Roman}
+\setmonofont{Courier New}
+
+%% ---------------------------------------------------------------------------
+%%  SPACING — Single-spaced throughout
+%% ---------------------------------------------------------------------------
+\singlespacing
+
+%% ---------------------------------------------------------------------------
+%%  BANNED CONTENT — KTH Logo safety gate
+%%  If the filename passed to \includegraphics contains "kth", "KTH", or
+%%  "Kungliga", compilation halts with an error.  Optional arguments (width,
+%%  height, etc.) are preserved and forwarded to the original command.
+%% ---------------------------------------------------------------------------
+\LetLtxMacro{\lumos@original@includegraphics}{\includegraphics}
+
+\ExplSyntaxOn
+\msg_new:nnn { lumos } { banned-logo }
+  { KTH/Royal~Institute~of~Technology~logo~is~strictly~prohibited.~Path:~#1 }
+
+\RenewDocumentCommand \includegraphics { O{} m }
+  {
+    \regex_match:nnTF { kth | KTH | Kungliga } { #2 }
+      { \msg_error:nnn { lumos } { banned-logo } { #2 } }
+      { \lumos@original@includegraphics [#1] { #2 } }
+  }
+\ExplSyntaxOff
+
+%% ---------------------------------------------------------------------------
+%%  HEADING STYLES — University manual compliance
+%% ---------------------------------------------------------------------------
+% Chapter: 16pt bold ALL CAPS
+\titleformat{\chapter}[display]
+  {\normalfont\fontsize{16pt}{19pt}\selectfont\bfseries\centering}
+  {\MakeUppercase{\chaptertitlename}\ \thechapter}
+  {0pt}
+  {}
+  [\vspace{6pt}]
+
+% Section: 14pt bold
+\titleformat{\section}
+  {\normalfont\fontsize{14pt}{17pt}\selectfont\bfseries}
+  {\thesection}
+  {1em}
+  {}
+
+% Subsection: 14pt underlined  (ulem's \uline allows line breaks)
+\titleformat{\subsection}
+  {\normalfont\fontsize{14pt}{17pt}\selectfont}
+  {\thesubsection}
+  {1em}
+  {\uline}
+
+\titlespacing*{\chapter}{0pt}{-30pt}{24pt}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+\titlespacing*{\subsection}{0pt}{10pt}{4pt}
+
+%% ---------------------------------------------------------------------------
+%%  CAPTION STYLE
+%% ---------------------------------------------------------------------------
+\captionsetup{font=small,labelfont=bf,labelsep=period,justification=centering}
+
+%% ---------------------------------------------------------------------------
+%%  HEADER / FOOTER
+%% ---------------------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\slshape LUMOS — Graduation Project}
+\fancyhead[R]{\slshape \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+%% ---------------------------------------------------------------------------
+%%  FRONT-MATTER PAGE STYLE — no header on title/cover pages
+%% ---------------------------------------------------------------------------
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
+}
+
+%% ---------------------------------------------------------------------------
+%%  BIBLIOGRAPHY RESOURCE — uncomment and set your .bib file
+%% ---------------------------------------------------------------------------
+% \addbibresource{references.bib}
+
+%% ========================================================================
+%%                      BEGIN DOCUMENT
+%% ========================================================================
+\begin{document}
+
+%% ---------------------------------------------------------------------------
+%%  PART 1 — OFFICIAL COVER PAGE
+%% ---------------------------------------------------------------------------
+\begin{titlepage}
+\thispagestyle{plain}
+\centering
+
+%% --- University Logo ---
+\vspace*{1cm}
+\includegraphics[width=3cm]{university_logo.png}
+
+\vspace{0.6cm}
+
+%% --- University Name ---
+{\Large\bfseries Pharos University in Alexandria}
+
+\vspace{0.3cm}
+
+%% --- Faculty ---
+{\normalsize Faculty of Computer Science \& Artificial Intelligence}
+
+\vspace{0.6cm}
+
+%% --- Report Type ---
+{\large\bfseries Graduation Project Report}
+
+\vspace{0.4cm}
+
+%% --- Project Subtitle ---
+{\normalsize Healthcare Platform for ADHD Diagnosis, Monitoring,\\
+and Treatment Support}
+
+\vspace{1.2cm}
+
+%% --- Main Title ---
+{\fontsize{28pt}{34pt}\selectfont\bfseries LUMOS}
+
+\vspace{0.8cm}
+
+%% --- Declaration ---
+{\small Submitted in partial fulfillment of the requirements\\
+for the graduation project}
+
+\vspace{1.5cm}
+
+%% --- Authors ---
+{\large\bfseries Authors}
+
+\vspace{0.3cm}
+
+\begin{tabular}{@{}l@{\hspace{2em}}r@{}}
+\MakeUppercase{Hozaifa Moustafa Mohy Aldeen Risho}  & 202201621 \\
+\MakeUppercase{Ahmed Osama Fouad}                     & 202201777 \\
+\MakeUppercase{Yehia Amr Mohmed Fouad}               & 202201726 \\
+\MakeUppercase{Abdelrahman Osama Hafez Massoud}      & 202201746 \\
+\MakeUppercase{David Hany}                            & 202201324 \\
+\MakeUppercase{Malak Yasser}                          & 202201505 \\
+\end{tabular}
+
+\vfill
+
+%% --- Supervisor / TA / Academic Year ---
+{\normalsize\bfseries Supervisor: Dr.\ Sahar Ghanem}\\[4pt]
+{\normalsize\bfseries Teaching Assistant: Esraa Habiba}\\[4pt]
+{\normalsize\bfseries Academic Year: 2025--2026}
+
+\end{titlepage}
+
+\newpage
+
+%% ---------------------------------------------------------------------------
+%%  TABLE OF CONTENTS
+%% ---------------------------------------------------------------------------
+\tableofcontents
+\newpage
+
+%% ========================================================================
+%%  CHAPTER 1 — INTRODUCTION
+%% ========================================================================
+\chapter{Introduction}
+\label{ch:introduction}
+
+This chapter introduces the problem domain, motivation, and objectives of the LUMOS platform.
+
+%% ========================================================================
+%%  CHAPTER 2 — LITERATURE REVIEW
+%% ========================================================================
+\chapter{Literature Review}
+\label{ch:literature-review}
+
+A review of related work and existing solutions in ADHD digital healthcare.
+
+%% ========================================================================
+%%  CHAPTER 3 — SYSTEM DESIGN
+%% ========================================================================
+\chapter{System Design}
+\label{ch:system-design}
+
+This chapter presents the architecture and design decisions of the LUMOS platform.
+
+%% ---------------------------------------------------------------------------
+%%  PART 3 — SYSTEM SEQUENCE DIAGRAM
+%% ---------------------------------------------------------------------------
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{diagrams/sequence_diagram.png}
+\caption{LUMOS System Sequence Diagram}
+\label{fig:sequence-diagram}
+\end{figure}
+
+%% ========================================================================
+%%  CHAPTER 4 — IMPLEMENTATION \& RESULTS
+%% ========================================================================
+\chapter{Implementation \& Results}
+\label{ch:implementation}
+
+This chapter details the implementation of the LUMOS frontend, backend, and evaluation results.
+
+%% ---------------------------------------------------------------------------
+%%  PART 2 — FRONTEND SCREENS LAYOUT MATRIX (2 x 4 Grid)
+%% ---------------------------------------------------------------------------
+\begin{figure}[H]
+\centering
+
+%% --- Row 1: Screens 1–4 ---
+\begin{minipage}[t]{0.23\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{frontend-screens/screen1.png}
+  \subcaption{Home screen}\label{fig:screen-a}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.23\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{frontend-screens/screen2.png}
+  \subcaption{Login screen}\label{fig:screen-b}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.23\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{frontend-screens/screen3.png}
+  \subcaption{Dashboard}\label{fig:screen-c}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.23\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{frontend-screens/screen4.png}
+  \subcaption{Assessment}\label{fig:screen-d}
+\end{minipage}
+
+\vspace{6pt}
+
+%% --- Row 2: Screens 5–8 ---
+\begin{minipage}[t]{0.23\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{frontend-screens/screen5.png}
+  \subcaption{Progress tracker}\label{fig:screen-e}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.23\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{frontend-screens/screen6.png}
+  \subcaption{Notifications}\label{fig:screen-f}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.23\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{frontend-screens/screen7.png}
+  \subcaption{Profile}\label{fig:screen-g}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.23\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{frontend-screens/screen8.png}
+  \subcaption{Settings}\label{fig:screen-h}
+\end{minipage}
+
+\caption{LUMOS Frontend Application Interfaces}
+\label{fig:frontend-screens}
+\end{figure}
+
+%% ========================================================================
+%%  CHAPTER 5 — CONCLUSIONS
+%% ========================================================================
+\chapter{Conclusions}
+\label{ch:conclusions}
+
+Summary of contributions, ethical considerations, and future work directions.
+
+%% ---------------------------------------------------------------------------
+%%  BIBLIOGRAPHY — uncomment when references.bib is ready
+%% ---------------------------------------------------------------------------
+% \printbibliography[heading=bibintoc,title={References}]
+
+\end{document}
