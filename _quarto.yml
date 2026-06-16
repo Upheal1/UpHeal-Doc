@@ -98,8 +98,7 @@ format:
           \vspace*{2cm}
           {\fontsize{18}{22}\selectfont\textbf{UpHeal: An AI-Powered, Data-Driven and Gamified Mental Health Companion}\par}
           \vspace{2cm}
-          % University logo placeholder - replace logo-filename.pdf with actual file
-          % \includegraphics[width=4cm]{images/university-logo.pdf}\par
+          \includegraphics[width=4cm]{logo-2015.png}\par
           \vspace{0.5cm}
           {\Large Pharos University in Alexandria}\par
           \vfill
