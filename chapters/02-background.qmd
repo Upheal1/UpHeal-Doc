@@ -2,72 +2,82 @@
 
 ## Existing Solutions {#sec-state-of-art}
 
-Mental health disorders are a leading cause of disability worldwide. WHO estimates one in eight people lives with a mental health condition, yet service coverage in low- and middle-income countries remains below 25% [@who2021mental]. In Egypt and the MENA region, stigma, a shortage of professionals, and financial barriers widen the treatment gap. Egypt has an estimated 20 million people in need of mental health services but fewer than 1,000 practicing psychiatrists. Smartphone proliferation and AI advances create an opportunity for scalable digital interventions [@toufique2023llm].
+Large language models (LLMs) have transformed natural-language processing. Transformer architectures [@vaswani2017attention], pre-training objectives such as masked language modeling [@devlin2019bert], and instruction tuning [@ouyang2022training] enable models to generate coherent, context-aware text. For mental-health support, this capability is valuable because users often express complex emotions and need empathetic, personalized responses.
 
-### Conversational Agents
+Several systems demonstrate the potential and limitations of LLMs in this domain. Woebot delivers structured CBT exercises through rule-based dialogue [@woebot2021]. Wysa combines rule-based logic with NLP to handle broader inputs [@inkster2018empath]. Replika uses a large language model for open-ended conversation but lacks clinical grounding and disclaims therapeutic intent. A systematic review found that most mental-health chatbots rely on simple keyword matching rather than evidence-based frameworks [@kumar2023mental].
 
-Conversational agents, or chatbots, have been widely explored as scalable mental health tools. The landscape can be organized according to a taxonomy proposed by Kumar and Jaiswal [@kumar2023mental], which categorizes mental health chatbots along three dimensions: (1) rule-based versus generative, (2) task-oriented versus open-domain, and (3) single-session versus multi-session.
+### Opportunities and Risks of LLMs in Mental Health
 
-**Woebot** is a CBT-based chatbot that delivers structured therapeutic exercises through scripted dialogue. A randomized controlled trial by Fulmer et al. [@woebot2021] found that Woebot significantly reduced depression symptoms in young adults over a two-week period, with PHQ-9 scores decreasing by an average of 2.5 points. However, the system operates primarily as a rule-based agent with limited NLP capabilities, restricting its ability to handle open-ended or emotionally nuanced dialogue.
+LLMs offer personalization, empathetic language, fast information access, and crisis-language detection. However, they also introduce risks: incorrect or excessive memory use, false empathy, hallucinated mental-health claims, and unsafe crisis responses.
 
-**Wysa** combines rule-based logic with NLP to handle a broader range of user inputs. A study by Inkster et al. [@inkster2018empath] found that users engaged with the bot an average of 3.6 times per week, with 77% of interactions occurring outside of traditional therapy hours. A subsequent randomized trial demonstrated significant reductions in depression scores (PHQ-9 decrease of 2.8 points over 4 weeks) among users who completed at least three sessions.
+Table 2.1: Opportunities and risks of LLMs for mental-health support.
 
-**Replika** uses a large language model for open-ended conversation but lacks clinical grounding and explicitly disclaims therapeutic intent. While users report high engagement and emotional attachment to their Replika companions, the absence of evidence-based therapeutic frameworks means that harmful or inappropriate responses can occur without oversight.
+| Capability | Opportunity | Risk | Mitigation in UpHeal |
+|------------|-------------|------|----------------------|
+| Personalization | Responses use user context | Incorrect or excessive memory extraction | Controlled memory retrieval |
+| Emotional support | Natural empathetic language | False sense of human understanding | Clear AI companion framing |
+| Information access | Fast psychoeducation | Hallucinated mental-health claims | RAG grounding from curated books |
+| Crisis handling | Early detection of risk language | Unsafe or incomplete crisis response | Crisis detection and safety prompts |
+| Voice interaction | Natural conversation | Misinterpretation of tone | Voice emotion as uncertain signal only |
 
-A systematic review of 47 mental health conversational agents by Kumar and Jaiswal [@kumar2023mental] found that only 12% incorporated evidence-based therapeutic frameworks, while 68% used simple keyword matching or rule-based responses. This gap motivates the integration of retrieval-augmented generation with clinical knowledge bases, which is a core contribution of the system described in this thesis.
+### Empathetic Dialogue Systems
 
-### Emotion Recognition
+Empathy in dialogue systems involves recognizing emotional states, acknowledging the user's experience, and responding supportively. The EmpatheticDialogues dataset showed that models trained on empathetic data can be perceived as more empathetic by human evaluators [@rashkin2018empathetic]. However, compassionate-sounding language does not imply true understanding. UpHeal therefore combines empathetic style with safety constraints, uncertainty framing, and professional-referral prompts.
 
-Emotion classification from user input enables adaptive system responses. Pre-trained models such as BERT-based classifiers have shown strong performance in detecting emotional cues from text [@devlin2019bert]. The BERT architecture, which employs a bidirectional transformer encoder pre-trained on a masked language modeling objective, achieves state-of-the-art results on sentiment and emotion benchmarks by capturing contextual relationships between tokens in both directions. The HuggingFace Transformers library [@wolf2020transformers] provides the standard implementation used to fine-tune and deploy these models in production pipelines.
+### Parameter-Efficient Fine-Tuning
 
-For text-based emotion detection, the GoEmotions dataset [@demszky2019goemotions] provides 58,000 Reddit comments labeled across 27 emotion categories, making it one of the most comprehensive publicly available emotion datasets. EmoBank [@bostrom2020emobank] offers an additional dimensional emotion annotation resource that can support valence-arousal modeling. Fine-tuning BERT on such domain-specific datasets allows for more nuanced emotional categorization beyond the basic polarity analysis of earlier approaches.
-
-For speech-based emotion recognition, Whisper has demonstrated robust performance in transcribing and analyzing emotional speech patterns [@radford2022whisper]. Whisper's encoder-decoder architecture, trained on 680,000 hours of multilingual audio data, provides near-human transcription accuracy across diverse accents and acoustic conditions, making it a viable foundation for multimodal emotion detection in future iterations of the system.
-
-In the mental health domain, the integration of real-time emotion detection into conversational systems remains limited [@toufique2023llm]. Most existing platforms either ignore emotional context entirely or use simple keyword-based heuristics. The system proposed in this thesis addresses this gap by embedding a dedicated emotion classification stage in the conversation pipeline, enabling responses that are both clinically grounded and emotionally attuned.
-
-### Gamification
-
-Gamification — the application of game-design elements to non-game contexts — has been validated across multiple health domains as an effective mechanism for sustaining user engagement. Hamari et al. [@hamari2016gamification] conducted a systematic literature review finding that gamification elements can increase retention rates by 20–40% compared to non-gamified counterparts, with points, badges, and leaderboards being the most commonly implemented features.
-
-The theoretical foundation for gamification's effectiveness in health contexts draws on Self-Determination Theory (SDT) [@deci2000sdt], which posits that intrinsic motivation is driven by three basic psychological needs: autonomy (the need to feel in control of one's behavior), competence (the need to feel effective in achieving desired outcomes), and relatedness (the need to feel connected to others). Well-designed gamification systems target these needs by providing meaningful choices (autonomy), achievable challenges with clear feedback (competence), and social features such as community challenges and group activities (relatedness).
-
-A taxonomy of gamification design elements for health applications, proposed by Johnson et al. [@johnson2016gamification], organizes game mechanics into three categories: motivational (points, levels, achievements), social (leaderboards, teams, challenges), and behavioral (streaks, reminders, loss aversion). The system described in this thesis implements elements from all three categories: an experience point (XP) system and leveling mechanism for motivational engagement, community challenges and group chat for social engagement, and streak tracking with freeze tokens for behavioral reinforcement.
-
-Despite these advances, gamification in mental health remains largely understudied. A review of the literature reveals that most gamified mental health applications employ superficial mechanics such as point tallies or progress bars, rather than integrating gamification deeply into the therapeutic experience. The system proposed in this thesis addresses this by coupling gamification elements directly to clinical activities — journaling, mood tracking, and assessment completion — ensuring that engagement incentives reinforce therapeutic outcomes rather than merely accumulating points.
+Full fine-tuning of large models is computationally expensive. LoRA freezes pre-trained weights and injects trainable low-rank matrices into selected layers, enabling domain adaptation with far fewer parameters [@hu2021lora]. QLoRA extends this by loading the base model in 4-bit representation while training LoRA adapters, reducing memory requirements while preserving performance [@dettmers2022qlora]. UpHeal uses QLoRA to adapt the core LLM to a supportive, safe, and life-coaching conversational style without storing all knowledge in model weights.
 
 ### Retrieval-Augmented Generation
 
-Retrieval-augmented generation (RAG) combines a retrieval component with a generative model to ground responses in verified external knowledge. The framework was introduced by Lewis et al. [@lewis2020rag] and has become foundational for building knowledge-intensive NLP systems. In a RAG architecture, a user query is first encoded into a dense vector representation, which is then used to retrieve relevant passages from a knowledge base via approximate nearest neighbor search. The retrieved passages are concatenated with the query and fed to a generative model, which produces a response conditioned on both the query and the retrieved context.
+RAG combines parametric memory from a language model with non-parametric memory from an external knowledge index [@lewis2020rag]. For mental-health support, this grounding is essential because standalone LLMs may produce plausible but unsupported claims. UpHeal retrieves relevant passages from a curated corpus of 25 mental-health and psychology books, injects them into the prompt, and generates responses conditioned on retrieved evidence rather than latent knowledge alone.
 
-The retrieval component typically relies on dense vector representations, with Sentence-BERT embeddings [@reimers2019sentence] providing strong performance on semantic textual similarity benchmarks. For efficient similarity search at scale, the Hierarchical Navigable Small World (HNSW) algorithm [@malkov2018hnsw] enables sub-linear query time with high recall, making it suitable for real-time retrieval in conversational systems. ChromaDB [@chromadb2024] is an open-source vector database that implements HNSW indexing and provides a lightweight, persistent store specifically designed for RAG applications.
+### Conversational Memory and Personalization
 
-In the medical domain, RAG has been applied to ground LLM responses in clinical literature, reducing hallucination and improving factual accuracy [@toufique2023llm]. By retrieving passages from the Diagnostic and Statistical Manual of Mental Disorders (DSM-5-TR) [@apa2022dsm5tr] and curated CBT workbooks, a RAG pipeline can ensure that generated responses are clinically appropriate and evidence-based. The system described in this thesis embeds 3,255+ semantic chunks from clinical psychology texts using the `all-mpnet-base-v2` model, with HNSW parameters configured for retrieval latency under 120 milliseconds.
+Long-term personalization requires memory beyond the finite context window. Memory-augmented systems such as MemGPT manage information between limited active context and longer-term storage [@packer2023memgpt]. UpHeal separates immediate conversation context, recent session history, long-term user memory, journal-derived summaries, and mood-tracking patterns. This structured approach improves safety because user-specific information is retrieved from protected storage and inserted into the prompt only when needed.
 
-## Evaluation of Current Solutions {#sec-evaluation}
+### Emotion-Aware Context Processing
 
-Table: Comparison of existing digital mental health solutions. {#tbl-comparison}
+Emotion recognition in text (e.g., GoEmotions) and speech (e.g., wav2vec 2.0) can improve response relevance [@demszky2019goemotions; @baevski2020wav2vec]. In UpHeal, emotion signals — text emotion, voice emotion, mood scores, journal themes, and crisis keywords — guide tone and response strategy but are not treated as medical conclusions.
 
-| Dimension | Woebot | Wysa | Replika | UpHeal |
-|-----------|--------|------|---------|--------|
-| Personalization | Fixed scripts | Limited NLP | Generic LLM | Emotion-adaptive + RAG |
-| Clinical grounding | CBT modules | Limited | None | DSM-5-TR + CBT + RAG |
-| User retention | Moderate (2-week studies) | Moderate (3.6 engagements/week) | High (social attachment) | Gamification (XP, streaks, badges, challenges) |
-| Crisis detection | Basic keyword | Basic keyword | None | Multi-tier (EN/AR) + hotlines + clinical auditor |
-| LLM integration | None | None | Yes (ungrounded) | RAG-augmented + clinical audit |
-| Emotion adaptation | None | None | None | Keyword-based sentiment (BERT planned) |
-| Gamification | None | Minimal | Tamagotchi-style avatar | 10 badges, 12 achievements, 10 challenges, streak system |
-| Community | None | None | None | Real-time feed, groups, focus rooms |
+Table 2.2: Emotion signals and their role in UpHeal.
+
+| Signal | Source | Use in Context | Limitation |
+|--------|--------|----------------|------------|
+| Text emotion | User message or transcript | Adjust response tone | May miss sarcasm or hidden meaning |
+| Voice emotion | Audio features | Detect tone and intensity | Sensitive to noise and accent |
+| Mood score | User self-report | Track trends over time | Subjective and incomplete |
+| Journal themes | User writing | Identify recurring concerns | Requires summarization and privacy control |
+| Crisis keywords | Text/audio transcript | Trigger safety handling | May miss indirect risk signals |
+
+### Voice and Multimodal Interaction
+
+Voice interaction can lower engagement barriers. Whisper demonstrated strong multilingual speech recognition through large-scale weak supervision [@radford2022whisper]. Recent TTS systems such as XTTS and F5-TTS show progress in expressive, multilingual synthesis [@casanova2024xtts; @chen2024f5tts]. UpHeal combines Whisper for transcription, Chatterbox for streaming TTS, and emotion analysis to enable real-time spoken dialogue.
+
+### Prompt Engineering and Context Engineering
+
+Context engineering decides what information enters each LLM request. In UpHeal, the context layer prioritizes system instructions, crisis handling, current user input, recent history, relevant long-term memory, mood and journal context, emotion signals, retrieved book evidence, and language preferences. This prioritization prevents unsafe or disorganized responses and protects privacy by excluding unnecessary sensitive information.
+
+### Safety, Privacy, and Ethical Considerations
+
+LLM-based mental-health systems require rigorous safety evaluation, crisis handling, privacy protection, and human oversight [@guo2024llmmentalhealth; @hua2024llmmentalhealthscoping]. The WHO emphasizes ethical governance of AI in health, including autonomy, transparency, responsibility, inclusiveness, fairness, and sustainability [@who2021aiethics]. UpHeal therefore frames itself as a supportive companion, not a therapist; it does not diagnose, prescribe, or replace emergency services, and it protects user data through authentication, access control, and user-scoped storage.
 
 ## Gap Analysis {#sec-gap}
 
-The analysis reveals that while existing solutions address individual aspects of digital mental health support, no existing system integrates all of the following:
+The reviewed literature shows that standalone LLMs for mental health suffer from limited personalization, weak factual grounding, insufficient emotion awareness, limited multimodal support, safety concerns, and lack of an integrated architecture. Existing work often studies fine-tuning, RAG, memory, emotion analysis, or voice interaction separately rather than as one combined system.
 
-1.  **RAG-augmented LLM responses grounded in clinical literature.** Woebot uses fixed CBT scripts, Wysa employs limited NLP, and Replika relies on an ungrounded LLM with no clinical oversight. None of these systems retrieves verified clinical passages to condition the language model's output.
+Table 2.3: Literature-to-architecture mapping.
 
-2.  **Real-time emotion-adaptive interaction.** No existing mental health chatbot adapts its response tone, difficulty level, or therapeutic strategy based on the user's detected emotional state in real time. Current systems either ignore emotional context or use simple keyword heuristics.
+| Literature Area | Key Idea | Influence on UpHeal |
+|-----------------|----------|---------------------|
+| Transformers and LLMs | LLMs generate coherent natural language | Gemma 3 27B IT as core language model |
+| Instruction tuning | Models must be aligned to user intent | Supportive and safe response style |
+| LoRA and QLoRA | Efficient adaptation of large models | QLoRA fine-tuning layer |
+| RAG | External knowledge improves grounding | 25-book mental-health knowledge base |
+| Empathetic dialogue | Emotional acknowledgment improves perception | Empathetic response behavior |
+| Memory systems | Long-term context improves personalization | Supabase-based memory and history |
+| Emotion recognition | Emotion signals guide response tone | Text and voice emotion analysis |
+| ASR and TTS | Speech enables natural interaction | Whisper and Chatterbox voice pipeline |
+| AI safety | Sensitive domains need safeguards | Crisis rules and safety prompts |
 
-3.  **Comprehensive gamification with clinical sensitivity.** Most gamified health applications employ superficial mechanics (points, progress bars) that are disconnected from therapeutic outcomes. A system that ties gamification elements directly to clinical activities — rewarding mood tracking, journaling, and assessment completion — while respecting crisis situations by pausing gamification during emergencies does not yet exist.
-
-4.  **Privacy-first, safety-augmented architecture with bilingual crisis detection.** Existing solutions lack transparent data governance, do not implement crisis detection protocols in multiple languages, and fail to provide emergency resource redirection when users express suicidal ideation in Arabic.
-
+UpHeal addresses these gaps by integrating fine-tuning, RAG, memory, emotion-aware context processing, and real-time voice interaction within a single mental-health support framework.

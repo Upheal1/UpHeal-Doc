@@ -1,1018 +1,240 @@
 # SYSTEM DESIGN {#sec-methodology}
 
-## 3.1 Functional Requirements
+## 3.1 Chapter Introduction
 
-The following functional requirements (FR) define the core capabilities of the UpHeal system, derived from the problem definition in @sec-problem-definition and informed by the gap analysis in @sec-gap.
+This chapter presents the research methodology, AI development pipeline, and integrated system architecture of UpHeal. It explains the criteria used to select models and technologies, the comparative evaluation of candidate models, the QLoRA fine-tuning process, the retrieval-augmented generation layer, prompt and context engineering, the complete system architecture, text and voice conversation flows, backend integration, and personalization loops.
 
-| ID | Requirement | Priority | Rationale |
-|----|-------------|----------|-----------|
-| FR-01 | The system shall allow users to register and authenticate via email/password and Google Sign-In. | Must | Secure identity management is a prerequisite for personalized, persistent interactions. |
-| FR-02 | The system shall provide a conversational AI chatbot that generates responses conditioned on the user's detected emotional state and retrieved clinical context. | Must | Addresses the personalization gap identified in @sec-gap. |
-| FR-03 | The system shall classify the user's emotional state from text input into one of six categories: Anxious, Sad, Angry, Neutral, Hopeful, or Distressed, with a confidence score. | Must | Real-time emotion adaptation is a core pillar of the system design. |
-| FR-04 | The system shall detect crisis keywords in both English and Arabic and intervene with localized emergency resources when a crisis is identified. | Must | Bilingual crisis detection addresses the safety gap identified in @sec-gap. |
-| FR-05 | The system shall retrieve clinically relevant passages from a vector database indexed with DSM-5-TR and CBT workbook content to ground LLM responses. | Must | RAG addresses the clinical grounding gap identified in @sec-gap. |
-| FR-06 | The system shall generate GAD-7 and PHQ-9 clinical assessments and produce personalized 90-day wellness roadmaps based on the assessment results. | Must | Assessment-driven personalization is central to the therapeutic model. |
-| FR-07 | The system shall implement a gamification engine with experience points, levels, badges, achievements, challenges, and streak tracking with freeze tokens. | Must | Gamification addresses the retention gap identified in @sec-gap. |
-| FR-08 | The system shall provide journaling, mood tracking, sleep logging, and screen time monitoring features. | Must | These features provide the behavioral data needed for personalization and gamification. |
-| FR-09 | The system shall support a community feature with a real-time feed, group chat, synchronized focus rooms, and user profiles. | Should | Community features leverage the relatedness dimension of SDT [@deci2000sdt] to sustain engagement. |
-| FR-10 | The system shall screen every generated response through a clinical safety auditor that classifies it as GREEN, YELLOW, or RED before delivery. | Must | The clinical auditor ensures safety in every interaction, addressing the privacy and safety gap. |
+## 3.2 Research and Development Methodology
 
-## 3.2 Non-Functional Requirements
-
-| ID | Requirement | Target | Rationale |
-|----|-------------|--------|-----------|
-| NFR-01 | Response latency | End-to-end response in under 4 seconds (target: 3.2 seconds) | Users expect near-real-time responses in conversational interfaces; latency above 4 seconds degrades perceived empathy. |
-| NFR-02 | Availability | 99.5% uptime (planned maintenance windows excluded) | Mental health applications must be accessible during moments of crisis. |
-| NFR-03 | Security | Zero Trust Architecture with defense in depth: TLS 1.3 in transit, AES-256-GCM at rest with envelope encryption and 90-day key rotation, row-level security (RLS), 3-tier JWT with OTP and PBKDF2, on-device edge AI threat detection, visual content safety scanning, and service continuity protection | Sensitive mental health data requires defense in depth; regulatory compliance requires encryption at rest and in transit, while crisis scenarios require persistent safety infrastructure. |
-| NFR-04 | Privacy | User data isolation via RLS policies; no cross-user data access | Each user's mental health data must be strictly isolated to prevent information leakage between accounts. |
-| NFR-05 | Scalability | Handle 1,000 concurrent users with horizontal scaling | Sufficient for initial deployment; microservices architecture enables independent scaling of bottleneck services. |
-| NFR-06 | Emotion classification accuracy | Minimum F1 score of 0.80 across all six categories | Clinical utility requires reliable emotion detection; below 0.80 the system risks misclassifying distress as neutral. |
-| NFR-07 | Accessibility | Android 10+ and iOS 15+, minimum 4 GB RAM | Targeting the broadest possible mobile device compatibility in the MENA region. |
-
-## 3.3 Use Case Diagram
-
-Figure 3.1 presents the use case diagram for the UpHeal system, showing both actor use cases and system use cases.
+The project follows a design-and-development research methodology. The system is defined from the identified problem, designed using academic research, implemented as an integrated prototype, evaluated against technical and functional criteria, and refined iteratively. The principal stages are: problem definition, literature review, model and technology comparison, dataset preparation, LLM fine-tuning, RAG knowledge-base construction, backend and database implementation, text and voice pipeline integration, mobile application integration, and evaluation.
 
 ```{python}
-#| label: fig-use-case
-#| fig-cap: "UpHeal use case diagram showing 8 user use cases and 6 system use cases"
+#| label: fig-methodology
+#| fig-cap: "Research and development methodology"
 #| echo: false
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
-fig, ax = plt.subplots(figsize=(7.50, 5.25))
-ax.set_xlim(0, 10)
-ax.set_ylim(0, 8)
-ax.axis('off')
-
-# Actors
-user_box = mpatches.FancyBboxPatch((0.1, 3.5), 1.2, 0.8, boxstyle="round,pad=0.1", facecolor='#4C8BF5', edgecolor='#333333', linewidth=1.5)
-ax.add_patch(user_box)
-ax.text(0.7, 3.9, 'User', ha='center', va='center', fontsize=11, fontweight='bold', color='white')
-
-system_box = mpatches.FancyBboxPatch((8.7, 3.5), 1.2, 0.8, boxstyle="round,pad=0.1", facecolor='#EA4335', edgecolor='#333333', linewidth=1.5)
-ax.add_patch(system_box)
-ax.text(9.3, 3.9, 'System', ha='center', va='center', fontsize=11, fontweight='bold', color='white')
-
-# Use case positions
-user_cases = [
-    (2.5, 7.1, 'Register / Login'),
-    (2.5, 6.2, 'Take Assessment'),
-    (2.5, 5.3, 'Chat with AI Coach'),
-    (2.5, 4.4, 'View Roadmap'),
-    (2.5, 3.5, 'Track Mood'),
-    (2.5, 2.6, 'Write Journal'),
-    (2.5, 1.7, 'Manage Gamification'),
-    (2.5, 0.8, 'Join Community'),
-]
-
-system_cases = [
-    (6.5, 7.1, 'RAG Retrieval'),
-    (6.5, 6.2, 'Emotion Classification'),
-    (6.5, 5.3, 'Clinical Audit'),
-    (6.5, 4.4, 'Crisis Detection'),
-    (6.5, 3.5, 'Roadmap Generation'),
-    (6.5, 2.6, 'Gamification XP Calculation'),
-]
-
-for x, y, label in user_cases:
-    box = mpatches.FancyBboxPatch((x - 1.0, y - 0.32), 2.0, 0.64, boxstyle="round,pad=0.08", facecolor='#E8F0FE', edgecolor='#4C8BF5', linewidth=1.2)
-    ax.add_patch(box)
-    ax.text(x, y, label, ha='center', va='center', fontsize=8)
-
-for x, y, label in system_cases:
-    box = mpatches.FancyBboxPatch((x - 1.0, y - 0.32), 2.0, 0.64, boxstyle="round,pad=0.08", facecolor='#FCE8E6', edgecolor='#EA4335', linewidth=1.2)
-    ax.add_patch(box)
-    ax.text(x, y, label, ha='center', va='center', fontsize=8)
-
-# Actor -> use case arrows
-for x, y, _ in user_cases:
-    ax.annotate('', xy=(x - 1.0, y), xytext=(1.3, 3.9),
-                arrowprops=dict(arrowstyle='->', color='#4C8BF5', lw=1.0))
-
-# System -> use case arrows
-for x, y, _ in system_cases:
-    ax.annotate('', xy=(x + 1.0, y), xytext=(8.7, 3.9),
-                arrowprops=dict(arrowstyle='->', color='#EA4335', lw=1.0))
-
-# Include <<include>> dashed relationships
-# Chat -> RAG, Emotion, Audit, Crisis
-for sys_y in [7.1, 6.2, 5.3, 4.4]:
-    ax.annotate('', xy=(6.5 - 1.0, sys_y), xytext=(2.5 + 1.0, 5.3),
-                arrowprops=dict(arrowstyle='->', color='#888888', lw=0.8, linestyle='dashed'))
-
-# Assessment -> Roadmap Gen
-ax.annotate('', xy=(6.5 - 1.0, 4.4), xytext=(2.5 + 1.0, 6.2),
-            arrowprops=dict(arrowstyle='->', color='#888888', lw=0.8, linestyle='dashed'))
-
-# Mood, Journal, Gamification, Community -> XP Calculation
-for src_y in [3.5, 2.6, 1.7, 0.8]:
-    ax.annotate('', xy=(6.5 - 1.0, 2.6), xytext=(2.5 + 1.0, src_y),
-                arrowprops=dict(arrowstyle='->', color='#888888', lw=0.8, linestyle='dashed'))
-
-plt.tight_layout()
-plt.show()
-```
-
-The use cases are organized into two categories. User use cases represent direct interactions: registration and authentication (FR-01), clinical assessment (FR-06), conversational AI chat (FR-02, FR-03), roadmap viewing (FR-06), mood tracking (FR-08), journaling (FR-08), gamification management (FR-07), and community participation (FR-09). System use cases represent internal processes triggered by user actions: RAG retrieval (FR-05), emotion classification (FR-03), clinical auditing (FR-10), crisis detection (FR-04), personalized roadmap generation (FR-06), and gamification XP calculation (FR-07).
-
-## 3.4 System Architecture Overview
-
-The UpHeal system follows a layered microservices architecture inspired by the RAG framework [@lewis2020rag] and modern LLM integration patterns [@toufique2023llm]. Figure 3.2 presents the high-level block diagram showing all components and their interconnections.
-
-```{python}
-#| label: fig-architecture
-#| fig-cap: "UpHeal system architecture block diagram"
-#| echo: false
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-
-fig, ax = plt.subplots(figsize=(8.25, 7.50))
-ax.set_xlim(0, 11)
-ax.set_ylim(0, 10)
-ax.axis('off')
-
-# Layer backgrounds
-layer_colors = ['#E3F2FD', '#E8F5E9', '#FFF3E0', '#F3E5F5', '#FCE4EC']
-layer_labels = ['Client Layer', 'API Gateway Layer', 'Microservices Layer', 'AI Pipeline Layer', 'Data Layer']
-layer_y = [9.0, 7.5, 5.0, 3.0, 1.0]
-layer_h = [1.1, 1.1, 2.2, 1.3, 1.3]
-
-for y, h, color, label in zip(layer_y, layer_h, layer_colors, layer_labels):
-    rect = mpatches.FancyBboxPatch((0.3, y - h/2), 10.4, h, boxstyle="round,pad=0.05", facecolor=color, edgecolor='#333333', linewidth=1.2, alpha=0.5)
-    ax.add_patch(rect)
-    ax.text(0.45, y + h/2 - 0.15, label, fontsize=10, fontweight='bold')
-
-# Components as (x, y, label, color)
-client = [(5.5, 9.0, 'Flutter Mobile App', '#4C8BF5')]
-
-gateway = [
-    (3.5, 7.5, 'FastAPI Gateway', '#34A853'),
-    (5.5, 7.5, 'Auth Middleware', '#34A853'),
-    (7.5, 7.5, 'Rate Limiter', '#34A853'),
-]
-
-microservices = [
-    (2.0, 6.0, 'Chat\nService', '#FBBC05'),
-    (4.0, 6.0, 'Assessment\nService', '#FBBC05'),
-    (6.0, 6.0, 'Journal\nService', '#FBBC05'),
-    (8.0, 6.0, 'Telemetry\nService', '#FBBC05'),
-    (10.0, 6.0, 'Roadmap\nService', '#FBBC05'),
-    (2.0, 4.3, 'Knowledge Base\nService', '#FBBC05'),
-    (4.0, 4.3, 'Architect\nService', '#FBBC05'),
-    (6.0, 4.3, 'Ingestion\nService', '#FBBC05'),
-    (8.0, 4.3, 'Auditor\nService', '#FBBC05'),
-]
-
-ai = [
-    (2.5, 3.0, 'Emotion\nClassifier', '#9C27B0'),
-    (5.0, 3.0, 'ChromaDB\nVector Store', '#9C27B0'),
-    (7.5, 3.0, 'LLM\nService', '#9C27B0'),
-    (10.0, 3.0, 'Clinical\nAuditor', '#9C27B0'),
-]
-
-data = [
-    (3.5, 1.0, 'Supabase\nPostgreSQL', '#EA4335'),
-    (5.5, 1.0, 'Supabase\nStorage', '#EA4335'),
-    (7.5, 1.0, 'Supabase\nRealtime', '#EA4335'),
-]
-
-all_components = client + gateway + microservices + ai + data
-for x, y, label, color in all_components:
-    box = mpatches.FancyBboxPatch((x - 0.75, y - 0.45), 1.5, 0.9, boxstyle="round,pad=0.06", facecolor=color, edgecolor='#333333', linewidth=1.0, alpha=0.9)
-    ax.add_patch(box)
-    ax.text(x, y, label, ha='center', va='center', fontsize=7.5, color='white', fontweight='bold')
-
-# Helper arrows
-def draw_arrow(start, end, color='#555555', style='->', lw=1.0):
-    ax.annotate('', xy=end, xytext=start, arrowprops=dict(arrowstyle=style, color=color, lw=lw))
-
-# Client -> Gateway
-draw_arrow((5.5, 8.55), (5.5, 7.95))
-
-# Gateway -> Microservices
-draw_arrow((5.5, 7.05), (5.5, 6.45))
-
-# Microservices -> AI
-draw_arrow((5.5, 3.9), (5.5, 3.45))
-
-# AI -> Data
-draw_arrow((5.5, 2.55), (5.5, 1.45))
-
-# Internal gateway flow
-draw_arrow((3.95, 7.5), (4.75, 7.5))
-draw_arrow((6.25, 7.5), (6.75, 7.5))
-
-# Chat service to AI components
-for ax_pos in [2.5, 5.0, 7.5, 10.0]:
-    draw_arrow((2.0, 5.55), (ax_pos, 3.45), '#666666', lw=0.8)
-
-# Assessment -> DB
-draw_arrow((4.0, 5.55), (3.5, 1.45), '#666666', lw=0.8)
-
-# Ingestion -> ChromaDB
-draw_arrow((6.0, 3.85), (5.0, 3.45), '#666666', lw=0.8)
-
-# Realtime -> DB
-draw_arrow((7.5, 0.55), (5.5, 0.55), '#666666', lw=0.8)
-
-# Architect -> Assessment & Auditor
-draw_arrow((3.25, 4.75), (4.0, 5.55), '#666666', lw=0.8)
-draw_arrow((4.75, 4.75), (8.0, 5.55), '#666666', lw=0.8)
-
-plt.tight_layout()
-plt.show()
-```
-
-**Component Descriptions:**
-
-| Layer | Component | Technology | Purpose |
-|-------|-----------|------------|---------|
-| Client | Flutter Mobile App | Flutter 3.24.5 | Cross-platform UI |
-| Gateway | FastAPI Gateway | FastAPI 0.115+ | API routing, orchestration |
-| Gateway | Auth Middleware | PyJWT + Supabase | 3-tier JWT verification |
-| Gateway | Rate Limiter | SlowAPI | Request throttling |
-| Microservices | Chat Service | Python + FastAPI | Conversational AI |
-| Microservices | Assessment Service | Python + FastAPI | Clinical scoring |
-| Microservices | Journal Service | Python + FastAPI | Journal CRUD |
-| Microservices | Telemetry Service | Python + FastAPI | Usage analytics |
-| Microservices | Roadmap Service | Python + FastAPI | Personalized roadmaps |
-| Microservices | Knowledge Base Service | Python + ChromaDB | Vector store management |
-| Microservices | Architect Service | Python + FastAPI | Assessment orchestration |
-| Microservices | Ingestion Service | Python + pdfplumber | Document processing |
-| Microservices | Auditor Service | Python + FastAPI | Safety validation |
-| AI | Emotion Classifier | BERT/DistilBERT | Text emotion detection [@devlin2019bert] |
-| AI | ChromaDB Vector Store | ChromaDB 0.5+ | Clinical knowledge retrieval |
-| AI | LLM Service | Groq/Ollama | Response generation |
-| AI | Clinical Auditor | Custom Python | Safety validation |
-| Data | Supabase PostgreSQL | PostgreSQL 15+ | Relational data |
-| Data | Supabase Storage | S3-compatible | Files, audio, images |
-| Data | Supabase Realtime | WebSocket channels | Live community updates |
-
-## 3.5 RAG Pipeline Design
-
-### 3.5.1 Pipeline Architecture
-
-```{python}
-#| label: fig-rag-pipeline
-#| fig-cap: "RAG pipeline block diagram"
-#| echo: false
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-
-fig, ax = plt.subplots(figsize=(8.25, 3.75))
-ax.set_xlim(0, 11)
-ax.set_ylim(0, 5)
-ax.axis('off')
-
-# Indexing pipeline (top)
-index_nodes = [
-    (1.0, 3.8, 'Clinical\nDocuments'),
-    (2.7, 3.8, 'PDF\nExtraction'),
-    (4.4, 3.8, 'Semantic\nChunking'),
-    (6.1, 3.8, 'Embedding\nGeneration'),
-    (8.0, 3.8, 'ChromaDB\nIndex'),
-]
-
-# Query pipeline (bottom)
-query_nodes = [
-    (1.0, 1.3, 'User\nQuery'),
-    (2.7, 1.3, 'Query\nEmbedding'),
-    (4.4, 1.3, 'Vector\nSearch'),
-    (6.1, 1.3, 'Top-k\nRetrieval'),
-    (8.0, 1.3, 'Prompt\nAssembly'),
-    (9.7, 1.3, 'LLM\nGeneration'),
-    (11.0, 1.3, 'Response\nDelivery'),
-]
-
-# Draw indexing nodes
-for x, y, label in index_nodes:
-    box = mpatches.FancyBboxPatch((x - 0.6, y - 0.4), 1.2, 0.8, boxstyle="round,pad=0.05", facecolor='#E8F0FE', edgecolor='#4C8BF5', linewidth=1.2)
-    ax.add_patch(box)
-    ax.text(x, y, label, ha='center', va='center', fontsize=8)
-
-# Draw query nodes
-for x, y, label in query_nodes:
-    box = mpatches.FancyBboxPatch((x - 0.55, y - 0.4), 1.1, 0.8, boxstyle="round,pad=0.05", facecolor='#FFF3E0', edgecolor='#FBBC05', linewidth=1.2)
-    ax.add_patch(box)
-    ax.text(x, y, label, ha='center', va='center', fontsize=8)
-
-# Arrows in indexing pipeline
-for i in range(len(index_nodes) - 1):
-    x1, y1, _ = index_nodes[i]
-    x2, y2, _ = index_nodes[i + 1]
-    ax.annotate('', xy=(x2 - 0.6, y1), xytext=(x1 + 0.6, y1),
-                arrowprops=dict(arrowstyle='->', color='#4C8BF5', lw=1.2))
-
-# Arrows in query pipeline
-for i in range(len(query_nodes) - 1):
-    x1, y1, _ = query_nodes[i]
-    x2, y2, _ = query_nodes[i + 1]
-    ax.annotate('', xy=(x2 - 0.55, y1), xytext=(x1 + 0.55, y1),
-                arrowprops=dict(arrowstyle='->', color='#FBBC05', lw=1.2))
-
-# Connection from ChromaDB index to Vector Search
-ax.annotate('', xy=(4.4, 1.7), xytext=(8.0, 3.4),
-            arrowprops=dict(arrowstyle='->', color='#888888', lw=1.0, connectionstyle='arc3,rad=0.3'))
-
-# Add clinical audit step
-ca_box = mpatches.FancyBboxPatch((9.7 - 0.55, 2.6 - 0.25), 1.1, 0.5, boxstyle="round,pad=0.04", facecolor='#FCE8E6', edgecolor='#EA4335', linewidth=1.0)
-ax.add_patch(ca_box)
-ax.text(9.7, 2.6, 'Clinical\nAudit', ha='center', va='center', fontsize=7)
-ax.annotate('', xy=(9.7, 2.35), xytext=(9.7, 1.7),
-            arrowprops=dict(arrowstyle='->', color='#EA4335', lw=1.0))
-
-# Labels for pipelines
-ax.text(0.3, 3.8, 'Indexing', fontsize=9, fontweight='bold', color='#4C8BF5', va='center')
-ax.text(0.3, 1.3, 'Query', fontsize=9, fontweight='bold', color='#FBBC05', va='center')
-
-plt.tight_layout()
-plt.show()
-```
-
-### 3.5.2 Document Processing Algorithm
-
-```
-Algorithm: ProcessClinicalDocuments
-Input: PDF_files[]
-Output: Indexed_documents
-
-1. For each PDF in PDF_files:
-   a. Extract text using pdfplumber [@hutton2022pdfplumber]
-   b. Filter noise (bibliography, headers, footers)
-   c. Normalize Unicode
-   
-2. For each extracted text:
-   a. Split into sentences using regex
-   b. Detect topic shifts using all-MiniLM-L6-v2
-   c. Create chunks with 15% overlap
-   d. Label each chunk with difficulty, XP, tags
-   
-3. For each chunk:
-   a. Generate embedding using all-mpnet-base-v2
-   b. Store in ChromaDB with metadata
-   
-4. Return indexed collection
-```
-
-### 3.5.3 Retrieval Algorithm
-
-```
-Algorithm: RetrieveClinicalContext
-Input: user_message, emotion_label, user_context
-Output: top_k_passages
-
-1. Embed user_message using all-mpnet-base-v2
-2. Build metadata filter:
-   a. Filter by symptom tags from user_context
-   b. Filter by difficulty level
-   c. Exclude high safety-risk tasks if user is in crisis
-   
-3. Query ChromaDB:
-   a. Over-fetch: n = min(max(k * 4, 15), 50)
-   b. Apply metadata filter
-   c. Return results by cosine similarity
-   
-4. Apply digital detox boost:
-   a. If user has high screen time, boost detox tasks
-   b. If user has high social media ratio, penalize social tasks
-   
-5. Return top_k passages
-```
-
-### 3.5.4 Embedding Model Configuration
-
-Table 3.1: Embedding model specifications.
-
-| Parameter | Value |
-|-----------|-------|
-| Model | all-mpnet-base-v2 |
-| Dimensions | 768 |
-| Similarity Metric | Cosine |
-| HNSW ef_search | 128 |
-| HNSW ef_construction | 200 |
-| HNSW M | 16 |
-
-## 3.6 LLM Integration
-
-### 3.6.1 Prompt Assembly
-
-The prompt is constructed from four components, following instruction-fine-tuning patterns [@chung2022scaling]:
-
-```
-Prompt Structure:
-[SYSTEM] CBT therapist persona + safety rules
-[CONTEXT] Retrieved clinical passages (top-k)
-[EMOTION] Detected emotion label + confidence
-[HISTORY] Last 5 conversation turns
-[USER] Current user message
-```
-
-### 3.6.2 LLM Service Architecture
-
-```{python}
-#| label: fig-llm-service
-#| fig-cap: "LLM service integration sequence diagram"
-#| echo: false
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-
-fig, ax = plt.subplots(figsize=(6.75, 5.25))
-ax.set_xlim(0, 9)
-ax.set_ylim(0, 7)
-ax.axis('off')
-
-participants = [
-    (1.0, 'Chat\nService'),
-    (3.0, 'RAG\nPipeline'),
-    (5.0, 'Prompt\nAssembler'),
-    (7.0, 'LLM\nService'),
-    (9.0, 'Clinical\nAuditor'),
-]
-
-# Lifelines
-for x, label in participants:
-    box = mpatches.FancyBboxPatch((x - 0.5, 6.4), 1.0, 0.5, boxstyle="round,pad=0.04", facecolor='#E8F0FE', edgecolor='#4C8BF5', linewidth=1.2)
-    ax.add_patch(box)
-    ax.text(x, 6.65, label, ha='center', va='center', fontsize=8)
-    ax.plot([x, x], [6.4, 0.8], color='#BBBBBB', linestyle='--', lw=1.0)
-
-# Message arrows: (x1, x2, y, label, color)
-messages = [
-    (1.0, 3.0, 5.8, 'user_message + emotion', '#333333'),
-    (3.0, 1.0, 5.2, 'top_k_passages', '#333333'),
-    (1.0, 5.0, 4.6, 'passages + emotion + history', '#333333'),
-    (5.0, 1.0, 4.0, 'structured_prompt', '#333333'),
-    (1.0, 7.0, 3.4, 'structured_prompt', '#333333'),
-    (7.0, 1.0, 2.8, 'generated_response', '#333333'),
-    (1.0, 9.0, 2.2, 'response + user_locale', '#333333'),
-    (9.0, 1.0, 1.6, 'safety_status', '#333333'),
-]
-
-for x1, x2, y, label, color in messages:
-    ax.annotate('', xy=(x2, y), xytext=(x1, y),
-                arrowprops=dict(arrowstyle='->', color=color, lw=1.2))
-    mid = (x1 + x2) / 2
-    ax.text(mid, y + 0.12, label, ha='center', va='bottom', fontsize=7)
-
-# Alt block
-alt_rect = mpatches.FancyBboxPatch((0.5, 0.6), 2.0, 0.8, boxstyle="round,pad=0.03", facecolor='#E8F5E9', edgecolor='#34A853', linewidth=1.0)
-ax.add_patch(alt_rect)
-ax.text(0.65, 1.25, 'alt GREEN', fontsize=8, fontweight='bold', color='#34A853')
-ax.text(1.5, 0.95, 'Deliver response', ha='center', va='center', fontsize=8)
-
-alt_rect2 = mpatches.FancyBboxPatch((0.5, 0.0), 2.0, 0.6, boxstyle="round,pad=0.03", facecolor='#FCE8E6', edgecolor='#EA4335', linewidth=1.0)
-ax.add_patch(alt_rect2)
-ax.text(0.65, 0.45, 'else RED', fontsize=8, fontweight='bold', color='#EA4335')
-ax.text(1.5, 0.2, 'Block + emergency resources', ha='center', va='center', fontsize=8)
-
-plt.tight_layout()
-plt.show()
-```
-
-### 3.6.3 LLM Configuration
-
-Table 3.2: LLM service configurations.
-
-| Parameter | Groq (Current) | Ollama (Planned) |
-|-----------|----------------|-------------------|
-| Model | llama-3.1-8b-instant [@touvron2023llama; @chung2022scaling] | qwen2.5:7b / Gemma 2B [@team2024gemma] |
-| Hosting | Cloud (Groq) | Self-hosted (RunPod) |
-| Temperature | 0.7 | 0.7 |
-| Max Tokens | 300 | 500 |
-| Latency | ~2s | ~1s (GPU) |
-| Cost | Per-request | Fixed (GPU rental) |
-
-## 3.7 Emotion Classification
-
-### 3.7.1 Classification Pipeline
-
-```{python}
-#| label: fig-emotion-pipeline
-#| fig-cap: "Emotion classification pipeline"
-#| echo: false
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-
-fig, ax = plt.subplots(figsize=(4.50, 6.00))
-ax.set_xlim(0, 6)
-ax.set_ylim(0, 8)
-ax.axis('off')
-
-nodes = [
-    (3.0, 7.2, 'User Input'),
-    (3.0, 6.0, 'Text Preprocessing'),
-    (3.0, 4.8, 'BERT Tokenizer'),
-    (3.0, 3.6, 'BERT Encoder'),
-    (3.0, 2.4, 'Classification Head'),
-    (3.0, 1.2, 'Softmax'),
-]
-
-for x, y, label in nodes:
-    box = mpatches.FancyBboxPatch((x - 1.2, y - 0.35), 2.4, 0.7, boxstyle="round,pad=0.06", facecolor='#F3E5F5', edgecolor='#9C27B0', linewidth=1.2)
-    ax.add_patch(box)
-    ax.text(x, y, label, ha='center', va='center', fontsize=9, fontweight='bold')
-
-# Arrows down
-for i in range(len(nodes) - 1):
-    x1, y1, _ = nodes[i]
-    x2, y2, _ = nodes[i + 1]
-    ax.annotate('', xy=(x2, y2 + 0.35), xytext=(x1, y1 - 0.35),
-                arrowprops=dict(arrowstyle='->', color='#9C27B0', lw=1.5))
-
-# Split to outputs
-ax.annotate('', xy=(1.5, 0.4), xytext=(3.0, 0.85),
-            arrowprops=dict(arrowstyle='->', color='#9C27B0', lw=1.2))
-ax.annotate('', xy=(4.5, 0.4), xytext=(3.0, 0.85),
-            arrowprops=dict(arrowstyle='->', color='#9C27B0', lw=1.2))
-
-out1 = mpatches.FancyBboxPatch((0.6, 0.1), 1.8, 0.6, boxstyle="round,pad=0.04", facecolor='#E8F5E9', edgecolor='#34A853', linewidth=1.0)
-ax.add_patch(out1)
-ax.text(1.5, 0.4, 'Emotion Label', ha='center', va='center', fontsize=8)
-
-out2 = mpatches.FancyBboxPatch((3.6, 0.1), 1.8, 0.6, boxstyle="round,pad=0.04", facecolor='#E8F0FE', edgecolor='#4C8BF5', linewidth=1.0)
-ax.add_patch(out2)
-ax.text(4.5, 0.4, 'Confidence\nScore', ha='center', va='center', fontsize=8)
-
-plt.tight_layout()
-plt.show()
-```
-
-### 3.7.2 Emotion Categories
-
-Table 3.3: Emotion classification categories.
-
-| Emotion | ID | Description | Trigger Response |
-|---------|-----|-------------|------------------|
-| Anxious | 0 | Elevated worry, restlessness | Calming exercises, grounding |
-| Sad | 1 | Low mood, hopelessness | Behavioral activation, CBT |
-| Angry | 2 | Irritation, frustration | Anger management, breathing |
-| Neutral | 3 | Balanced, calm | Standard therapeutic response |
-| Hopeful | 4 | Optimistic, motivated | Goal-setting, reinforcement |
-| Distressed | 5 | Severe emotional pain | Crisis protocol, immediate support |
-
-### 3.7.3 Classification Algorithm
-
-```
-Algorithm: ClassifyEmotion
-Input: user_text
-Output: emotion_label, confidence_scores
-
-1. Preprocess text:
-   a. Lowercase
-   b. Remove special characters
-   c. Tokenize using BERT tokenizer
-   
-2. Forward pass through BERT:
-   a. Input: token_ids + attention_mask
-   b. Output: [CLS] token embedding
-   
-3. Classification:
-   a. Linear layer: 768 → 6
-   b. Softmax: probability distribution
-   
-4. Return:
-   a. Argmax: emotion_label
-   b. All probabilities: confidence_scores
-```
-
-> **Design vs. implementation note:** Section 3.7 describes the designed emotion classification pipeline. The current production implementation uses keyword-based sentiment analysis with clinical safety keywords within the auditor service, while the BERT-based classifier remains planned for future deployment.
-
-## 3.8 Gamification System
-
-### 3.8.1 Gamification Architecture
-
-```{python}
-#| label: fig-gamification-state
-#| fig-cap: "Gamification state machine"
-#| echo: false
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-
-fig, ax = plt.subplots(figsize=(7.50, 5.25))
-ax.set_xlim(0, 10)
-ax.set_ylim(0, 7)
-ax.axis('off')
-
-# State nodes arranged in two columns
-states = [
-    (2.5, 6.2, 'Idle'),
-    (2.5, 5.2, 'Activity\nDetected'),
-    (2.5, 4.2, 'XP\nCalculated'),
-    (2.5, 3.2, 'Streak\nChecked'),
-    (2.5, 2.2, 'Multiplier\nApplied'),
-    (2.5, 1.2, 'Level\nChecked'),
-    (5.0, 1.2, 'Badge\nChecked'),
-    (5.0, 2.2, 'Achievement\nChecked'),
-    (5.0, 3.2, 'Reward\nDisplayed'),
-]
-
-# Special branch nodes
-branch = [
-    (7.5, 2.2, 'Level Up'),
-    (7.5, 1.2, 'Badge\nUnlocked'),
-]
-
-for x, y, label in states:
-    box = mpatches.FancyBboxPatch((x - 0.6, y - 0.35), 1.2, 0.7, boxstyle="round,pad=0.05", facecolor='#FFF3E0', edgecolor='#FBBC05', linewidth=1.2)
-    ax.add_patch(box)
-    ax.text(x, y, label, ha='center', va='center', fontsize=8, fontweight='bold')
-
-for x, y, label in branch:
-    box = mpatches.FancyBboxPatch((x - 0.6, y - 0.35), 1.2, 0.7, boxstyle="round,pad=0.05", facecolor='#E8F5E9', edgecolor='#34A853', linewidth=1.2)
-    ax.add_patch(box)
-    ax.text(x, y, label, ha='center', va='center', fontsize=8, fontweight='bold')
-
-# Start node
-start = plt.Circle((2.5, 6.85), 0.12, color='#333333')
-ax.add_patch(start)
-ax.annotate('', xy=(2.5, 6.55), xytext=(2.5, 6.73),
-            arrowprops=dict(arrowstyle='->', color='#333333', lw=1.2))
-
-# Main flow arrows (down)
-main_flow = [
-    (2.5, 5.85, 2.5, 5.55),
-    (2.5, 4.85, 2.5, 4.55),
-    (2.5, 3.85, 2.5, 3.55),
-    (2.5, 2.85, 2.5, 2.55),
-    (2.5, 1.85, 2.5, 1.55),
-    (3.1, 1.2, 4.4, 1.2),
-    (5.0, 0.85, 5.0, 0.55),
-    (5.0, 0.55, 2.5, 0.55),
-    (2.5, 0.55, 2.5, 5.85),
-]
-
-for x1, y1, x2, y2 in main_flow:
-    ax.annotate('', xy=(x2, y2), xytext=(x1, y1),
-                arrowprops=dict(arrowstyle='->', color='#FBBC05', lw=1.2))
-
-# Horizontal arrows
-ax.annotate('', xy=(4.4, 2.2), xytext=(3.1, 2.2),
-            arrowprops=dict(arrowstyle='->', color='#FBBC05', lw=1.2))
-ax.annotate('', xy=(4.4, 3.2), xytext=(3.1, 3.2),
-            arrowprops=dict(arrowstyle='->', color='#FBBC05', lw=1.2))
-
-# Branch arrows
-ax.annotate('', xy=(6.9, 2.2), xytext=(3.1, 1.85),
-            arrowprops=dict(arrowstyle='->', color='#34A853', lw=1.0, connectionstyle='arc3,rad=0.2'))
-ax.annotate('', xy=(6.9, 1.2), xytext=(3.1, 1.55),
-            arrowprops=dict(arrowstyle='->', color='#34A853', lw=1.0, connectionstyle='arc3,rad=-0.2'))
-
-# Return from branches to Reward Displayed
-ax.annotate('', xy=(6.9, 3.2), xytext=(7.5, 2.55),
-            arrowprops=dict(arrowstyle='->', color='#34A853', lw=1.0))
-ax.annotate('', xy=(6.9, 3.2), xytext=(7.5, 1.55),
-            arrowprops=dict(arrowstyle='->', color='#34A853', lw=1.0))
-
-# Labels
-ax.text(3.4, 5.7, 'user performs action', fontsize=7, style='italic', color='#666666')
-ax.text(3.4, 4.7, 'calculate base XP', fontsize=7, style='italic', color='#666666')
-ax.text(3.4, 3.7, 'check streak', fontsize=7, style='italic', color='#666666')
-ax.text(3.4, 2.7, 'apply multiplier', fontsize=7, style='italic', color='#666666')
-ax.text(3.4, 1.7, 'check level up', fontsize=7, style='italic', color='#666666')
-ax.text(6.0, 1.5, 'check badge', fontsize=7, style='italic', color='#666666')
-ax.text(6.0, 2.5, 'check achievement', fontsize=7, style='italic', color='#666666')
-
-plt.tight_layout()
-plt.show()
-```
-
-### 3.8.2 XP Calculation Formula
-
-```
-XP_total = Base_XP × Streak_Multiplier × Difficulty_Multiplier
-
-Where:
-- Base_XP: Activity-specific value (5-15)
-- Streak_Multiplier: 1.0× to 5.0× based on streak length
-- Difficulty_Multiplier: 1.0× to 2.0× based on task difficulty
-```
-
-### 3.8.3 Level Thresholds
-
-Table 3.4: Level progression thresholds.
-
-| Level | XP Required | Total XP | Unlocks |
-|-------|-------------|----------|---------|
-| 1 | 0 | 0 | Basic features |
-| 2 | 100 | 100 | First badge slot |
-| 3 | 150 | 250 | Journal templates |
-| 4 | 200 | 450 | Advanced challenges |
-| 5 | 250 | 700 | Community access |
-| 10 | 500 | 2,450 | Premium features |
-
-## 3.9 Security Considerations
-
-### 3.9.1 Authentication and Access Control
-
-The security architecture follows a Zero Trust model: never trust, always verify [@rose2020zerotrust]. Every request — from users, services, or internal components — is authenticated and authorized before data access. Data is classified into four sensitivity tiers, from critical clinical notes to operational analytics, with controls scaled accordingly.
-
-The authentication flow combines Supabase-managed identity with a three-tier JWT strategy (HS256 for development, ES256+JWKS for production users, RS256 for AI services) and a local OTP engine for sensitive operations. Passwords are verified with PBKDF2-HMAC-SHA256 using 100,000 iterations, per-user salt, and an application-level pepper [@rfc2898].
-
-```{python}
-#| label: fig-auth-flow
-#| fig-cap: "JWT authentication flow"
-#| echo: false
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-
-fig, ax = plt.subplots(figsize=(6.00, 4.50))
-ax.set_xlim(0, 8)
+fig, ax = plt.subplots(figsize=(7, 6))
+ax.set_xlim(0, 7)
 ax.set_ylim(0, 6)
 ax.axis('off')
 
-participants = [
-    (1.0, 'User'),
-    (3.0, 'Flutter\nApp'),
-    (5.0, 'Gateway'),
-    (7.0, 'Supabase'),
+stages = [
+    (3.5, 5.5, 'Problem Definition'),
+    (3.5, 4.7, 'Literature Review'),
+    (3.5, 3.9, 'Model Comparison'),
+    (3.5, 3.1, 'Dataset Preparation'),
+    (3.5, 2.3, 'QLoRA Fine-Tuning'),
+    (3.5, 1.5, 'RAG Construction'),
+    (3.5, 0.7, 'System Integration'),
 ]
 
-for x, label in participants:
-    box = mpatches.FancyBboxPatch((x - 0.55, 5.4), 1.1, 0.45, boxstyle="round,pad=0.04", facecolor='#E8F0FE', edgecolor='#4C8BF5', linewidth=1.2)
+for x, y, label in stages:
+    box = mpatches.FancyBboxPatch((x - 1.2, y - 0.3), 2.4, 0.6, boxstyle="round,pad=0.05", facecolor='#E8F0FE', edgecolor='#4C8BF5', linewidth=1.2)
     ax.add_patch(box)
-    ax.text(x, 5.62, label, ha='center', va='center', fontsize=9, fontweight='bold')
-    ax.plot([x, x], [5.4, 0.7], color='#BBBBBB', linestyle='--', lw=1.0)
+    ax.text(x, y, label, ha='center', va='center', fontsize=9, fontweight='bold')
 
-messages = [
-    (1.0, 3.0, 4.9, 'Email + Password', '#333333'),
-    (3.0, 7.0, 4.3, 'signInWithPassword()', '#333333'),
-    (7.0, 3.0, 3.7, 'JWT Token', '#333333'),
-    (3.0, 5.0, 3.1, 'Request + Bearer Token', '#333333'),
-    (5.0, 5.0, 2.3, 'Verify JWT', '#333333'),
-    (5.0, 3.0, 1.5, 'Success + Data', '#34A853'),
-]
-
-for x1, x2, y, label, color in messages:
-    ax.annotate('', xy=(x2, y), xytext=(x1, y),
-                arrowprops=dict(arrowstyle='->', color=color, lw=1.2))
-    mid = (x1 + x2) / 2
-    ax.text(mid, y + 0.12, label, ha='center', va='bottom', fontsize=8)
-
-# Alt block
-alt_rect = mpatches.FancyBboxPatch((4.4, 0.7), 2.2, 1.0, boxstyle="round,pad=0.03", facecolor='#E8F5E9', edgecolor='#34A853', linewidth=1.0)
-ax.add_patch(alt_rect)
-ax.text(4.55, 1.55, 'alt Valid', fontsize=8, fontweight='bold', color='#34A853')
-ax.text(5.5, 1.1, 'Return success + data', ha='center', va='center', fontsize=8)
-
-alt_rect2 = mpatches.FancyBboxPatch((1.8, 0.7), 2.2, 0.7, boxstyle="round,pad=0.03", facecolor='#FCE8E6', edgecolor='#EA4335', linewidth=1.0)
-ax.add_patch(alt_rect2)
-ax.text(1.95, 1.25, 'else Invalid', fontsize=8, fontweight='bold', color='#EA4335')
-ax.text(2.9, 0.95, 'Return 401 Unauthorized', ha='center', va='center', fontsize=8)
+for i in range(len(stages) - 1):
+    x1, y1, _ = stages[i]
+    x2, y2, _ = stages[i + 1]
+    ax.annotate('', xy=(x2, y2 + 0.3), xytext=(x1, y1 - 0.3),
+                arrowprops=dict(arrowstyle='->', color='#4C8BF5', lw=1.5))
 
 plt.tight_layout()
 plt.show()
 ```
 
-### 3.9.2 Defense-in-Depth Security Layers
+Technology selection is driven by model quality, suitability for mental-health support, multilingual capability, Arabic and English support, context-window capacity, hardware requirements, inference latency, quantization support, fine-tuning compatibility, open-source availability, licensing, and deployment complexity.
 
-Table 3.5 summarizes the security layers. Beyond server-side safeguards, the platform uses on-device harmful content detection (AccessibilityService + bilingual keyword matching + TensorFlow Lite toxicity scoring), visual content scanning (periodic screenshots classified locally with a 70% threshold), and service continuity protection (GuardService, BootReceiver, WakeLock, device admin) to keep safety infrastructure active during acute distress [@androidaccessibility2024; @tflite2024]. Input/output sanitization, rate limiting, and RLS complete the defense-in-depth model.
+## 3.3 Model and Technology Selection
 
-Table 3.5: Security measures by layer.
+### 3.3.1 Large Language Model Selection
 
-| Layer | Mechanism | Implementation |
-|-------|-----------|----------------|
-| Edge | Cloudflare WAF + DDoS + Bot Management | Inbound traffic protection |
-| Network | TLS 1.3 + Perfect Forward Secrecy | All API connections |
-| Storage | AES-256-GCM + envelope encryption | KMS-managed keys, 90-day rotation [@dworkin2007modes] |
-| Application | JWT + OTP + PBKDF2 | 3-tier JWT, CSPRNG OTP, key derivation |
-| Database | Row-Level Security | Per-user data isolation |
-| API | Rate limiting | 10 req/min assess, 30 req/min chat |
-| On-device text | Harmful content detection | Accessibility + bilingual keywords + TFLite |
-| Visual | Screenshot classification | TFLite, 4-second interval, 70% threshold |
-| Service continuity | Anti-tamper + boot persistence | GuardService + BootReceiver + WakeLock |
-| Crisis | Bilingual keyword + visual detection | EN/AR on-device and server-side |
+The core LLM must support long-context inference, strong instruction following, multilingual generation, and efficient quantization. Candidate models include Gemma 3 27B IT, Llama 3, Qwen 2.5, Mistral Small, Phi-4, and DeepSeek distilled variants.
 
-### 3.9.3 Clinical Safety Audit
+Table 3.1: Candidate LLM comparison.
 
-The server-side clinical audit is the final gate before any response reaches the user. It scans for crisis keywords (EN/AR), robotic tone, risky advice, and user frustration, then returns GREEN, YELLOW, or RED. RED responses are blocked and replaced with localized emergency resources.
+| Model | Parameters | Context | Multilingual | Quantization | Fine-Tuning | Hardware | Assessment |
+|-------|------------|---------|--------------|--------------|-------------|----------|------------|
+| Gemma 3 27B IT | 27B | Long | Strong | Strong | Strong | Manageable after quantization | Selected |
+| Llama 3/3.3 | Varies | Long | Strong | Strong | Strong | Higher for large variants | Alternative |
+| Qwen 2.5/3 | Varies | Long | Strong | Strong | Strong | Moderate to high | Alternative |
+| Mistral Small | Varies | Long | Good | Strong | Strong | Moderate | Alternative |
+| Phi-4 | Smaller | Moderate/long | Moderate | Strong | Good | Lower | Efficient but less capable |
+| DeepSeek distilled | Varies | Long | Strong | Strong | Good | Moderate to high | Strong reasoning alternative |
 
-```
-Algorithm: ClinicalAudit
-Input: response_text, user_locale
-Output: safety_status, emergency_payload
+Gemma 3 27B IT is selected because it provides a suitable balance of capability, multilingual performance, instruction following, quantization support, QLoRA compatibility, and manageable deployment on available GPU infrastructure [@gemma2025gemma3].
 
-1. Sanitize input (length, charset, prompt-injection patterns).
-2. Scan for crisis keywords (EN/AR) → RED + hotlines if found.
-3. Detect robotic/dismissive tone → flag for revision.
-4. Check for risky advice → YELLOW + advisory if found.
-5. Score user frustration → empathy boost if high.
-6. If all checks pass → GREEN.
-```
+### 3.3.2 Speech Recognition Model Selection
 
-### 3.9.4 Security Comparison
+Candidate speech-recognition models include Whisper Large V3, Whisper Large V3 Turbo, Distil-Whisper, wav2vec 2.0, and SeamlessM4T. Criteria include Word Error Rate, multilingual transcription, Arabic support, English support, robustness to noise, inference speed, streaming suitability, and memory requirements.
 
-Table 3.6 compares the hardened UpHeal architecture against a baseline mental health application.
+Table 3.2: Speech-recognition model comparison.
 
-Table 3.6: Security comparison: baseline vs. UpHeal hardened.
+| Model | Accuracy | Multilingual | Speed | Streaming | Hardware | Assessment |
+|-------|----------|--------------|-------|-----------|----------|------------|
+| Whisper Large V3 | Very good | Strong | Slower | Good | High | High accuracy |
+| Whisper Large V3 Turbo | Good to very good | Strong | Faster | Strong | Moderate to high | Selected |
+| Distil-Whisper | Good | Moderate/strong | Fast | Strong | Lower | Efficient alternative |
+| wav2vec 2.0 | Dataset-dependent | Depends on adaptation | Fast | Strong | Moderate | Strong classifier foundation |
+| SeamlessM4T | Strong multilingual | Strong | Moderate | Moderate | High | Broader multimodal alternative |
 
-| Domain | Baseline | UpHeal Hardened |
-|-----------------|---------------------------|--------------------------------|
-| Encryption at rest | AES-256-CBC or none | AES-256-GCM + envelope |
-| Key management | Manual/provider-default | KMS-managed, 90-day rotation |
-| Authentication | Single JWT / basic auth | 3-tier JWT + OTP + PBKDF2 |
-| Crisis detection | None or keyword matching | Multi-tier bilingual EN/AR + visual |
-| Service continuity | None | Anti-tamper + boot persistence |
-| Privacy model | Server-side only | Edge AI; raw data never leaves device |
-| Network edge | Basic TLS | TLS 1.3 + PFS + Cloudflare WAF/DDoS |
+Whisper Large V3 Turbo is selected for its balance between transcription quality, multilingual support, robustness, and inference speed [@radford2022whisper].
 
-## 3.10 Data Flow Integration
+### 3.3.3 Text-to-Speech Model Selection
 
-### 3.10.1 End-to-End Data Flow
+Candidate TTS models include Chatterbox, XTTS-v2, F5-TTS, and StyleTTS 2. Criteria include naturalness, expressiveness, English and Arabic support, speaker conditioning, voice cloning, inference latency, streaming capability, and deployment requirements.
+
+Table 3.3: Text-to-speech model comparison.
+
+| Model | Naturalness | Multilingual | Arabic | Streaming | Voice Conditioning | Assessment |
+|-------|-------------|--------------|--------|-----------|-------------------|------------|
+| Chatterbox | Strong | Strong | Available via multilingual variant | Strong | Strong | Selected |
+| XTTS-v2 | Strong | Strong | Supported | Moderate | Strong | Strong alternative |
+| F5-TTS | Strong | More limited | Depends on checkpoint | Good | Strong | Research alternative |
+| StyleTTS 2 | Strong | More limited | Limited | Moderate | Strong | High-quality alternative |
+
+Chatterbox is selected for its expressive synthesis, multilingual capability, local deployment support, and compatibility with the real-time voice pipeline [@seo2026chatterbox].
+
+### 3.3.4 Emotion Model Selection
+
+Two emotion-analysis paths are required. Text-emotion classification is compared by number of classes, model size, inference latency, English support, and integration ease. Voice-emotion classification is compared by supported classes, speech representation quality, robustness, model size, latency, and integration with streamed audio. GoEmotions provides the textual foundation [@demszky2019goemotions], while wav2vec 2.0 provides speech representations [@baevski2020wav2vec]. Emotion predictions are used as contextual signals, not medical conclusions.
+
+### 3.3.5 Embedding Model and Vector Database Selection
+
+Embedding-model criteria include semantic-retrieval quality, multilingual performance, vector dimension, inference speed, and domain suitability. Vector-database criteria include vector search, metadata filtering, persistence, scalability, Docker deployment, and API support.
+
+Table 3.4: Vector database comparison.
+
+| Technology | Persistence | Metadata Filtering | Distributed | Managed | Local | Assessment |
+|------------|-------------|-------------------|-------------|---------|-------|------------|
+| Qdrant | Yes | Strong | Yes | Available | Yes | Selected |
+| Chroma | Yes | Basic/moderate | Limited | Limited | Yes | Suitable for small prototypes |
+| FAISS | External handling | Limited | Requires custom design | No | Yes | Efficient library, not complete database |
+| Pinecone | Yes | Strong | Yes | Yes | No | Strong managed option |
+
+Qdrant is selected for persistent vector storage, strong metadata filters, efficient similarity search, Docker deployment, and API integration [@qdrant2024].
+
+## 3.4 AI Model Development
+
+### 3.4.1 Fine-Tuning Objective
+
+The selected LLM is adapted to improve empathetic communication, reflective questioning, journaling support, life-coaching style, supportive tone, conversational continuity, response boundaries, and audience-sensitive communication. Fine-tuning is used for behavior and style, not as the main store for the 25 mental-health books or private user memories. Static knowledge is handled through RAG.
+
+### 3.4.2 Dataset Collection and Preparation
+
+The fine-tuning dataset combines multiple conversational datasets. Preparation includes source-specific transformation, column and speaker-role normalization, conversation reconstruction, unified schema formatting, duplicate removal, quality filtering, safety filtering, and train/validation/test splits. The unified format stores conversations as lists of `{role, content}` objects. The complete dataset inventory and transformation rules are documented in the source repository.
+
+### 3.4.3 QLoRA and Unsloth Training
+
+The project uses supervised fine-tuning with LoRA adapters, QLoRA 4-bit model loading, Unsloth acceleration, gradient checkpointing, and Gemma-compatible chat formatting. QLoRA reduces memory requirements while preserving adaptation quality [@dettmers2022qlora; @hu2021lora]. This configuration makes it feasible to fine-tune a 27B-parameter model within academic GPU constraints.
+
+### 3.4.4 Retrieval-Augmented Generation Layer
+
+The RAG layer provides external knowledge from 25 mental-health and psychology books. The document-processing pipeline extracts text from PDFs, cleans and normalizes content, performs section-aware chunking, generates metadata, creates embeddings, and stores vectors in Qdrant. At inference time, the user query is embedded, Qdrant retrieves relevant chunks with metadata filtering, and the retrieved passages are injected into the prompt. RAG grounding improves factual accuracy and traceability [@lewis2020rag].
+
+### 3.4.5 Prompt and Context Engineering
+
+The context-engineering layer assembles the system role, safety instructions, current user input, recent conversation history, long-term user memory, journal summaries, mood trends, text and voice emotion results, retrieved RAG passages, and language preferences. Priority ordering places system instructions and crisis handling first, followed by current input, recent history, relevant memory, mood and journal context, emotion signals, and retrieved evidence. Token management limits old messages, summarizes long history, retrieves only relevant memories, and restricts the number of RAG chunks.
+
+## 3.5 Integrated System Architecture
+
+The principal components are the Flutter mobile application, a DigitalOcean FastAPI backend, Supabase authentication and PostgreSQL storage, Qdrant vector database, RunPod text-generation endpoint, RunPod real-time voice endpoint, and memory/context services.
 
 ```{python}
-#| label: fig-data-flow
-#| fig-cap: "Complete data flow for a chat request"
+#| label: fig-architecture
+#| fig-cap: "Complete UpHeal architecture"
 #| echo: false
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
-fig, ax = plt.subplots(figsize=(5.25, 6.75))
-ax.set_xlim(0, 7)
-ax.set_ylim(0, 9)
+fig, ax = plt.subplots(figsize=(8, 7))
+ax.set_xlim(0, 8)
+ax.set_ylim(0, 7)
 ax.axis('off')
 
-# Nodes: (x, y, label, type, color)
-# type: 'box' or 'diamond'
-nodes = [
-    (3.5, 8.5, 'User sends\nmessage', 'box', '#4C8BF5'),
-    (3.5, 7.6, 'Flutter App', 'box', '#E8F0FE'),
-    (3.5, 6.7, 'FastAPI Gateway', 'box', '#34A853'),
-    (3.5, 5.8, 'Auth Valid?', 'diamond', '#FFF3E0'),
-    (1.2, 5.0, '401 Error', 'box', '#FCE8E6'),
-    (3.5, 5.0, 'Chat Service', 'box', '#FBBC05'),
-    (1.2, 4.0, 'Emotion\nClassifier', 'box', '#9C27B0'),
-    (1.2, 3.1, 'Emotion:\nAnxious, 0.85', 'box', '#F3E5F5'),
-    (3.5, 4.0, 'ChromaDB\nRetrieval', 'box', '#9C27B0'),
-    (3.5, 3.1, 'Top-5\npassages', 'box', '#F3E5F5'),
-    (5.8, 4.0, 'Prompt\nAssembler', 'box', '#9C27B0'),
-    (5.8, 3.1, 'LLM\nService', 'box', '#9C27B0'),
-    (5.8, 2.2, 'Generated\nresponse', 'box', '#F3E5F5'),
-    (3.5, 2.0, 'Clinical\nAuditor', 'box', '#EA4335'),
-    (3.5, 1.1, 'Safety\nCheck', 'diamond', '#FFF3E0'),
-    (1.5, 0.3, 'Emergency\nresources', 'box', '#FCE8E6'),
-    (5.5, 0.3, 'Deliver\nresponse', 'box', '#E8F5E9'),
-    (3.5, -0.3, 'Store in\nSupabase', 'box', '#EA4335'),
-    (3.5, -1.1, 'Return to\nUser', 'box', '#4C8BF5'),
+# Layers
+layers = [
+    (4.0, 6.3, 'Flutter Mobile App', '#4C8BF5'),
+    (2.0, 5.0, 'FastAPI\nBackend', '#34A853'),
+    (4.0, 5.0, 'Supabase\nAuth + DB', '#34A853'),
+    (6.0, 5.0, 'Qdrant\nVector DB', '#34A853'),
+    (2.0, 3.5, 'RunPod\nText Gen', '#FBBC05'),
+    (4.0, 3.5, 'RunPod\nVoice', '#FBBC05'),
+    (6.0, 3.5, 'Memory &\nContext', '#FBBC05'),
+    (2.5, 2.0, 'Journal', '#9C27B0'),
+    (4.0, 2.0, 'Mood', '#9C27B0'),
+    (5.5, 2.0, 'RAG', '#9C27B0'),
 ]
 
-for x, y, label, ntype, color in nodes:
-    if ntype == 'box':
-        box = mpatches.FancyBboxPatch((x - 0.65, y - 0.32), 1.3, 0.64, boxstyle="round,pad=0.04", facecolor=color, edgecolor='#333333', linewidth=1.0, alpha=0.9)
-        ax.add_patch(box)
-        text_color = 'white' if color in ['#4C8BF5', '#34A853', '#9C27B0', '#EA4335', '#FBBC05'] else '#333333'
-    else:  # diamond
-        diamond = mpatches.RegularPolygon((x, y), numVertices=4, radius=0.55, orientation=0.785, facecolor=color, edgecolor='#333333', linewidth=1.0)
-        ax.add_patch(diamond)
-        text_color = '#333333'
+for x, y, label, color in layers:
+    box = mpatches.FancyBboxPatch((x - 0.7, y - 0.35), 1.4, 0.7, boxstyle="round,pad=0.05", facecolor=color, edgecolor='#333333', linewidth=1.0, alpha=0.9)
+    ax.add_patch(box)
+    text_color = 'white' if color in ['#4C8BF5', '#34A853', '#9C27B0'] else '#333333'
     ax.text(x, y, label, ha='center', va='center', fontsize=8, color=text_color, fontweight='bold')
 
 # Arrows
 arrows = [
-    (3.5, 8.18, 3.5, 7.92),
-    (3.5, 7.28, 3.5, 7.02),
-    (3.5, 6.38, 3.5, 6.12),
-    (3.5, 5.47, 1.2, 5.32),
-    (1.2, 4.68, 1.2, 4.32),
-    (1.2, 3.78, 1.2, 3.42),
-    (3.5, 5.47, 3.5, 5.32),
-    (3.5, 4.68, 3.5, 4.32),
-    (3.5, 3.78, 3.5, 3.42),
-    (3.5, 4.68, 5.15, 4.15),
-    (5.8, 3.68, 5.8, 3.42),
-    (5.8, 2.78, 5.8, 2.52),
-    (5.8, 1.88, 3.85, 1.85),
-    (1.2, 2.78, 3.15, 1.85),
-    (3.5, 1.68, 3.5, 1.42),
-    (3.5, 0.78, 1.5, 0.62),
-    (3.5, 0.78, 5.5, 0.62),
-    (1.5, 0.0, 3.15, -0.15),
-    (5.5, 0.0, 3.85, -0.15),
-    (3.5, -0.62, 3.5, -0.78),
+    (4.0, 5.95, 4.0, 5.35),
+    (4.0, 5.65, 2.0, 5.35),
+    (4.0, 5.65, 6.0, 5.35),
+    (2.0, 4.65, 2.0, 3.85),
+    (4.0, 4.65, 4.0, 3.85),
+    (6.0, 4.65, 6.0, 3.85),
+    (2.0, 3.15, 2.5, 2.35),
+    (4.0, 3.15, 4.0, 2.35),
+    (6.0, 3.15, 5.5, 2.35),
 ]
 
 for x1, y1, x2, y2 in arrows:
     ax.annotate('', xy=(x2, y2), xytext=(x1, y1),
-                arrowprops=dict(arrowstyle='->', color='#555555', lw=1.0))
-
-# Decision labels
-ax.text(3.85, 5.7, 'No', fontsize=8, color='#EA4335', fontweight='bold')
-ax.text(3.85, 5.35, 'Yes', fontsize=8, color='#34A853', fontweight='bold')
-ax.text(3.85, 1.2, 'RED', fontsize=8, color='#EA4335', fontweight='bold')
-ax.text(3.85, 0.8, 'GREEN', fontsize=8, color='#34A853', fontweight='bold')
+                arrowprops=dict(arrowstyle='->', color='#666666', lw=1.0))
 
 plt.tight_layout()
 plt.show()
 ```
 
-### 3.10.2 Integration Points
+## 3.6 Conversation Processing Flows
 
-Table 3.7: Service integration matrix.
+### 3.6.1 Shared Conversation Pipeline
 
-| Service | Depends On | Provides To |
-|---------|-----------|-------------|
-| Chat Service | Emotion, RAG, LLM, Auditor | Flutter App |
-| Emotion Classifier | BERT Model | Chat Service |
-| RAG Pipeline | ChromaDB, Embeddings | Chat Service, Architect |
-| LLM Service | Groq/Ollama | Chat Service |
-| Clinical Auditor | Keyword DB, Sentiment | Chat Service |
-| Assessment | Supabase | Flutter App, Architect |
-| Journal | Supabase | Flutter App |
-| Architect | Assessment, Auditor | Gateway (roadmap generation) |
-| Ingestion | pdfplumber, Embeddings | Knowledge Base |
-| Knowledge Base | ChromaDB | RAG Pipeline |
-| Roadmap | Supabase, Architect | Flutter App |
-| Telemetry | Supabase | Flutter App |
+Both text and voice interactions use the same central stages: authenticated user input, input validation, crisis and emotion analysis, conversation-history retrieval, long-term-memory retrieval, journal and mood context retrieval, RAG retrieval, prompt and context construction, LLM generation, and message persistence.
 
-### 3.10.3 Data Flow Narrative
+### 3.6.2 Text Conversation Flow
 
-When a user sends a message, the system processes it through: (1) JWT authentication at the FastAPI gateway; (2) emotion classification to label the detected affective state; (3) RAG retrieval of top-k clinical passages from ChromaDB using `all-mpnet-base-v2` embeddings; (4) prompt assembly with retrieved context, emotion label, and conversation history; (5) LLM response generation via Groq Cloud; (6) clinical safety auditing for crisis keywords, tone, and safety risks; (7) persistence in Supabase PostgreSQL and gamification XP calculation; and (8) delivery to the Flutter app with emotion badges and reward animations. The end-to-end latency is approximately 3.2 seconds, with 2.2 seconds consumed by LLM inference.
+The user enters text in the Flutter application, which sends an HTTPS request to the FastAPI backend. The backend validates the Supabase JWT, performs text-emotion analysis, retrieves history, memory, journal, mood, and RAG context, assembles the prompt, generates a response via the RunPod text endpoint, and stores the message in Supabase before returning the response to the Flutter client.
 
-## 3.11 Implementation Stack
+### 3.6.3 Real-Time Voice Flow
 
-Table 3.8: Complete technology stack.
+Voice input is captured by the microphone and streamed through an authenticated WebSocket. Voice Activity Detection segments speech, Whisper transcribes the audio, and voice and text emotion analyses run in parallel. The shared context pipeline retrieves history, memory, journal, mood, and RAG evidence. Gemma generates a response, which Chatterbox converts to phrase-level speech and streams back to the user. The main challenge is latency, addressed through partial transcripts, streaming generation, and interruption handling.
 
-| Layer | Technology | Version | Purpose |
-|-------|-----------|---------|---------|
-| Frontend | Flutter | 3.24.5 | Cross-platform UI |
-| Navigation | GoRouter | 14.6.2 | Declarative routing |
-| State Mgmt | Provider | 6.1.1 | ChangeNotifier |
-| Backend | FastAPI | 0.115+ | REST API gateway |
-| ASGI | Uvicorn | 0.32+ | Async server |
-| Auth | Supabase Auth | 2.12+ | JWT + OAuth2 |
-| Database | PostgreSQL | 15+ | Relational data |
-| Realtime | Supabase Realtime | - | WebSocket channels |
-| Vector DB | ChromaDB | 0.5+ | HNSW search |
-| Embedding | Sentence-Transformers | 2.2+ | all-mpnet-base-v2 |
-| Chat LLM | Groq API | - | llama-3.1-8b-instant |
-| Planned LLM | Ollama | - | qwen2.5:7b / Gemma |
-| PDF | pdfplumber | 0.10+ | Text extraction |
-| Community | Supabase Edge Functions | - | Serverless logic |
-| Container | Docker | 24+ | Deployment |
-| Hosting | DigitalOcean | - | Backend server |
-| GPU | RunPod | - | A100 80GB (planned) |
+## 3.7 Backend, Database, and Cloud Integration
 
-The frontend is built with Flutter [@flutter2024], the API gateway with FastAPI [@fastapi2024], and authentication, database, and real-time services are provided by Supabase [@supabase2024].
+### 3.7.1 FastAPI Backend
 
-## 3.12 Hardware Specifications
+The backend validates authenticated requests, coordinates AI services, retrieves history and memory, calls Qdrant, constructs model context, invokes RunPod endpoints, stores messages and metadata, and returns text or voice responses.
 
-Table 3.9: Infrastructure specifications.
+### 3.7.2 Supabase
 
-| Component | Specification | Purpose |
-|-----------|-------------|---------|
-| Backend Server | DigitalOcean 4 vCPU, 8GB RAM | FastAPI gateway |
-| Database | Supabase managed | PostgreSQL + Storage |
-| Vector Store | ChromaDB persistent | Clinical knowledge |
-| Embedding | CPU inference | all-mpnet-base-v2 |
-| Chat LLM | Groq Cloud | Production inference |
-| Planned GPU | RunPod A100 80GB | Self-hosted LLM |
-| Client | Android 10+ / iOS 15+ | 4GB RAM minimum |
+Supabase provides user authentication, PostgreSQL storage, chat sessions and messages, message metadata, long-term user memory, journal entries, mood records, and user preferences.
 
-## 3.13 Data Models
+### 3.7.3 Qdrant
 
-### 3.13.1 Core Application Tables
+Qdrant stores book-chunk vectors, source metadata, book titles, chapter and page details, topic tags, and embedding identifiers.
 
-The system uses 12 core tables in Supabase PostgreSQL to support the primary therapeutic workflow.
+### 3.7.4 RunPod
 
-Table 3.10: Core application data models.
+RunPod hosts GPU model services for LLM inference, real-time speech recognition, emotion analysis, and TTS generation.
 
-| Table | Primary Key | Key Fields | Purpose |
-|-------|-------------|------------|---------|
-| profiles | id (UUID) | display_name, level, xp_total, streak_count, freeze_tokens | User profile and gamification state |
-| chat_sessions | id (UUID) | user_id, roadmap_id, created_at | Chat session metadata |
-| chat_messages | id (UUID) | session_id, role, content, emotion_label, safety_status, created_at | Conversation messages |
-| assessments | id (UUID) | user_id, assessment_type, score, severity, created_at | Clinical assessment records |
-| journal_entries | id (UUID) | user_id, title, content, mood_rating, created_at | User journaling |
-| mood_logs | id (UUID) | user_id, mood_score, emotion_label, logged_at | Mood tracking |
-| sleep_logs | id (UUID) | user_id, duration_minutes, quality, logged_at | Sleep tracking |
-| roadmaps | id (UUID) | user_id, overview, suggested_tasks, status | Personalized roadmaps |
-| badges | id (UUID) | user_id, badge_id, earned_at | Earned badges |
-| achievements | id (UUID) | user_id, achievement_id, progress, unlocked_at | Achievement tracking |
-| challenges | id (UUID) | user_id, challenge_id, progress, expires_at | Active challenges |
-| crisis_reports | id (UUID) | user_id, trigger_text, action_taken, created_at | Safety audit log |
+### 3.7.5 DigitalOcean and Flutter Integration
 
-### 3.13.2 Community Tables
+DigitalOcean hosts the main FastAPI orchestration service, public API routing, and coordination between Supabase and RunPod. The Flutter application communicates through HTTPS for text features and authenticated WebSockets for real-time voice.
 
-Thirteen tables implement the community feature data model, supporting groups, posts, comments, real-time channels, moderation, and notifications.
+## 3.8 Personalization and Integration Loops
 
-Table 3.11: Community data models.
+The personalization system consists of connected loops. The conversation-history loop stores messages in Supabase and retrieves recent history for future context. The long-term-memory loop extracts candidate memories, filters by relevance and safety, stores them user-scoped, and retrieves relevant memories for personalization. The journaling loop analyzes entries, extracts themes, summarizes content, and feeds relevant context into future conversations. The mood loop stores check-ins, calculates trends, and adapts tone. The RAG loop retrieves grounded book evidence and stores source metadata for quality review.
 
-| Table | Primary Key | Key Fields | Purpose |
-|-------|-------------|------------|---------|
-| community_groups | id (UUID) | name, description, type, created_by | Support groups and communities |
-| community_group_members | id (UUID) | group_id, user_id, role, joined_at | Membership with role-based access |
-| community_posts | id (UUID) | group_id, author_id, title, content, created_at | Group posts and announcements |
-| community_comments | id (UUID) | post_id, author_id, content, created_at | Post comments |
-| community_likes | id (UUID) | target_id, user_id, target_type, created_at | Likes on posts/comments |
-| community_reports | id (UUID) | reporter_id, target_id, reason, status, created_at | Content moderation reports |
-| community_messages | id (UUID) | channel_id, author_id, content, created_at | Group chat messages |
-| community_channels | id (UUID) | group_id, name, type, created_at | Chat channels within groups |
-| community_notifications | id (UUID) | user_id, type, payload, read, created_at | User notifications |
-| community_banned_users | id (UUID) | group_id, user_id, reason, banned_at | Group-level user bans |
-| community_moderation_log | id (UUID) | moderator_id, action, target_id, created_at | Moderator action history |
-| community_user_profiles | id (UUID) | user_id, display_name, avatar_url, bio | Community-specific profiles |
-| community_pinned_posts | id (UUID) | post_id, group_id, pinned_by, pinned_at | Pinned announcements |
+## 3.9 Core Design Decisions
 
-### 3.13.3 Entity Relationships
-
-Each core table links to `profiles` through `user_id`, with row-level security enforcing user isolation. Community tables form a separate subgraph anchored on `community_groups`, with `community_group_members` bridging users to groups.
+The most important architectural decisions are: (1) use QLoRA fine-tuning for response style, empathy, and conversation behavior; (2) use RAG for the 25-book knowledge base rather than memorizing it; (3) use Supabase for user history, journals, moods, and long-term memory; (4) use separate text and voice endpoints that share context logic but handle different streaming requirements; (5) use context engineering as the orchestration layer so only relevant information reaches the model; and (6) use modular cloud services so application, database, vector storage, and GPU inference can be updated independently.

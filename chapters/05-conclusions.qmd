@@ -2,9 +2,9 @@
 
 ## 5.1 Summary of Contributions
 
-This thesis presented UpHeal, an AI-powered, data-driven, and gamified mental health companion. The system combines four key innovations: (1) RAG-augmented conversational AI grounded in clinical literature [@lewis2020rag], (2) emotion-adaptive interaction designed for real-time BERT-based classification and currently implemented with keyword-based sentiment analysis, (3) a comprehensive gamification engine [@hamari2016gamification], and (4) a privacy-first, safety-augmented architecture [@toufique2023llm].
+This thesis presented UpHeal, an AI-powered, data-driven, and gamified mental health companion. The system combines four key innovations: (1) a QLoRA fine-tuned Gemma 3 27B IT conversational model integrated with retrieval-augmented generation over a 25-book mental-health corpus, (2) multimodal emotion-adaptive interaction using text and voice emotion signals, (3) a real-time voice pipeline combining Whisper Large V3 Turbo and Chatterbox text-to-speech, and (4) a privacy-first, safety-augmented architecture with structured memory, journaling, mood tracking, and clinical auditing.
 
-The system was implemented as a Flutter mobile application with 48 screens across 12 feature modules (including community-based peer support), a Python FastAPI backend with 9 domain service routers orchestrated through a central gateway, Supabase for data persistence and real-time community features, and ChromaDB for vector-based clinical knowledge retrieval. Evaluation results demonstrated that the system achieves an emotion classification F1 score of 0.82, a 4-week user retention rate of 45%, and a System Usability Scale score of 75/100, outperforming existing rule-based chatbots in personalization and engagement.
+The system architecture comprises a Flutter mobile application, a DigitalOcean FastAPI backend, Supabase authentication and PostgreSQL storage, Qdrant vector retrieval, and RunPod GPU endpoints for LLM, speech recognition, and speech synthesis. The design emphasizes separating knowledge (RAG) from behavior (fine-tuning), keeping user-specific data under user control, and grounding every response in curated sources while maintaining empathetic, supportive communication.
 
 ## 5.2 Impact on Technology
 
@@ -90,4 +90,4 @@ The current implementation has several limitations that should be acknowledged:
 
 ## 5.7 Conclusion
 
-UpHeal demonstrates that integrating RAG-augmented LLM responses, emotion classification, gamification, and community-based peer support within a privacy-first architecture can improve user engagement and therapeutic outcomes in digital mental health. The system provides a foundation for scalable, clinically grounded mental health support that can be adapted to diverse cultural and linguistic contexts.
+UpHeal demonstrates that a fine-tuned, RAG-grounded LLM combined with structured memory, emotion-aware context processing, and real-time voice interaction can deliver more personalized, empathetic, and safer mental-health support than standalone chatbots. The system provides a foundation for scalable, clinically grounded, and culturally adaptable digital mental-health assistance in the MENA region and beyond.
