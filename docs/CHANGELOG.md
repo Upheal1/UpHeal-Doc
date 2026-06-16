@@ -136,3 +136,52 @@ This file tracks all major changes to the thesis documentation. Use the format:
 - `references.bib`
 - `docs/PROGRESS.md`
 - `docs/CHANGELOG.md`
+
+---
+
+## 2026-06-16 — OpenCode (LLM-Focused Architecture Rewrite)
+
+### Changed
+- Replaced Chapter 2 (Literature Review) with a condensed, LLM-focused literature review covering:
+  - LLMs for mental health: opportunities and risks
+  - Empathetic dialogue systems
+  - Parameter-efficient fine-tuning (LoRA/QLoRA)
+  - Retrieval-Augmented Generation
+  - Conversational memory and personalization
+  - Emotion-aware context processing
+  - Voice and multimodal interaction
+  - Prompt/context engineering
+  - Safety, privacy, and ethical considerations
+  - Research gap and literature-to-architecture mapping
+- Replaced Chapter 3 (System Design) with new content focused on the LLM architecture:
+  - Research and development methodology
+  - Model and technology selection with comparison tables (LLM, ASR, TTS, emotion, vector DB)
+  - AI model development: fine-tuning objective, dataset preparation, QLoRA/Unsloth, RAG, prompt engineering
+  - Integrated system architecture (Flutter + FastAPI + Supabase + Qdrant + RunPod)
+  - Conversation processing flows (shared, text, real-time voice)
+  - Backend, database, and cloud integration
+  - Personalization loops (history, memory, journal, mood, RAG)
+  - Core design decisions
+- Updated Chapter 1 Proposed Solution and Thesis Organization to align with Gemma 3 27B IT, QLoRA, Qdrant, Whisper, and Chatterbox
+- Updated Abstract and Chapter 5 Summary/Conclusion to reflect the new architecture
+- Added transitional note in Chapter 4 that detailed implementation results still describe the initial prototype
+- Added 20 new references for transformers, GPT-3, InstructGPT, mental-health LLM reviews, empathetic dialogue, LoRA/QLoRA, MemGPT, wav2vec 2.0, XTTS, F5-TTS, Chatterbox, AI safety, WHO ethics, Gemma 3, Qdrant, and Unsloth
+- Generated new matplotlib figures: methodology flow and complete architecture block diagram
+
+### Why
+- A new source document (`llm final dec.docx`) describes the intended real architecture centered on a fine-tuned Gemma 3 27B IT model, Qdrant retrieval, and real-time voice interaction
+- The thesis needed to reflect the LLM's central role in the system and justify model selection through comparison tables
+- Condensation was required to maintain the 35–50 page university constraint (final: 38 pages)
+
+### Affected Files
+- `chapters/01-introduction.qmd`
+- `chapters/02-background.qmd`
+- `chapters/03-methodology.qmd`
+- `chapters/04-results-discussions.qmd`
+- `chapters/05-conclusions.qmd`
+- `index.qmd`
+- `references.bib`
+- `docs/PROGRESS.md`
+- `docs/CHANGELOG.md`
+- `chapters/03-methodology_files/figure-pdf/fig-methodology-output-1.pdf`
+- `chapters/03-methodology_files/figure-pdf/fig-architecture-output-1.pdf`

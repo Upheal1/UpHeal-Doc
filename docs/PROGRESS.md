@@ -29,13 +29,9 @@
 
 | Section | Status | Last Updated | Notes |
 |---------|--------|-------------|-------|
-| 2.1 Digital Mental Health Landscape | ✅ Draft | 2026-06-13 | WHO, Baumeister review, MENA context |
-| 2.2 Conversational Agents | ✅ Draft | 2026-06-15 | Woebot, Wysa, Replika, Kumar review, citations added |
-| 2.3 Emotion Recognition | ✅ Draft | 2026-06-15 | BERT, Whisper, GoEmotions, EmoBank, Transformers lib, citations added |
-| 2.4 Gamification for Health | ✅ Draft | 2026-06-15 | Hamari meta-analysis, 20-40% boost, citation added |
-| 2.5 Retrieval-Augmented Generation | ✅ Draft | 2026-06-15 | Lewis et al., medical RAG, Reimers Sentence-BERT, citations added |
-| 2.6 Gap Analysis | ✅ Draft | 2026-06-15 | Table comparing Woebot/Wysa/Replika/UpHeal; emotion row updated to "keyword-based (BERT planned)" |
-| References | ✅ | 2026-06-15 | 30/30 references cited; orphan references resolved |
+| 2.1 Existing Solutions | ✅ Draft | 2026-06-16 | LLMs for mental health, opportunities/risks table, empathetic dialogue, LoRA/QLoRA, RAG, memory, emotion, voice, context engineering, safety/ethics |
+| 2.2 Gap Analysis | ✅ Draft | 2026-06-16 | Literature-to-architecture mapping table; identifies personalization, grounding, emotion, multimodal, safety, and integration gaps |
+| References | ✅ | 2026-06-16 | 20 new LLM/voice/memory/safety references added; all cited |
 | Supervisor review | ⬜ | | |
 | Final revision | ⬜ | | |
 
@@ -46,19 +42,15 @@
 
 | Section | Status | Last Updated | Notes |
 |---------|--------|-------------|-------|
-| 3.1 Functional Requirements | ✅ Draft | 2026-06-13 | 10 FRs (FR-01 to FR-10) |
-| 3.2 Non-Functional Requirements | ✅ Draft | 2026-06-15 | 7 NFRs; NFR-03 expanded with ZTA, edge AI, service continuity |
-| 3.3 Use Case Diagram | ✅ Draft | 2026-06-15 | Matplotlib figure with 8 user + 6 system use cases (was Mermaid) |
-| 3.4 System Architecture Overview | ✅ Draft | 2026-06-15 | Matplotlib block diagram: Frontend → Gateway → Microservices → AI Pipeline → Data |
-| 3.5 RAG Pipeline Design | ✅ Draft | 2026-06-15 | Matplotlib RAG pipeline and retrieval/embedding algorithms |
-| 3.6 LLM Integration | ✅ Draft | 2026-06-15 | Matplotlib sequence diagram, prompt assembly, LLM config table |
-| 3.7 Emotion Classification | ✅ Draft | 2026-06-15 | Matplotlib pipeline, 6 categories, design-vs-implementation note |
-| 3.8 Gamification System | ✅ Draft | 2026-06-15 | XP formula, levels, Matplotlib state machine |
-| 3.9 Security Architecture | ✅ Draft | 2026-06-15 | 11 subsections: ZTA, data classification, auth/crypto, on-device + visual detection, service continuity, AI pipeline security, benchmarks |
-| 3.10 Data Flow Integration | ✅ Draft | 2026-06-15 | Matplotlib end-to-end data flow diagram |
-| 3.11 Implementation Stack | ✅ Draft | 2026-06-15 | Stack table with Flutter, FastAPI, Supabase citations |
-| 3.12 Hardware Specifications | ✅ Draft | 2026-06-15 | DigitalOcean, RunPod, Supabase, client specs |
-| 3.13 Data Models | ✅ Draft | 2026-06-15 | 12 core + 13 community tables + ER diagram |
+| 3.1 Chapter Introduction | ✅ Draft | 2026-06-16 | Brief overview of methodology, model selection, fine-tuning, RAG, architecture |
+| 3.2 Research and Development Methodology | ✅ Draft | 2026-06-16 | Design-and-development methodology; technology-selection criteria; methodology flow diagram |
+| 3.3 Model and Technology Selection | ✅ Draft | 2026-06-16 | LLM (Table 3.1), ASR (Table 3.2), TTS (Table 3.3), emotion, embedding/vector DB (Table 3.4) |
+| 3.4 AI Model Development | ✅ Draft | 2026-06-16 | Fine-tuning objective, dataset preparation, QLoRA/Unsloth training, RAG layer, prompt/context engineering |
+| 3.5 Integrated System Architecture | ✅ Draft | 2026-06-16 | Flutter + FastAPI + Supabase + Qdrant + RunPod; architecture block diagram |
+| 3.6 Conversation Processing Flows | ✅ Draft | 2026-06-16 | Shared pipeline, text flow, real-time voice flow |
+| 3.7 Backend, Database, and Cloud Integration | ✅ Draft | 2026-06-16 | FastAPI, Supabase, Qdrant, RunPod, DigitalOcean, Flutter integration |
+| 3.8 Personalization and Integration Loops | ✅ Draft | 2026-06-16 | Conversation history, long-term memory, journaling, mood, RAG loops |
+| 3.9 Core Design Decisions | ✅ Draft | 2026-06-16 | Six key decisions separating fine-tuning, RAG, memory, text/voice, context engineering, and modularity |
 | Supervisor review | ⬜ | | |
 | Final revision | ⬜ | | |
 
@@ -125,6 +117,8 @@
 | Fix content consistency | ✅ | 2026-06-15 | Classifier claims, API route, simulated-data disclaimer |
 | Add real test data to Ch4 | ✅ | 2026-06-15 | Simulated data retained with explicit disclaimer |
 | Expand security architecture | ✅ | 2026-06-15 | ZTA, data classification, on-device + visual detection, service continuity, AI pipeline security |
-| Review all references | ✅ | 2026-06-15 | 35/35 references cited; 0 orphans |
+| Integrate LLM-focused Ch2/Ch3 rewrite | ✅ | 2026-06-16 | Replaced with Gemma 3 27B, QLoRA, Qdrant, Whisper, Chatterbox; 38 pages |
+| Review all references | ✅ | 2026-06-16 | 50+ references; all cited |
+| Update Ch4 implementation results | ⬜ | | Still describes initial prototype; needs rewrite for new architecture |
 | Final formatting pass | ✅ | 2026-06-15 | Cross-refs verified, style guide check passed |
 | Supervisor sign-off | ⬜ | | |
