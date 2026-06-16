@@ -86,6 +86,9 @@ format:
 
         % === DISABLE DEFAULT TITLE PAGE (we provide custom cover pages) ===
         \let\maketitle\relax
+
+        % === SCALE ALL FIGURES TO FIT TEXT WIDTH WITHOUT CLIPPING ===
+        \setkeys{Gin}{width=0.95\linewidth,keepaspectratio}
     include-before-body:
       text: |
         % Outer cover: Title + University Logo + Academic Year only

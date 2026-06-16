@@ -15,31 +15,31 @@ The project follows a design-and-development research methodology. The system is
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
-fig, ax = plt.subplots(figsize=(7, 6))
-ax.set_xlim(0, 7)
-ax.set_ylim(0, 6)
+fig, ax = plt.subplots(figsize=(5, 5.5))
+ax.set_xlim(0, 5)
+ax.set_ylim(0, 5.5)
 ax.axis('off')
 
 stages = [
-    (3.5, 5.5, 'Problem Definition'),
-    (3.5, 4.7, 'Literature Review'),
-    (3.5, 3.9, 'Model Comparison'),
-    (3.5, 3.1, 'Dataset Preparation'),
-    (3.5, 2.3, 'QLoRA Fine-Tuning'),
-    (3.5, 1.5, 'RAG Construction'),
-    (3.5, 0.7, 'System Integration'),
+    (2.5, 5.0, 'Problem\nDefinition'),
+    (2.5, 4.2, 'Literature\nReview'),
+    (2.5, 3.4, 'Model\nComparison'),
+    (2.5, 2.6, 'Dataset\nPreparation'),
+    (2.5, 1.8, 'QLoRA\nFine-Tuning'),
+    (2.5, 1.0, 'RAG\nConstruction'),
+    (2.5, 0.2, 'System\nIntegration'),
 ]
 
 for x, y, label in stages:
-    box = mpatches.FancyBboxPatch((x - 1.2, y - 0.3), 2.4, 0.6, boxstyle="round,pad=0.05", facecolor='#E8F0FE', edgecolor='#4C8BF5', linewidth=1.2)
+    box = mpatches.FancyBboxPatch((x - 0.95, y - 0.28), 1.9, 0.56, boxstyle="round,pad=0.04", facecolor='#E8F0FE', edgecolor='#4C8BF5', linewidth=1.0)
     ax.add_patch(box)
-    ax.text(x, y, label, ha='center', va='center', fontsize=9, fontweight='bold')
+    ax.text(x, y, label, ha='center', va='center', fontsize=8, fontweight='bold')
 
 for i in range(len(stages) - 1):
     x1, y1, _ = stages[i]
     x2, y2, _ = stages[i + 1]
-    ax.annotate('', xy=(x2, y2 + 0.3), xytext=(x1, y1 - 0.3),
-                arrowprops=dict(arrowstyle='->', color='#4C8BF5', lw=1.5))
+    ax.annotate('', xy=(x2, y2 + 0.28), xytext=(x1, y1 - 0.28),
+                arrowprops=dict(arrowstyle='->', color='#4C8BF5', lw=1.2))
 
 plt.tight_layout()
 plt.show()
@@ -149,47 +149,47 @@ The principal components are the Flutter mobile application, a DigitalOcean Fast
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 
-fig, ax = plt.subplots(figsize=(8, 7))
-ax.set_xlim(0, 8)
-ax.set_ylim(0, 7)
+fig, ax = plt.subplots(figsize=(6, 5))
+ax.set_xlim(0, 6)
+ax.set_ylim(0, 5)
 ax.axis('off')
 
-# Layers
+# Layers (compact 3-column layout)
 layers = [
-    (4.0, 6.3, 'Flutter Mobile App', '#4C8BF5'),
-    (2.0, 5.0, 'FastAPI\nBackend', '#34A853'),
-    (4.0, 5.0, 'Supabase\nAuth + DB', '#34A853'),
-    (6.0, 5.0, 'Qdrant\nVector DB', '#34A853'),
-    (2.0, 3.5, 'RunPod\nText Gen', '#FBBC05'),
-    (4.0, 3.5, 'RunPod\nVoice', '#FBBC05'),
-    (6.0, 3.5, 'Memory &\nContext', '#FBBC05'),
-    (2.5, 2.0, 'Journal', '#9C27B0'),
-    (4.0, 2.0, 'Mood', '#9C27B0'),
-    (5.5, 2.0, 'RAG', '#9C27B0'),
+    (3.0, 4.5, 'Flutter\nMobile App', '#4C8BF5'),
+    (1.2, 3.4, 'FastAPI\nBackend', '#34A853'),
+    (3.0, 3.4, 'Supabase\nAuth + DB', '#34A853'),
+    (4.8, 3.4, 'Qdrant\nVector DB', '#34A853'),
+    (1.2, 2.3, 'RunPod\nText Gen', '#FBBC05'),
+    (3.0, 2.3, 'RunPod\nVoice', '#FBBC05'),
+    (4.8, 2.3, 'Memory &\nContext', '#FBBC05'),
+    (1.5, 1.2, 'Journal', '#9C27B0'),
+    (3.0, 1.2, 'Mood', '#9C27B0'),
+    (4.5, 1.2, 'RAG', '#9C27B0'),
 ]
 
 for x, y, label, color in layers:
-    box = mpatches.FancyBboxPatch((x - 0.7, y - 0.35), 1.4, 0.7, boxstyle="round,pad=0.05", facecolor=color, edgecolor='#333333', linewidth=1.0, alpha=0.9)
+    box = mpatches.FancyBboxPatch((x - 0.55, y - 0.28), 1.1, 0.56, boxstyle="round,pad=0.04", facecolor=color, edgecolor='#333333', linewidth=0.8, alpha=0.9)
     ax.add_patch(box)
     text_color = 'white' if color in ['#4C8BF5', '#34A853', '#9C27B0'] else '#333333'
-    ax.text(x, y, label, ha='center', va='center', fontsize=8, color=text_color, fontweight='bold')
+    ax.text(x, y, label, ha='center', va='center', fontsize=7, color=text_color, fontweight='bold')
 
 # Arrows
 arrows = [
-    (4.0, 5.95, 4.0, 5.35),
-    (4.0, 5.65, 2.0, 5.35),
-    (4.0, 5.65, 6.0, 5.35),
-    (2.0, 4.65, 2.0, 3.85),
-    (4.0, 4.65, 4.0, 3.85),
-    (6.0, 4.65, 6.0, 3.85),
-    (2.0, 3.15, 2.5, 2.35),
-    (4.0, 3.15, 4.0, 2.35),
-    (6.0, 3.15, 5.5, 2.35),
+    (3.0, 4.22, 1.2, 3.68),
+    (3.0, 4.22, 3.0, 3.68),
+    (3.0, 4.22, 4.8, 3.68),
+    (1.2, 3.12, 1.2, 2.58),
+    (3.0, 3.12, 3.0, 2.58),
+    (4.8, 3.12, 4.8, 2.58),
+    (1.2, 2.02, 1.5, 1.48),
+    (3.0, 2.02, 3.0, 1.48),
+    (4.8, 2.02, 4.5, 1.48),
 ]
 
 for x1, y1, x2, y2 in arrows:
     ax.annotate('', xy=(x2, y2), xytext=(x1, y1),
-                arrowprops=dict(arrowstyle='->', color='#666666', lw=1.0))
+                arrowprops=dict(arrowstyle='->', color='#666666', lw=0.8))
 
 plt.tight_layout()
 plt.show()

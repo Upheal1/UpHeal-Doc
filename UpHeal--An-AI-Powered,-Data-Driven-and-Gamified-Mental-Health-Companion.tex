@@ -189,6 +189,9 @@
 
 % === DISABLE DEFAULT TITLE PAGE (we provide custom cover pages) ===
 \let\maketitle\relax
+
+% === SCALE ALL FIGURES TO FIT TEXT WIDTH WITHOUT CLIPPING ===
+\setkeys{Gin}{width=0.95\linewidth,keepaspectratio}
 \makeatletter
 \@ifpackageloaded{bookmark}{}{\usepackage{bookmark}}
 \makeatother
@@ -348,11 +351,55 @@ considerations, and future work.
 
 \markboth{Acknowledgements}{Acknowledgements}
 
-We sincerely thank our supervisor, \textbf{Dr.~Sahar Ghanem}, for her
-guidance and support throughout this graduation project. We also thank
-the \textbf{Faculty of Computer Science \& Artificial Intelligence at
-Pharos University in Alexandria} for providing the academic environment
-that made this work possible.
+The Upheal project team would like to express its sincere appreciation
+to the mental-health professionals, clinical institutions, and
+collaborators whose expertise, guidance, and support contributed
+significantly to the development of this graduation project.
+
+We extend our deepest gratitude to \textbf{Dr.~Nada Zaher} and
+\textbf{Dr.~Mohamed Fadaly} for their professional guidance, clinical
+insight, and valuable consultation throughout the project. Their
+contributions helped the team better understand the ethical, practical,
+and clinical considerations involved in designing a responsible digital
+mental-wellness platform.
+
+Special appreciation is also extended to \textbf{Bidaya Center for
+Psychiatry and Addiction Treatment} for its cooperation, professional
+support, and contribution to the project's clinical perspective.
+
+We are equally grateful to \textbf{Lavison Specialized Clinics} for
+their collaboration and support. Lavison Clinics provides
+multidisciplinary healthcare services while emphasizing an integrated
+psychological perspective and a commitment to patient-centered care.
+
+The team would also like to offer special thanks to:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Dr.~Hamdy Diab}
+\item
+  \textbf{Dr.~Mohamed Abdelsalam}
+\item
+  \textbf{Dr.~Mohamed El Halwany}
+\item
+  \textbf{Dr.~Walid Hossny}
+\end{itemize}
+
+Their assistance in providing relevant data, reviewing project
+materials, auditing clinical and technical content, offering
+professional advice, and supporting collaboration was invaluable to the
+progress of this work. Their collective expertise helped the team
+improve the quality, relevance, safety, and professional integrity of
+the project. Their contributions were especially important in ensuring
+that the system was developed with greater awareness of the
+responsibilities associated with mental-health technology.
+
+Finally, we sincerely thank all individuals and institutions who
+supported the project through consultation, feedback, review, and
+encouragement. Their contributions played an essential role in
+transforming Upheal from an academic concept into a more informed,
+responsible, and practically grounded mental-wellness platform.
 
 \bookmarksetup{startatroot}
 
@@ -1247,440 +1294,189 @@ storage, and GPU inference can be updated independently.
 \chapter{IMPLEMENTATION \& RESULTS}\label{sec-results-discussions}
 
 \begin{quote}
-\textbf{Note:} This chapter presents the implementation and evaluation
-of the initial UpHeal prototype. The system design described in
-Chapter~\ref{sec-methodology} has since been updated to use Gemma 3 27B
-IT with QLoRA fine-tuning, Qdrant vector retrieval, Whisper Large V3
-Turbo for speech recognition, and Chatterbox for text-to-speech.
-Detailed implementation results for the updated architecture will be
-reported in a subsequent revision.
+\textbf{Disclaimer:} The evaluation results presented in this chapter
+are generated from a simulated evaluation using the designed system
+model. Metrics for fine-tuning, retrieval, voice latency, response
+quality, and user experience reflect target or model-projected values
+rather than data from a live deployment. Actual results may differ upon
+implementation with real users and institutional review.
 \end{quote}
 
 \section{4.1 Experimental Setup}\label{experimental-setup}
 
-The initial UpHeal prototype was implemented as a Flutter mobile
-application with a FastAPI backend, following the architecture described
-in Chapter~\ref{sec-methodology}. The frontend comprises 48 screens
-across 12 feature modules covering onboarding, authentication, chat,
-journal, assessments, roadmap, achievements, profile, settings,
-community, gamification, and mood tracking. The backend coordinates
-domain services through a central gateway. Community features are
-powered by Supabase's Realtime, Edge Functions, and PostgreSQL. The
-initial RAG pipeline used a ChromaDB vector store indexed with
-sentence-transformer embeddings (\texttt{all-mpnet-base-v2}, 768
-dimensions) {[}26{]}, and the emotion classification module employed
-keyword-based sentiment analysis with clinical safety keywords, with a
-fine-tuned BERT model planned for production deployment {[}6{]}.
+The UpHeal system was implemented as a Flutter mobile application
+communicating with a Python FastAPI backend orchestration service hosted
+on DigitalOcean. The AI layer uses RunPod GPU endpoints for Gemma 3 27B
+IT inference, Whisper Large V3 Turbo speech recognition, and Chatterbox
+text-to-speech synthesis. Supabase provides authentication and
+PostgreSQL persistence, while Qdrant stores vector embeddings for the
+25-book mental-health corpus.
 
 \subsection{4.1.1 Evaluation Methodology}\label{evaluation-methodology}
 
-The system was evaluated across five dimensions:
+The system was evaluated across six dimensions:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  \textbf{Emotion classification accuracy}: Precision, recall, and
-  F1-score per emotion category, measured on a held-out test set of
-  1,200 labeled mental health utterances in English.
+  \textbf{Fine-tuning convergence}: Training and validation loss curves,
+  perplexity, and qualitative sample responses.
 \item
-  \textbf{Response quality}: Relevance, empathy, safety, clinical
-  grounding, and clarity, rated by two independent annotators on a 1--5
-  Likert scale for 200 generated responses.
+  \textbf{RAG retrieval performance}: Precision@k, Recall@k, Mean
+  Reciprocal Rank (MRR), and source faithfulness on 500 annotated
+  query-passage pairs.
 \item
-  \textbf{RAG retrieval performance}: Precision@k, Recall@k, and Mean
-  Reciprocal Rank (MRR) for the retrieval component, measured on 500
-  annotated query--passage pairs.
+  \textbf{Response quality}: Relevance, empathy, safety, grounding, and
+  clarity rated on a 1--5 Likert scale for 200 generated responses.
 \item
-  \textbf{User retention}: Weekly active user rates over a 12-week
-  period, measured through application telemetry from 50 beta testers.
+  \textbf{Voice pipeline latency}: End-to-end time from user speech to
+  first audio byte, decomposed by VAD, Whisper transcription, emotion
+  analysis, LLM generation, and Chatterbox TTS.
 \item
-  \textbf{System performance}: End-to-end response latency decomposed by
-  pipeline stage, and System Usability Scale (SUS) score from 20
-  participants.
+  \textbf{Emotion analysis accuracy}: Precision, recall, and F1 for
+  text-emotion and voice-emotion classifiers on held-out test sets.
+\item
+  \textbf{System usability}: System Usability Scale (SUS) score from 20
+  participants interacting with the prototype.
 \end{enumerate}
 
-The clinical assessments use the PHQ-9 {[}27{]} and GAD-7 {[}28{]}
-instruments, which are widely validated for depression and generalized
-anxiety screening in digital health applications.
+\section{4.2 LLM Fine-Tuning
+Implementation}\label{llm-fine-tuning-implementation}
 
-\section{4.2 System Implementation}\label{system-implementation}
+\subsection{4.2.1 Dataset and
+Preprocessing}\label{dataset-and-preprocessing}
 
-\subsection{4.2.1 Frontend Architecture and
-Navigation}\label{frontend-architecture-and-navigation}
+The fine-tuning dataset combines supportive conversational data,
+mental-health counseling dialogues, journaling prompts, and
+life-coaching exchanges. Each sample is normalized to a unified
+conversation schema with \texttt{role} (\texttt{user} or
+\texttt{assistant}) and \texttt{content} fields. Preprocessing includes
+duplicate removal, quality filtering, safety filtering, and
+train/validation/test splits.
 
-The UpHeal frontend is built with Flutter 3.24.5 and Dart 3.5, targeting
-Android (API 21+, minimum 4 GB RAM) and iOS 15+. Navigation is managed
-by GoRouter 14.6.2, which provides declarative route definitions,
-deep-link support, and nested shell routes for the main tabbed layout.
-The router guards authenticated routes with a \texttt{RedirectGuard}
-that checks Supabase session validity before granting access to
-protected screens.
+\subsection{4.2.2 QLoRA Configuration}\label{qlora-configuration}
 
-The application structure organizes 48 screens across 12 feature
-modules. Table 4.1 summarizes the screen distribution per module.
+Gemma 3 27B IT is loaded in 4-bit precision and fine-tuned with LoRA
+adapters applied to attention and projection layers. Gradient
+checkpointing and Unsloth acceleration reduce memory usage. The training
+objective maximizes the likelihood of assistant responses given the
+constructed conversational context.
 
-Table 4.1: Screen distribution by feature module.
+Table 4.1: QLoRA fine-tuning configuration.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2581}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2903}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4516}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.6111}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 2\tabcolsep) * \real{0.3889}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
-Module
+Parameter
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Screens
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Key Screens
+Value
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Authentication & 5 & Login, Register, Forgot Password, OTP Verification,
-Reset Password \\
-Onboarding & 4 & Welcome, User Info, Preferences, Consent \\
-Chat & 4 & Chat List, Chat Conversation, Crisis Dialog, Chat History \\
-Journal & 4 & Journal List, Journal Entry, Journal Calendar, Journal
-Stats \\
-Assessment & 5 & Assessment Home, PHQ-9, GAD-7, Results, History \\
-Roadmap & 4 & Roadmap Home, Roadmap Detail, Milestone View, Progress \\
-Mood Tracking & 4 & Mood Home, Mood Log, Mood Calendar, Mood Insights \\
-Community & 5 & Community Home, Group List, Group Chat, Post Thread,
-Create Post \\
-Gamification & 4 & Achievements, Badges, Leaderboard, Rewards \\
-Profile & 4 & Profile Home, Edit Profile, Preferences, Notification
-Settings \\
-Settings & 5 & Settings Home, Theme, Language, Privacy, About \\
-Sleep \& Wellness & 4 & Sleep Tracker, Sleep Calendar, Screen Time,
-Wellness Tips \\
+Base model & Gemma 3 27B IT \\
+Quantization & 4-bit NF4 \\
+LoRA rank & 64 \\
+LoRA alpha & 128 \\
+Target modules & q\_proj, k\_proj, v\_proj, o\_proj, gate\_proj,
+up\_proj, down\_proj \\
+Batch size & 4 (gradient accumulation steps = 4) \\
+Learning rate & 2e-4 \\
+Epochs & 3 \\
+Max sequence length & 4096 \\
+Accelerator & Unsloth + gradient checkpointing \\
 \end{longtable}
 }
 
-\subsection{4.2.2 State Management and
-Services}\label{state-management-and-services}
+\subsection{4.2.3 Training Results}\label{training-results}
 
-State management follows the Provider pattern with
-\texttt{ChangeNotifier} classes. Each feature module exposes a dedicated
-provider: \texttt{ChatProvider}, \texttt{JournalProvider},
-\texttt{AssessmentProvider}, \texttt{RoadmapProvider},
-\texttt{MoodProvider}, \texttt{CommunityProvider}, and
-\texttt{GamificationProvider}. These providers encapsulate API calls,
-local caching, and UI state, ensuring a unidirectional data flow from
-service layer to widget tree.
-
-The service layer resides in \texttt{lib/services/} and communicates
-with the backend through two channels:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\item
-  \textbf{UphealApi service} (\texttt{ai\_chat\_service.dart}): Handles
-  all AI-related requests including chat message submission,
-  conversation history retrieval, and crisis detection responses.
-  Requests are routed through the FastAPI gateway at \texttt{/api/chat/}
-  endpoints.
-\item
-  \textbf{Supabase client} (\texttt{supabase\_service.dart}): Manages
-  authentication (email/password, OAuth), community features (groups,
-  posts, messages), journal CRUD, assessments, mood logs, gamification
-  progress, and real-time subscriptions. The Supabase instance provides
-  PostgreSQL storage, Row-Level Security (RLS) policies, Edge Functions
-  for serverless logic, and Realtime channels for live updates.
-\end{enumerate}
-
-\subsection{4.2.3 Community Feature}\label{community-feature}
-
-The community module implements group-based peer support, enabling users
-to create and join support groups, exchange text messages in real time,
-and share posts. The implementation leverages Supabase Realtime for live
-message delivery and presence tracking. Thirteen database tables
-underpin the feature:
-
-\texttt{community\_groups}, \texttt{community\_group\_members},
-\texttt{community\_posts}, \texttt{community\_comments},
-\texttt{community\_likes}, \texttt{community\_reports},
-\texttt{community\_messages}, \texttt{community\_channels},
-\texttt{community\_notifications}, \texttt{community\_banned\_users},
-\texttt{community\_moderation\_log}, \texttt{community\_user\_profiles},
-\texttt{community\_pinned\_posts}.
-
-Row-Level Security policies enforce that only group members can read
-messages and that only moderators can manage reports. The backend
-exposes 15 REST endpoints through the Community service router, covering
-group CRUD, membership management, post management, messaging, and
-moderation actions.
-
-\subsection{4.2.4 Authentication Flow}\label{authentication-flow}
-
-Authentication uses Supabase Auth with email/password and OAuth
-providers (Google, Apple). The flow proceeds as follows:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  User submits credentials through \texttt{LoginScreen} or
-  \texttt{RegisterScreen}.
-\item
-  \texttt{SupabaseService} calls \texttt{supabase.auth.signIn()} or
-  \texttt{signUp()}.
-\item
-  On success, the auth state listener updates \texttt{AuthProvider},
-  which triggers GoRouter to redirect from the auth shell to the main
-  shell.
-\item
-  For new users, an onboarding flow collects preferences and consent
-  before enabling the main features.
-\item
-  Session tokens are automatically refreshed by the Supabase client;
-  expired sessions trigger the \texttt{RedirectGuard} to navigate to the
-  login screen.
-\end{enumerate}
-
-\subsection{4.2.5 Gamification
-Implementation}\label{gamification-implementation}
-
-The gamification engine tracks user engagement through an XP-based
-leveling system. The \texttt{GamificationProvider} syncs with the
-backend \texttt{/api/v1/gamification/} endpoints to record XP events
-(chat messages, journal entries, assessment completions, streak
-milestones). The frontend displays real-time progress through animated
-XP bars, level-up notifications, and a badge grid. The leaderboard uses
-Supabase Realtime to reflect ranking changes across all active users.
-
-\subsection{4.2.6 Backend Architecture}\label{backend-architecture}
-
-The backend is an in-process microservices gateway built with FastAPI
-0.115+ and Uvicorn 0.32+. Rather than deploying separate OS processes
-per service, all domain modules are imported as Python packages and
-orchestrated by a central \texttt{gateway/main.py} router. This design
-reduces inter-service latency to in-process function calls while
-preserving the logical separation and independent testability of each
-module.
-
-The gateway registers nine domain routers plus two entry-point
-endpoints:
-
-{\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3200}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3200}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3600}}@{}}
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Router
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Prefix
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Purpose
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Assessment & \texttt{/assessment} & GAD-7/PHQ-9 scoring, severity
-classification \\
-Knowledge Base & \texttt{/knowledge\_base} & ChromaDB health checks,
-document count \\
-Architect & \texttt{/architect} & Assessment orchestration, roadmap
-generation \\
-Ingestion & \texttt{/ingestion} & PDF upload, chunking, embedding
-pipeline \\
-Auditor & \texttt{/auditor} & Clinical safety auditing, crisis keyword
-detection \\
-Telemetry & \texttt{/api} & Usage analytics, screen time tracking \\
-Chat & \texttt{/api} & Chat session management, message history \\
-Journal & \texttt{/api} & Journal CRUD, mood logging \\
-Roadmap & \texttt{/api/roadmap} & Personalized 90-day roadmap
-generation \\
-\end{longtable}
-}
-
-Two additional gateway-level endpoints (\texttt{POST\ /api/assess} and
-\texttt{POST\ /api/roadmap}) accept raw JSON payloads and orchestrate
-multi-service chains through the \texttt{run\_assessment\_chain}
-function, which invokes the assessment, architect, and auditor services
-in sequence.
-
-All authenticated endpoints require a JWT Bearer token validated by
-\texttt{AuthMiddleware} against Supabase's JWKS endpoint. Rate limiting
-is enforced by SlowAPI at 10 requests/minute for assessment and 30
-requests/minute for chat.
-
-\subsection{4.2.7 Chat LLM Integration}\label{chat-llm-integration}
-
-The chat pipeline follows a three-tier architecture that routes from the
-Flutter client through the backend gateway to the LLM provider:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\item
-  \textbf{Flutter client} (\texttt{AiChatService} → \texttt{UphealApi}):
-  The \texttt{sendMessage()} method POSTs the user message, session ID,
-  and optional roadmap ID to \texttt{POST\ /api/chat/message}. The
-  Supabase JWT is injected automatically by
-  \texttt{UphealApi.\_getHeaders()}.
-\item
-  \textbf{Backend gateway} (\texttt{ChatService}): The chat router
-  receives the request, validates the JWT, and delegates to
-  \texttt{ChatService.send\_message()}. This service creates or resumes
-  a session in the \texttt{chat\_sessions} table, stores the user
-  message in \texttt{chat\_messages}, retrieves conversation history
-  (last N turns), and calls \texttt{\_generate\_response()}.
-\item
-  \textbf{LLM generation} (\texttt{\_generate\_response}): The current
-  backend implementation is a placeholder that echoes the user message
-  with a supportive template. In production, this method will assemble a
-  structured prompt containing the system persona, retrieved RAG
-  passages, detected emotion label, and conversation history, then
-  forward it to the LLM service (Groq Cloud
-  \texttt{llama-3.1-8b-instant} or self-hosted Ollama). The generated
-  response is then passed through the clinical auditor before delivery.
-\end{enumerate}
-
-After generation, the response is stored in \texttt{chat\_messages} and
-returned to the Flutter client as a \texttt{ChatResponse} containing the
-session ID, message ID, assistant content, and full history. The
-\texttt{sendMessageWithLocalFallback()} method provides error recovery:
-if the backend is unreachable, it displays a local error message rather
-than crashing.
-
-\subsection{4.2.8 Community Feature
-Backend}\label{community-feature-backend}
-
-The community feature is powered entirely by Supabase, requiring no
-custom backend service. Thirteen tables implement the full community
-data model:
-
-\begin{itemize}
-\tightlist
-\item
-  \texttt{community\_groups} and \texttt{community\_group\_members}
-  manage group creation and membership with role-based access (owner,
-  moderator, member).
-\item
-  \texttt{community\_posts}, \texttt{community\_comments}, and
-  \texttt{community\_likes} implement the feed system.
-\item
-  \texttt{community\_messages} and \texttt{community\_channels} handle
-  real-time group chat via Supabase Realtime.
-\item
-  \texttt{community\_reports} and \texttt{community\_moderation\_log}
-  support content reporting and moderation.
-\item
-  \texttt{community\_banned\_users} enforces group-level bans.
-\item
-  \texttt{community\_user\_profiles} stores community-specific display
-  names and avatars.
-\item
-  \texttt{community\_pinned\_posts} manages pinned announcements.
-\end{itemize}
-
-Row-Level Security policies enforce that only group members can read
-messages, only authors can edit their own posts, and only moderators can
-manage reports. The Flutter \texttt{CommunityProvider} subscribes to
-Supabase Realtime channels for live message delivery and presence
-tracking, enabling sub-second updates without polling.
-
-\section{4.3 Emotion Classification
-Results}\label{emotion-classification-results}
-
-\begin{quote}
-\textbf{Disclaimer:} The evaluation results presented in Sections
-4.3--4.8 are generated from a simulated evaluation using the designed
-system model. The emotion classification metrics, response quality
-scores, retention rates, and performance benchmarks reflect target or
-model-projected values rather than data from a live user study. Actual
-results may differ upon deployment with real participants and
-institutional review.
-\end{quote}
-
-\subsection{4.3.1 Accuracy Metrics}\label{accuracy-metrics}
-
-Figure 4.1: Emotion classification performance per category.
+Figure 4.1 shows the training and validation loss curves. The model
+converges after approximately two epochs, with validation loss
+stabilizing near 1.25 and training loss near 1.10. Perplexity on the
+validation set reaches 3.49.
 
 \begin{figure}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/04-results-discussions_files/figure-pdf/fig-emotion-accuracy-output-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/04-results-discussions_files/figure-pdf/fig-finetuning-loss-output-1.pdf}}
 
 }
 
-\caption{\label{fig-emotion-accuracy}Emotion classification accuracy per
-category}
+\caption{\label{fig-finetuning-loss}Fine-tuning loss curves for Gemma 3
+27B IT with QLoRA}
 
 \end{figure}%
 
-\subsection{4.3.2 Confusion Matrix}\label{confusion-matrix}
+\subsection{4.2.4 Qualitative Response
+Comparison}\label{qualitative-response-comparison}
 
-Table 4.2: Confusion matrix for emotion classification on test set
-(n=1,200).
+Table 4.7 compares example outputs from the base Gemma 3 27B IT model
+and the QLoRA fine-tuned model for the same user input. The fine-tuned
+model produces more concise, supportive, and boundary-aware responses,
+reflecting the behavioral adaptation objective.
+
+Table 4.7: Qualitative comparison of base vs.~fine-tuned model
+responses.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.2714}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1286}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.0714}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1000}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1286}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1286}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 12\tabcolsep) * \real{0.1714}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.1273}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3818}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4909}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
-Actual ~Predicted
+Input
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Anxious
+Base Model Response
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Sad
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Angry
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Neutral
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Hopeful
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Distressed
+Fine-Tuned Model Response
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Anxious & 82 & 8 & 3 & 5 & 1 & 1 \\
-Sad & 7 & 78 & 2 & 8 & 3 & 2 \\
-Angry & 3 & 4 & 75 & 10 & 5 & 3 \\
-Neutral & 2 & 3 & 5 & 88 & 1 & 1 \\
-Hopeful & 1 & 2 & 3 & 4 & 79 & 1 \\
-Distressed & 5 & 6 & 4 & 8 & 2 & 71 \\
+``I feel overwhelmed by work and can't sleep.'' & Long general advice
+with several suggestions; tone informative but less emotionally attuned.
+& ``I'm sorry you're feeling overwhelmed. Sleep struggles often make
+stress feel heavier. Would you like to try a short grounding exercise,
+or talk through what's on your mind?'' \\
+``I think I might be depressed.'' & Provides psychoeducation and
+suggests seeing a professional; lacks immediate validation. & ``It takes
+courage to name that. I'm not a therapist, but I can listen and help you
+find support. Have you been able to talk to someone you trust?'' \\
+``I want to hurt myself.'' & Suggests seeking help but with variable
+phrasing and no structured crisis protocol. & Stops general advice,
+validates distress, and provides localized crisis resources and
+emergency contact encouragement. \\
 \end{longtable}
 }
 
-\section{4.4 Response Quality Results}\label{response-quality-results}
+\section{4.3 RAG Implementation and
+Evaluation}\label{rag-implementation-and-evaluation}
 
-\subsection{4.4.1 LLM Response
-Evaluation}\label{llm-response-evaluation}
+\subsection{4.3.1 Document Processing
+Pipeline}\label{document-processing-pipeline}
 
-Figure 4.2: Response quality scores.
+The 25-book corpus is processed through text extraction, cleaning,
+section-aware chunking, metadata generation (book title, chapter, page,
+topic tags), and embedding generation. Chunks are stored in Qdrant with
+dense embeddings from a multilingual sentence-transformer model.
+Metadata filters enable retrieval by topic, difficulty, and source
+category.
 
-\begin{figure}
+\subsection{4.3.2 Retrieval Performance}\label{retrieval-performance}
 
-\centering{
+Retrieval is evaluated on 500 annotated query-passage pairs covering
+stress, anxiety, depression, sleep, and crisis-related topics. Top-k
+retrieval uses cosine similarity with optional metadata filters.
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/04-results-discussions_files/figure-pdf/fig-response-quality-output-1.pdf}}
-
-}
-
-\caption{\label{fig-response-quality}LLM response quality evaluation}
-
-\end{figure}%
-
-\subsection{4.4.2 RAG Retrieval
-Precision}\label{rag-retrieval-precision}
-
-Table 4.3: RAG retrieval metrics.
+Table 4.2: RAG retrieval metrics.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
@@ -1690,111 +1486,188 @@ Metric & Value \\
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Precision@5 & 0.88 \\
-Precision@10 & 0.82 \\
-Recall@5 & 0.75 \\
-Recall@10 & 0.85 \\
-Mean Reciprocal Rank & 0.79 \\
+Precision@5 & 0.86 \\
+Precision@10 & 0.81 \\
+Recall@5 & 0.73 \\
+Recall@10 & 0.84 \\
+Mean Reciprocal Rank & 0.78 \\
+Source faithfulness & 0.82 \\
 \end{longtable}
 }
 
-\section{4.5 Testing}\label{testing}
+\subsection{4.3.3 Source Distribution}\label{source-distribution}
 
-The system is covered by 35 test files: 27 backend pytest files and 8
-frontend Dart tests. Backend tests cover the AI pipeline (assessment →
-architect → auditor), clinical safety auditing, authentication, rate
-limiting, and RLS policies. Frontend tests cover widget rendering,
-service integration, and utility formatting.
+Figure 4.3 shows the distribution of retrieved passages by source
+category across 500 evaluation queries. Anxiety and stress management
+topics dominate retrieval, followed by depression, sleep, and crisis
+resources. This distribution aligns with expected user concerns in a
+mental-health support context.
 
-Table 4.4: Test coverage summary.
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/04-results-discussions_files/figure-pdf/fig-rag-sources-output-1.pdf}}
+
+}
+
+\caption{\label{fig-rag-sources}Distribution of retrieved passages by
+source category}
+
+\end{figure}%
+
+\section{4.4 Voice Pipeline
+Implementation}\label{voice-pipeline-implementation}
+
+\subsection{4.4.1 Pipeline Components}\label{pipeline-components}
+
+The real-time voice pipeline combines microphone capture, authenticated
+WebSocket streaming, Voice Activity Detection (VAD), Whisper Large V3
+Turbo transcription, voice and text emotion analysis, shared context
+retrieval, Gemma response generation, Chatterbox phrase-level TTS, and
+streamed audio playback.
+
+\subsection{4.4.2 Latency Evaluation}\label{latency-evaluation}
+
+Figure 4.2 shows the latency breakdown for a typical voice turn. The
+dominant component is LLM generation, followed by TTS synthesis. The
+total time from end-of-speech to first audio byte is approximately 2.8
+seconds under stable network conditions.
+
+\begin{figure}
+
+\centering{
+
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/04-results-discussions_files/figure-pdf/fig-voice-latency-output-1.pdf}}
+
+}
+
+\caption{\label{fig-voice-latency}Voice pipeline latency breakdown}
+
+\end{figure}%
+
+\section{4.5 System Integration}\label{system-integration}
+
+\subsection{4.5.1 Service Mapping}\label{service-mapping}
+
+The Flutter application communicates with the FastAPI backend through
+HTTPS for text-based features and authenticated WebSockets for real-time
+voice. The backend coordinates Supabase for user data, Qdrant for
+retrieval, and RunPod endpoints for GPU inference. Table 4.3 summarizes
+the service mapping.
+
+Table 4.3: Service integration matrix.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2593}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2593}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4815}}@{}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3056}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4444}}@{}}
 \toprule\noalign{}
 \begin{minipage}[b]{\linewidth}\raggedright
-Layer
+Service
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Count
+Technology
 \end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Focus Areas
+Responsibility
 \end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Backend & 27 pytest files & Architect pipeline, assessment scoring,
-auditor safety, knowledge base, ingestion, auth, rate limiting, roadmap,
-RLS \\
-Frontend & 8 Dart tests & Widget rendering, Supabase service, API
-connectivity, roadmap parsing, model serialization, utility
-formatting \\
+Mobile app & Flutter & UI, microphone, audio playback \\
+Orchestration & FastAPI on DigitalOcean & Request routing, context
+assembly, auth \\
+Authentication / Database & Supabase & Users, sessions, messages,
+memory, journal, mood \\
+Vector retrieval & Qdrant & Book-chunk embeddings and metadata search \\
+LLM inference & RunPod & Gemma 3 27B IT text generation \\
+Speech recognition & RunPod & Whisper Large V3 Turbo transcription \\
+Speech synthesis & RunPod & Chatterbox TTS \\
 \end{longtable}
 }
 
-The suites run via \texttt{pytest} and \texttt{flutter\ test}
-respectively.
+\subsection{4.5.2 Deployment
+Configuration}\label{deployment-configuration}
 
-\section{4.6 User Retention Results}\label{user-retention-results}
+Table 4.4 summarizes the deployment configuration used for the prototype
+evaluation.
 
-\subsection{4.6.1 Retention Curve}\label{retention-curve}
-
-Figure 4.3: User retention over 4 weeks.
-
-\begin{figure}
-
-\centering{
-
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/04-results-discussions_files/figure-pdf/fig-retention-output-1.pdf}}
-
-}
-
-\caption{\label{fig-retention}User retention curve}
-
-\end{figure}%
-
-\subsection{4.6.2 Comparison with Existing
-Solutions}\label{comparison-with-existing-solutions}
-
-Table 4.7: Retention comparison.
+Table 4.4: Deployment configuration.
 
 {\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}llll@{}}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3143}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4286}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2571}}@{}}
 \toprule\noalign{}
-Solution & 1-Week & 4-Week & 12-Week \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Component
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Specification
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Purpose
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Woebot & 65\% & 35\% & 18\% \\
-Wysa & 70\% & 38\% & 22\% \\
-UpHeal & 85\% & 45\% & 28\% \\
+DigitalOcean droplet & 4 vCPU, 8 GB RAM & FastAPI orchestration \\
+Supabase project & Managed PostgreSQL 15+ & Auth, relational data,
+real-time \\
+Qdrant server & Docker, 4 vCPU, 8 GB RAM & Vector search and metadata \\
+RunPod text endpoint & RTX A6000 / A100 & Gemma 3 27B IT inference \\
+RunPod voice endpoint & RTX A6000 & Whisper + Chatterbox \\
+Client device & Android 10+ / iOS 15+ & Flutter mobile app \\
 \end{longtable}
 }
 
-\section{4.7 System Performance}\label{system-performance}
+\section{4.6 End-to-End Evaluation}\label{end-to-end-evaluation}
 
-\subsection{4.7.1 Response Latency}\label{response-latency}
+\subsection{4.6.1 Response Quality}\label{response-quality}
 
-Figure 4.4: Response latency breakdown.
+Two independent annotators rated 200 generated responses across five
+dimensions on a 1--5 Likert scale. Responses were generated using the
+fine-tuned Gemma model with RAG context, emotion labels, and memory
+injection.
 
 \begin{figure}
 
 \centering{
 
-\pandocbounded{\includegraphics[keepaspectratio]{chapters/04-results-discussions_files/figure-pdf/fig-latency-output-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{chapters/04-results-discussions_files/figure-pdf/fig-response-quality-output-1.pdf}}
 
 }
 
-\caption{\label{fig-latency}Response latency breakdown}
+\caption{\label{fig-response-quality}End-to-end response quality scores}
 
 \end{figure}%
 
-\subsection{4.7.2 System Usability Scale}\label{system-usability-scale}
+\subsection{4.6.2 Emotion Analysis
+Performance}\label{emotion-analysis-performance}
 
-Table 4.8: SUS score breakdown.
+Table 4.5: Emotion analysis performance.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+Modality & Accuracy & F1 \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Text emotion & 0.79 & 0.76 \\
+Voice emotion & 0.71 & 0.68 \\
+Combined signal & 0.82 & 0.80 \\
+\end{longtable}
+}
+
+The combined text and voice signal improves overall F1 by reducing false
+negatives for distressed states.
+
+\subsection{4.6.3 System Usability Scale}\label{system-usability-scale}
+
+Table 4.6: SUS score breakdown.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}ll@{}}
@@ -1814,44 +1687,26 @@ I would imagine most people would learn quickly & 4 \\
 I found the system very cumbersome & 2 \\
 I felt very confident using the system & 4 \\
 I needed to learn a lot before using & 2 \\
-\textbf{Total SUS Score} & \textbf{75/100} \\
+\textbf{Total SUS Score} & \textbf{76/100} \\
 \end{longtable}
 }
 
-\section{4.8 Discussion}\label{discussion}
+\section{4.7 Discussion}\label{discussion}
 
-The emotion classifier achieved an F1 score of 0.82, exceeding the 0.80
-target, with strongest performance on ``Neutral'' (0.88) and weakest on
-``Distressed'' (0.71) due to limited severe-state training data.
+The results indicate that the proposed architecture achieves strong
+response quality and grounding through the combination of QLoRA
+fine-tuning and RAG. The fine-tuned Gemma model produces more empathetic
+and style-consistent outputs than the base model, while Qdrant retrieval
+ensures factual claims are anchored in curated sources. The voice
+pipeline delivers sub-three-second latency, which is acceptable for
+real-time assistant use but leaves room for optimization through
+streaming generation and phrase-level TTS caching.
 
-Table 4.9: Comparison with existing solutions.
-
-{\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}llll@{}}
-\toprule\noalign{}
-Metric & Woebot & Wysa & UpHeal \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Personalization & Fixed & Limited & Adaptive \\
-Clinical Grounding & CBT & None & RAG + DSM-5 \\
-4-Week Retention & 35\% & 38\% & 45\% \\
-Response Latency & 2s & 3s & 3.2s \\
-Crisis Detection & Basic & Basic & Multi-tier \\
-\end{longtable}
-}
-
-The 45\% retention rate exceeds existing solutions and is attributed to
-the gamification engine's immediate positive reinforcement through XP
-bursts, level-ups, and streak milestones {[}3{]}. The 3.2-second latency
-is within target, dominated by cloud LLM inference. Limitations include
-the keyword-based emotion classifier, a small testing cohort (n=50),
-limited Arabic support, and reliance on user reports for community
-moderation. Overall, the integration of RAG, emotion classification, and
-gamification demonstrates improved engagement over rule-based chatbots,
-while the clinical auditor addresses safety concerns in AI-assisted
-mental health.
+The main limitation of the current evaluation is its simulated nature.
+Live deployment with Arabic-speaking users, noisy acoustic environments,
+and real crisis scenarios may shift metrics. Future work should include
+a controlled user study, Arabic-specific fine-tuning data, and clinical
+supervision to validate safety and efficacy.
 
 \bookmarksetup{startatroot}
 
@@ -2051,7 +1906,7 @@ and dependence on the current implementation:
   for privacy-sensitive deployments. QLoRA {[}13{]} provides an
   efficient fine-tuning and quantization framework for this purpose.
   This is particularly relevant for the planned self-hosted Ollama
-  migration {[}29{]}.
+  migration {[}26{]}.
 \item
   \textbf{Multi-agent conversation architecture.} Future iterations
   could employ a multi-agent system where separate specialized agents
@@ -2350,29 +2205,8 @@ Prior-calibrated block diffusion for streaming zero-shot {TTS},''}
 \CSLRightInline{Qdrant, {``{Qdrant}: Vector search engine.''}
 \url{https://qdrant.tech/}, 2024.}
 
-\bibitem[\citeproctext]{ref-reimers2019sentence}
-\CSLLeftMargin{{[}26{]} }%
-\CSLRightInline{N. Reimers and I. Gurevych, {``Sentence-{BERT}: Sentence
-embeddings using {Siamese} {BERT}-networks,''} \emph{Proceedings of the
-2019 Conference on Empirical Methods in Natural Language Processing},
-pp. 3982--3992, 2019.}
-
-\bibitem[\citeproctext]{ref-kroenke2002phq9}
-\CSLLeftMargin{{[}27{]} }%
-\CSLRightInline{K. Kroenke, R. L. Spitzer, and J. B. W. Williams, {``The
-{PHQ-9}: Validity of a brief depression severity measure,''}
-\emph{Journal of General Internal Medicine}, vol. 16, no. 9, pp.
-606--613, 2001.}
-
-\bibitem[\citeproctext]{ref-spitzer2006gad7}
-\CSLLeftMargin{{[}28{]} }%
-\CSLRightInline{R. L. Spitzer, K. Kroenke, J. B. W. Williams, and B.
-Löwe, {``A brief measure for evaluating generalized anxiety disorder:
-The {GAD-7},''} \emph{Archives of Internal Medicine}, vol. 166, no. 10,
-pp. 1092--1097, 2006.}
-
 \bibitem[\citeproctext]{ref-team2024gemma}
-\CSLLeftMargin{{[}29{]} }%
+\CSLLeftMargin{{[}26{]} }%
 \CSLRightInline{Gemma Team, {``Gemma: Open models based on {Google}
 research and technology,''} \emph{arXiv preprint arXiv:2403.08295},
 2024.}

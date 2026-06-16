@@ -1,3 +1,20 @@
 # Acknowledgements {.unnumbered}
 
-We sincerely thank our supervisor, **Dr. Sahar Ghanem**, for her guidance and support throughout this graduation project. We also thank the **Faculty of Computer Science & Artificial Intelligence at Pharos University in Alexandria** for providing the academic environment that made this work possible.
+The Upheal project team would like to express its sincere appreciation to the mental-health professionals, clinical institutions, and collaborators whose expertise, guidance, and support contributed significantly to the development of this graduation project.
+
+We extend our deepest gratitude to **Dr. Nada Zaher** and **Dr. Mohamed Fadaly** for their professional guidance, clinical insight, and valuable consultation throughout the project. Their contributions helped the team better understand the ethical, practical, and clinical considerations involved in designing a responsible digital mental-wellness platform.
+
+Special appreciation is also extended to **Bidaya Center for Psychiatry and Addiction Treatment** for its cooperation, professional support, and contribution to the project's clinical perspective.
+
+We are equally grateful to **Lavison Specialized Clinics** for their collaboration and support. Lavison Clinics provides multidisciplinary healthcare services while emphasizing an integrated psychological perspective and a commitment to patient-centered care.
+
+The team would also like to offer special thanks to:
+
+- **Dr. Hamdy Diab**
+- **Dr. Mohamed Abdelsalam**
+- **Dr. Mohamed El Halwany**
+- **Dr. Walid Hossny**
+
+Their assistance in providing relevant data, reviewing project materials, auditing clinical and technical content, offering professional advice, and supporting collaboration was invaluable to the progress of this work. Their collective expertise helped the team improve the quality, relevance, safety, and professional integrity of the project. Their contributions were especially important in ensuring that the system was developed with greater awareness of the responsibilities associated with mental-health technology.
+
+Finally, we sincerely thank all individuals and institutions who supported the project through consultation, feedback, review, and encouragement. Their contributions played an essential role in transforming Upheal from an academic concept into a more informed, responsible, and practically grounded mental-wellness platform.
