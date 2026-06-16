@@ -547,14 +547,20 @@ reinforcement. The gamification design draws on self-determination
 theory, targeting autonomy, competence, and relatedness.
 
 \textbf{Pillar 4: Privacy-first, safety-augmented architecture.} UpHeal
-enforces encryption in transit (TLS 1.3) and at rest (AES-256 via
-Supabase), row-level security (RLS) policies that isolate user data, and
-a three-tier JWT authentication system (HS256, ES256/JWKS, development
-fallback). The clinical auditor operates as a mandatory safety gate:
-every generated response is screened for crisis keywords, robotic tone,
-safety risks, and frustration indicators before delivery. The auditor
-supports bilingual crisis detection (English and Arabic) and provides
-locale-specific emergency hotlines.
+is built on a Zero Trust Architecture principle --- never trust, always
+verify --- and enforces defense in depth across edge, network,
+application, and device layers. The platform uses encryption in transit
+(TLS 1.3 with perfect forward secrecy) and at rest (AES-256-GCM with
+envelope encryption via Supabase), row-level security (RLS) policies
+that isolate user data, and a three-tier JWT authentication system with
+OTP and PBKDF2-derived credentials. Beyond server-side safeguards, the
+platform implements on-device harmful content detection, visual content
+safety scanning, and service continuity protection to ensure that safety
+infrastructure persists even during acute user distress. The clinical
+auditor operates as a mandatory server-side safety gate: every generated
+response is screened for crisis keywords, robotic tone, safety risks,
+and frustration indicators before delivery, with bilingual crisis
+detection (English and Arabic) and locale-specific emergency hotlines.
 
 The system architecture comprises a Flutter cross-platform mobile
 application serving as the primary user interface, a Python FastAPI
@@ -1062,10 +1068,14 @@ empathy. \\
 NFR-02 & Availability & 99.5\% uptime (planned maintenance windows
 excluded) & Mental health applications must be accessible during moments
 of crisis. \\
-NFR-03 & Security & TLS 1.3 in transit, AES-256 at rest, row-level
-security (RLS), 3-tier JWT authentication & Sensitive mental health data
-requires defense in depth; regulatory compliance requires encryption at
-rest and in transit. \\
+NFR-03 & Security & Zero Trust Architecture with defense in depth: TLS
+1.3 in transit, AES-256-GCM at rest with envelope encryption and 90-day
+key rotation, row-level security (RLS), 3-tier JWT with OTP and PBKDF2,
+on-device edge AI threat detection, visual content safety scanning, and
+service continuity protection & Sensitive mental health data requires
+defense in depth; regulatory compliance requires encryption at rest and
+in transit, while crisis scenarios require persistent safety
+infrastructure. \\
 NFR-04 & Privacy & User data isolation via RLS policies; no cross-user
 data access & Each user's mental health data must be strictly isolated
 to prevent information leakage between accounts. \\
@@ -1477,7 +1487,66 @@ Level & XP Required & Total XP & Unlocks \\
 
 \section{3.9 Security Architecture}\label{security-architecture}
 
-\subsection{3.9.1 Authentication Flow}\label{authentication-flow}
+\subsection{3.9.1 Zero Trust Architecture
+Principle}\label{zero-trust-architecture-principle}
+
+The UpHeal security architecture is built on the Zero Trust Architecture
+(ZTA) principle: never trust, always verify {[}24{]}. Every request ---
+whether from a user, a service, or an internal component --- must be
+authenticated and authorized before accessing data. The architecture
+rejects implicit trust based on network topology or hosting environment,
+requiring explicit verification for every microservice communication,
+system query, and API call. This principle is especially critical for
+mental health applications, where the sensitivity of clinical data
+demands defense in depth rather than perimeter-only protection.
+
+\subsection{3.9.2 Data Asset
+Classification}\label{data-asset-classification}
+
+To ensure appropriate access controls and encryption requirements,
+platform data is partitioned into four sensitivity tiers.
+
+Table 3.5: Data asset classification by sensitivity tier.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1395}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2326}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2326}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3953}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Tier
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Category
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Examples
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Protection Level
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 (Critical) & Clinical notes and crisis reports & Chat transcripts,
+crisis audit logs, clinical observations & AES-256-GCM + RLS + access
+logging \\
+2 (Sensitive) & Assessment and emotion data & PHQ-9/GAD-7 scores,
+emotion labels, mood logs, journal entries & AES-256-GCM + RLS \\
+3 (Identifiable) & User demographics and identity & Email, display name,
+authentication credentials, session tokens & Encryption at rest + OTP +
+3-tier JWT \\
+4 (Operational) & Gamification and analytics & XP, streaks, badges,
+telemetry, screen time & RLS + rate limiting \\
+\end{longtable}
+}
+
+\subsection{3.9.3 Authentication and Cryptographic
+Identity}\label{authentication-and-cryptographic-identity}
+
+The authentication flow combines Supabase-managed identity with a
+three-tier JWT verification strategy and a local OTP engine for
+sensitive operations.
 
 \begin{figure}
 
@@ -1491,53 +1560,243 @@ Level & XP Required & Total XP & Unlocks \\
 
 \end{figure}%
 
-\subsection{3.9.2 Security Layers}\label{security-layers}
+\textbf{Three-tier JWT strategy.} The gateway supports three JWT
+verification modes to cover development, production, and AI-service
+authentication: HS256 for local development, ES256 with JWKS for
+production user authentication through Supabase, and RS256 for stateless
+authentication to the AI processing tier. This tiered approach allows
+the same codebase to operate securely across local development, staging,
+and production environments without key leakage.
 
-Table 3.5: Security measures by layer.
+\textbf{OTP engine.} Sensitive operations (password reset, email
+verification, high-risk profile changes) require a time-limited one-time
+password. The OTP is generated by a cryptographically secure
+pseudo-random number generator (CSPRNG) and bound to the user's session
+state. Tokens expire after five minutes and the system locks the
+verification endpoint after three consecutive failed attempts to prevent
+brute-force guessing.
+
+\textbf{Password storage.} Local password verification uses PBKDF2 key
+derivation with 100,000 iterations of HMAC-SHA256, a per-user random
+salt, and an application-level pepper {[}25{]}. The comparison function
+operates in constant time to prevent timing-side-channel attacks.
+
+\subsection{3.9.4 Security Layers}\label{security-layers}
+
+Table 3.6: Security measures by layer.
 
 {\def\LTcaptype{none} % do not increment counter
-\begin{longtable}[]{@{}lll@{}}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.2059}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3235}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.4706}}@{}}
 \toprule\noalign{}
-Layer & Mechanism & Implementation \\
+\begin{minipage}[b]{\linewidth}\raggedright
+Layer
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Mechanism
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Implementation
+\end{minipage} \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Network & TLS 1.3 & All API connections \\
-Storage & AES-256 & Supabase at-rest encryption \\
-Application & JWT & HS256 + ES256 + JWKS \\
+Edge Protection & Cloudflare WAF + DDoS + Bot Management + Turnstile &
+All inbound traffic (deployment layer) \\
+Network & TLS 1.3 + Perfect Forward Secrecy & All API connections \\
+Internal & mTLS (planned for microservices) & Service-to-service
+authentication \\
+Transport & Certificate pinning (planned) & Mobile-to-gateway \\
+Storage & AES-256-GCM + envelope encryption & Supabase at-rest
+encryption with KMS-managed keys, 90-day rotation {[}26{]} \\
+Application & JWT + OTP + PBKDF2 & HS256 / ES256+JWKS / RS256 + CSPRNG
+OTP + key derivation \\
 Database & RLS & Row-Level Security policies \\
-API & Rate Limiting & 10 req/min on /api/assess \\
-Crisis & Keyword Detection & Bilingual (EN/AR) \\
+API & Rate limiting & 10 req/min on \texttt{/api/assess}, 30 req/min on
+chat \\
+On-device text & Harmful content detection & Accessibility events + edge
+threat detector (3-second debounce) {[}27{]} \\
+Visual safety & On-device image classification & TFLite screenshot
+analysis (4-second interval, 70\% threshold) {[}28{]} \\
+Service continuity & Anti-tampering + boot persistence & GuardService +
+BootReceiver + WakeLock + device admin \\
+Crisis & Bilingual keyword + visual detection & EN/AR on-device and
+server-side clinical audit \\
 \end{longtable}
 }
 
-\subsection{3.9.3 Clinical Safety Audit}\label{clinical-safety-audit}
+\subsection{3.9.5 On-Device Harmful Content
+Detection}\label{on-device-harmful-content-detection}
+
+In addition to server-side crisis detection, the platform implements an
+on-device harmful content detection layer that operates locally on the
+user's phone. This layer extends the safety net beyond the UpHeal app
+itself, identifying potentially triggering or harmful text the user may
+encounter elsewhere on the device and routing alerts to crisis
+resources.
+
+The detector uses the Android AccessibilityService to receive UI change
+events and recursively traverse the visible node tree, extracting text
+from all on-screen elements {[}27{]}. Extracted strings are matched
+against a bilingual threat-signature list covering self-harm, crisis,
+cyberbullying, and other harmful content in English and Arabic. A
+pre-trained TensorFlow Lite text-toxicity classifier provides a
+secondary scoring signal.
+
+Privacy-by-design governs the processing: raw text is held in memory
+only for a short debounce window (approximately three seconds) and is
+wiped immediately after classification. Only metadata alerts --- such as
+a timestamp and threat category --- are dispatched to the Flutter UI
+through a thread-safe event bus. No raw user text leaves the device.
+
+\subsection{3.9.6 Visual Content Safety
+Scanner}\label{visual-content-safety-scanner}
+
+The visual content safety scanner complements text-based detection by
+analyzing on-device screenshots for potentially triggering imagery. The
+scanner captures periodic silent screenshots (every four seconds) and
+passes them to an on-device TensorFlow Lite image classifier that scores
+content for harmful visual categories such as self-harm imagery,
+violence, and explicit material {[}28{]}.
+
+When the classifier confidence exceeds a 70\% threshold, the system
+navigates the user away from the harmful content and displays a
+supportive redirection message. Like the text detector, the visual
+scanner processes images locally: screenshots are analyzed in memory and
+discarded immediately; no image data is stored or transmitted to remote
+servers.
+
+\subsection{3.9.7 Service Continuity
+Protection}\label{service-continuity-protection}
+
+Because users in acute distress may impulsively disable safety tools,
+the platform implements service continuity protection that resists
+casual attempts to terminate or uninstall the application. A foreground
+GuardService holds a WakeLock, monitors application state, and
+automatically restarts if terminated. A BootReceiver ensures the service
+starts when the device powers on. Device administrator privileges are
+requested during onboarding to discourage casual uninstallation.
+
+The anti-tampering component monitors Android system settings screens
+for actions such as Force Stop, Uninstall, or Clear Data, including
+Arabic-language equivalents. If such an action is detected while the
+user is viewing the UpHeal application info screen, the system redirects
+to the home screen and warns the user, preserving access to crisis
+resources.
+
+This protection intentionally balances safety and autonomy. It does not
+protect against a determined technical adversary with ADB access;
+rather, it prevents impulsive disabling during moments of vulnerability.
+Users are informed about the mechanism during onboarding and may request
+removal through a capacity-based opt-out process.
+
+\subsection{3.9.8 Clinical Safety Audit}\label{clinical-safety-audit}
+
+The server-side clinical safety audit acts as the final verification
+gate before any response reaches the user. It complements the on-device
+detection layers by validating AI-generated responses and incoming user
+messages at the backend.
 
 \begin{verbatim}
 Algorithm: ClinicalAudit
 Input: response_text, user_locale
 Output: safety_status, emergency_payload
 
-1. Crisis Detection:
+1. Input Sanitization:
+   a. Validate input length and character set
+   b. Strip prompt-injection patterns and unexpected code characters
+   c. Pass sanitized input to the LLM pipeline
+
+2. Crisis Detection:
    a. Scan for crisis keywords (EN/AR)
    b. If found: return RED + hotlines
    
-2. Robotic Tone Detection:
+3. Robotic Tone Detection:
    a. Check for clinical/dismissive language
    b. If detected: flag for revision
    
-3. Safety Risk Assessment:
+4. Safety Risk Assessment:
    a. Check if response contains risky advice
    b. If found: return YELLOW + advisory
    
-4. Frustration Detection:
+5. Frustration Detection:
    a. Analyze user message sentiment
    b. If frustrated: add empathy boost
    
-5. If all checks pass:
+6. If all checks pass:
    a. Return GREEN
 \end{verbatim}
+
+\subsection{3.9.9 Network-Level Content
+Filtering}\label{network-level-content-filtering}
+
+As a supplementary defense layer, the platform can optionally establish
+a local VPN service that intercepts DNS requests and blocks resolution
+of known harmful domains across all device traffic. This network-level
+filter complements in-app content detection by preventing accidental
+exposure to triggering content even outside the UpHeal application.
+Because the VPN is local and does not route traffic through remote
+servers, it preserves user privacy while extending protection to the
+device level.
+
+\subsection{3.9.10 AI Pipeline Security}\label{ai-pipeline-security}
+
+The AI interaction pipeline enforces sanitization at both input and
+output stages. Input sanitization strips prompt-injection vectors,
+enforces length limits, and filters unexpected code characters before
+user messages reach the LLM. Output validation checks generated
+responses for format correctness, hallucination indicators, and
+inadvertent disclosure of protected health information before delivery.
+All communication with the AI processing tier requires short-lived JWT
+tokens signed with RS256, limiting the blast radius of any compromised
+token.
+
+\subsection{3.9.11 Quantitative Security
+Comparison}\label{quantitative-security-comparison}
+
+Table 3.7 compares the UpHeal hardened architecture against a standard
+baseline for mental health applications.
+
+Table 3.7: Security comparison between baseline and UpHeal hardened
+architecture.
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2267}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2533}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3467}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.1733}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Security Domain
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Baseline Approach
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+UpHeal Hardened Approach
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Improvement
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Data encryption at rest & AES-256-CBC or unencrypted & AES-256-GCM with
+envelope encryption & Authenticated encryption with key rotation \\
+Key management & Manual or provider-default & KMS-managed keys with
+90-day rotation & Automated lifecycle and revocation \\
+Authentication & Single JWT or basic auth & 3-tier JWT + OTP + PBKDF2 &
+Multi-factor, timing-attack resistant \\
+Crisis detection & None or basic keyword matching & Multi-tier bilingual
+(EN/AR) on-device + server-side + visual & Defense in depth \\
+Service continuity & None & Anti-tamper + boot persistence + WakeLock &
+Persistent safety infrastructure during crisis \\
+Privacy model & Server-side processing only & Edge AI on-device; raw
+text/images wiped after analysis & Privacy by design \\
+Network edge protection & Basic TLS & TLS 1.3 + PFS + Cloudflare
+WAF/DDoS/bot management & Layered edge defense \\
+\end{longtable}
+}
 
 \section{3.10 Data Flow Integration}\label{data-flow-integration}
 
@@ -1557,7 +1816,7 @@ Output: safety_status, emergency_payload
 
 \subsection{3.10.2 Integration Points}\label{integration-points}
 
-Table 3.6: Service integration matrix.
+Table 3.8: Service integration matrix.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
@@ -1638,7 +1897,7 @@ persistence.
 
 \section{3.11 Implementation Stack}\label{implementation-stack}
 
-Table 3.7: Complete technology stack.
+Table 3.9: Complete technology stack.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}llll@{}}
@@ -1668,13 +1927,13 @@ GPU & RunPod & - & A100 80GB (planned) \\
 \end{longtable}
 }
 
-The frontend is built with Flutter {[}24{]}, the API gateway with
-FastAPI {[}25{]}, and authentication, database, and real-time services
-are provided by Supabase {[}26{]}.
+The frontend is built with Flutter {[}29{]}, the API gateway with
+FastAPI {[}30{]}, and authentication, database, and real-time services
+are provided by Supabase {[}31{]}.
 
 \section{3.12 Hardware Specifications}\label{hardware-specifications}
 
-Table 3.8: Infrastructure specifications.
+Table 3.10: Infrastructure specifications.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}lll@{}}
@@ -1702,7 +1961,7 @@ Tables}\label{core-application-tables}
 The system uses 12 core tables in Supabase PostgreSQL to support the
 primary therapeutic workflow.
 
-Table 3.9: Core application data models.
+Table 3.11: Core application data models.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -1756,7 +2015,7 @@ Thirteen tables implement the community feature data model, supporting
 groups, posts, comments, real-time channels, moderation, and
 notifications.
 
-Table 3.10: Community data models.
+Table 3.12: Community data models.
 
 {\def\LTcaptype{none} % do not increment counter
 \begin{longtable}[]{@{}
@@ -1879,7 +2138,7 @@ The system was evaluated across five dimensions:
   participants.
 \end{enumerate}
 
-The clinical assessments use the PHQ-9 {[}27{]} and GAD-7 {[}28{]}
+The clinical assessments use the PHQ-9 {[}32{]} and GAD-7 {[}33{]}
 instruments, which are widely validated for depression and generalized
 anxiety screening in digital health applications.
 
@@ -1992,7 +2251,7 @@ exposes 15 REST endpoints through the Community service router, covering
 group CRUD, membership management, post management, messaging, and
 moderation actions.
 
-\subsection{4.2.4 Authentication Flow}\label{authentication-flow-1}
+\subsection{4.2.4 Authentication Flow}\label{authentication-flow}
 
 Authentication uses Supabase Auth with email/password and OAuth
 providers (Google, Apple). The flow proceeds as follows:
@@ -2608,6 +2867,15 @@ follows a 90-day automatic purge policy for chat messages and a 365-day
 policy for assessment results, after which only anonymized aggregates
 are retained.
 
+\textbf{Privacy by Design for On-Device Detection.} The on-device
+harmful content detection and visual content safety scanner operate
+under a strict privacy-by-design model. Raw text and screenshots are
+processed locally on the user's device and immediately discarded after
+analysis. Only metadata alerts --- such as a timestamp and threat
+category --- are dispatched to the Flutter UI through a thread-safe
+event bus. No raw user text or image data leaves the device, ensuring
+that the expanded detection capability does not compromise user privacy.
+
 \textbf{Informed Consent.} Users provide explicit informed consent
 during onboarding, which covers: (a) the nature of AI-generated
 responses, (b) the limitations of the emotion classifier, (c) data
@@ -2637,6 +2905,18 @@ classification. A false negative (missed crisis) is the most serious
 risk; the system addresses this by over-detecting potential crises and
 routing flagged conversations to the clinical auditor for secondary
 review.
+
+\textbf{Service Continuity Ethics.} The service continuity protection
+mechanism --- which resists casual uninstallation or force-stopping of
+the application --- introduces a tension between user autonomy and
+safety. During acute crisis, users may impulsively remove safety tools
+that are essential for their protection. The mechanism is designed with
+transparency: users are informed during onboarding that the protection
+exists to preserve access to crisis resources, and a capacity-based
+opt-out process is available for users who can demonstrate informed
+decision-making. The protection does not defend against a determined
+technical adversary with ADB access; it is intended solely to prevent
+impulsive disabling during moments of vulnerability.
 
 \textbf{Therapeutic Boundaries.} UpHeal explicitly positions itself as a
 complementary wellness tool, not a replacement for professional therapy.
@@ -2711,7 +2991,7 @@ and dependence on the current implementation:
   \textbf{Model quantization for edge deployment.} Quantizing the LLM
   and emotion classifier to 4-bit or 8-bit precision would enable
   on-device inference, reducing latency and eliminating cloud dependency
-  for privacy-sensitive deployments. QLoRA {[}29{]} provides an
+  for privacy-sensitive deployments. QLoRA {[}34{]} provides an
   efficient fine-tuning and quantization framework for this purpose.
   This is particularly relevant for the planned self-hosted Ollama
   migration {[}23{]}.
@@ -2722,6 +3002,28 @@ and dependence on the current implementation:
   coaching, and assessment delivery, coordinated by a routing agent.
   This modular design would improve safety isolation and enable
   independent scaling of each agent.
+\item
+  \textbf{Cloudflare edge protection for production.} Deploying
+  Cloudflare WAF, DDoS mitigation, bot management, and Turnstile
+  attestation at the DNS edge would harden the platform against
+  automated attacks and credential stuffing before traffic reaches the
+  origin servers.
+\item
+  \textbf{Certificate pinning for mobile clients.} Pinning the backend
+  TLS certificate inside the Flutter application would eliminate certain
+  man-in-the-middle attack vectors on untrusted networks, complementing
+  TLS 1.3 and perfect forward secrecy.
+\item
+  \textbf{mTLS for inter-service communication.} If the architecture
+  evolves from the current in-process gateway to distributed
+  microservices, mutual TLS should be enforced for all internal
+  service-to-service calls to maintain Zero Trust verification between
+  components.
+\item
+  \textbf{Biometric authentication.} Integrating fingerprint or face
+  recognition as a second authentication factor would strengthen account
+  security while preserving usability, particularly for users who may
+  forget passwords during periods of cognitive distress.
 \end{enumerate}
 
 \section{5.6 Limitations}\label{limitations-1}
@@ -2759,6 +3061,22 @@ acknowledged:
   \textbf{Community moderation.} The community feature relies on user
   reports for content moderation; automated content detection is not yet
   implemented.
+\item
+  \textbf{On-device detection accuracy.} The on-device harmful content
+  detector relies on keyword matching and a pre-trained TensorFlow Lite
+  toxicity model. Fine-tuning on mental health-specific content datasets
+  would improve accuracy and reduce false positives for clinical
+  language.
+\item
+  \textbf{Visual scanner overhead.} The visual content safety scanner
+  processes screenshots every four seconds, which introduces CPU and
+  battery overhead. Adaptive interval strategies that scale with user
+  risk state should be explored.
+\item
+  \textbf{Anti-tampering limitations.} The service continuity mechanism
+  prevents casual uninstallation and force-stopping, but it does not
+  protect against a determined technical user with ADB access or custom
+  recovery tools.
 \end{enumerate}
 
 \section{5.7 Conclusion}\label{conclusion}
@@ -3296,38 +3614,69 @@ arXiv:2302.13971}, 2023.}
 research and technology,''} \emph{arXiv preprint arXiv:2403.08295},
 2024.}
 
-\bibitem[\citeproctext]{ref-flutter2024}
+\bibitem[\citeproctext]{ref-rose2020zerotrust}
 \CSLLeftMargin{{[}24{]} }%
+\CSLRightInline{S. Rose, O. Borchert, S. Mitchell, and S. Connelly,
+{``{Zero Trust Architecture},''} {National Institute of Standards and
+Technology}; \url{https://doi.org/10.6028/NIST.SP.800-207}, NIST SP
+800-207, 2020.}
+
+\bibitem[\citeproctext]{ref-rfc2898}
+\CSLLeftMargin{{[}25{]} }%
+\CSLRightInline{B. Kaliski, {Internet Engineering Task Force};
+\url{https://tools.ietf.org/html/rfc2898}, RFC 2898, 2000.}
+
+\bibitem[\citeproctext]{ref-dworkin2007modes}
+\CSLLeftMargin{{[}26{]} }%
+\CSLRightInline{M. Dworkin, {``{Recommendation for Block Cipher Modes of
+Operation: Galois/Counter Mode ({GCM}) and {GMAC})},''} {National
+Institute of Standards and Technology};
+\url{https://doi.org/10.6028/NIST.SP.800-38D}, NIST SP 800-38D, 2007.}
+
+\bibitem[\citeproctext]{ref-androidaccessibility2024}
+\CSLLeftMargin{{[}27{]} }%
+\CSLRightInline{Google, {``{AccessibilityService} \textbar{} {Android}
+developers.''}
+\url{https://developer.android.com/reference/android/accessibilityservice/AccessibilityService},
+2024.}
+
+\bibitem[\citeproctext]{ref-tflite2024}
+\CSLLeftMargin{{[}28{]} }%
+\CSLRightInline{Google, {``{TensorFlow Lite}: On-device machine learning
+framework.''} \url{https://www.tensorflow.org/lite}, 2024.}
+
+\bibitem[\citeproctext]{ref-flutter2024}
+\CSLLeftMargin{{[}29{]} }%
 \CSLRightInline{Google, {``{Flutter}: Build, ship, and run apps for any
 platform.''} \url{https://flutter.dev/}, 2024.}
 
 \bibitem[\citeproctext]{ref-fastapi2024}
-\CSLLeftMargin{{[}25{]} }%
+\CSLLeftMargin{{[}30{]} }%
 \CSLRightInline{S. Ramı́rez, {``{FastAPI}: Modern, fast web framework for
 building {APIs} with {Python}.''} \url{https://fastapi.tiangolo.com/},
 2024.}
 
 \bibitem[\citeproctext]{ref-supabase2024}
-\CSLLeftMargin{{[}26{]} }%
+\CSLLeftMargin{{[}31{]} }%
 \CSLRightInline{Supabase, {``{Supabase}: The open source {Firebase}
 alternative.''} \url{https://supabase.com/}, 2024.}
 
 \bibitem[\citeproctext]{ref-kroenke2002phq9}
-\CSLLeftMargin{{[}27{]} }%
+\CSLLeftMargin{{[}32{]} }%
 \CSLRightInline{K. Kroenke, R. L. Spitzer, and J. B. W. Williams, {``The
 {PHQ-9}: Validity of a brief depression severity measure,''}
 \emph{Journal of General Internal Medicine}, vol. 16, no. 9, pp.
 606--613, 2001.}
 
 \bibitem[\citeproctext]{ref-spitzer2006gad7}
-\CSLLeftMargin{{[}28{]} }%
+\CSLLeftMargin{{[}33{]} }%
 \CSLRightInline{R. L. Spitzer, K. Kroenke, J. B. W. Williams, and B.
 Löwe, {``A brief measure for evaluating generalized anxiety disorder:
 The {GAD-7},''} \emph{Archives of Internal Medicine}, vol. 166, no. 10,
 pp. 1092--1097, 2006.}
 
 \bibitem[\citeproctext]{ref-dettmers2022qlora}
-\CSLLeftMargin{{[}29{]} }%
+\CSLLeftMargin{{[}34{]} }%
 \CSLRightInline{T. Dettmers, A. Pagnoni, A. Holtzman, and L.
 Zettlemoyer, {``{QLoRA}: Efficient fine-tuning of quantized large
 language models,''} \emph{arXiv preprint arXiv:2305.14314}, 2023.}

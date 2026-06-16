@@ -16,7 +16,7 @@
 |---------|--------|-------------|-------|
 | 1.1 Background and Motivation | ✅ Draft | 2026-06-13 | WHO stats, AI opportunity, gamification evidence |
 | 1.2 Problem Definition | ✅ Draft | 2026-06-13 | 4 challenges: personalization, retention, grounding, safety |
-| 1.3 Proposed Solution | ✅ Draft | 2026-06-15 | 4 pillars; clarified emotion classifier is designed BERT / currently keyword-based |
+| 1.3 Proposed Solution | ✅ Draft | 2026-06-15 | 4 pillars; expanded Pillar 4 with ZTA, on-device detection, visual safety, service continuity |
 | 1.4 Thesis Organization | ✅ Draft | 2026-06-13 | Cross-references to Ch2-5 |
 | References added | ✅ | 2026-06-13 | 10 new references added to .bib |
 | Supervisor review | ⬜ | | |
@@ -47,16 +47,18 @@
 | Section | Status | Last Updated | Notes |
 |---------|--------|-------------|-------|
 | 3.1 Functional Requirements | ✅ Draft | 2026-06-13 | 10 FRs (FR-01 to FR-10) |
-| 3.2 Non-Functional Requirements | ✅ Draft | 2026-06-13 | 7 NFRs (latency, compliance, uptime, etc.) |
+| 3.2 Non-Functional Requirements | ✅ Draft | 2026-06-15 | 7 NFRs; NFR-03 expanded with ZTA, edge AI, service continuity |
 | 3.3 Use Case Diagram | ✅ Draft | 2026-06-15 | Matplotlib figure with 8 user + 6 system use cases (was Mermaid) |
-| 3.4 Sequence Diagram | ✅ Draft | 2026-06-15 | Matplotlib sequence diagram: User → Flutter → FastAPI → ChromaDB → LLM → Auditor |
-| 3.5 Functional Flow Diagram | ✅ Draft | 2026-06-15 | Matplotlib flow diagram: Home → Chat → Mood → Assessment → Roadmap |
-| 3.6 System Architecture Diagram | ✅ Draft | 2026-06-15 | Matplotlib block diagram: Frontend → Gateway → Microservices → AI Pipeline → Data |
-| 3.7 AI/ML Pipeline Design | ✅ Draft | 2026-06-15 | 5 stages: Input → Emotion → RAG → LLM → Audit; all pipeline figures now Matplotlib |
-| 3.13 Data Models | ✅ Draft | 2026-06-15 | 12 core + 13 community tables + ER diagram (was §3.8, renumbered) |
-| 3.9 Gamification System Design | ✅ Draft | 2026-06-15 | XP, levels, badges (10), achievements (12), challenges (10); state machine as Matplotlib |
-| 3.10 Security Considerations | ✅ Draft | 2026-06-15 | 3-tier JWT, TLS 1.3, AES-256, RLS, crisis detection; auth flow as Matplotlib |
-| 3.11 Implementation Stack & Hardware | ✅ Draft | 2026-06-15 | Stack table with Flutter, FastAPI, Supabase citations; hardware specs |
+| 3.4 System Architecture Overview | ✅ Draft | 2026-06-15 | Matplotlib block diagram: Frontend → Gateway → Microservices → AI Pipeline → Data |
+| 3.5 RAG Pipeline Design | ✅ Draft | 2026-06-15 | Matplotlib RAG pipeline and retrieval/embedding algorithms |
+| 3.6 LLM Integration | ✅ Draft | 2026-06-15 | Matplotlib sequence diagram, prompt assembly, LLM config table |
+| 3.7 Emotion Classification | ✅ Draft | 2026-06-15 | Matplotlib pipeline, 6 categories, design-vs-implementation note |
+| 3.8 Gamification System | ✅ Draft | 2026-06-15 | XP formula, levels, Matplotlib state machine |
+| 3.9 Security Architecture | ✅ Draft | 2026-06-15 | 11 subsections: ZTA, data classification, auth/crypto, on-device + visual detection, service continuity, AI pipeline security, benchmarks |
+| 3.10 Data Flow Integration | ✅ Draft | 2026-06-15 | Matplotlib end-to-end data flow diagram |
+| 3.11 Implementation Stack | ✅ Draft | 2026-06-15 | Stack table with Flutter, FastAPI, Supabase citations |
+| 3.12 Hardware Specifications | ✅ Draft | 2026-06-15 | DigitalOcean, RunPod, Supabase, client specs |
+| 3.13 Data Models | ✅ Draft | 2026-06-15 | 12 core + 13 community tables + ER diagram |
 | Supervisor review | ⬜ | | |
 | Final revision | ⬜ | | |
 
@@ -86,9 +88,9 @@
 | 5.1 Summary of Contributions | ✅ Draft | 2026-06-15 | 4 key contributions; emotion classifier described accurately |
 | 5.2 Impact on Technology | ✅ Draft | 2026-06-15 | RAG + safety auditing, gamification framework |
 | 5.3 Impact on Society | ✅ Draft | 2026-06-15 | MENA treatment gap, bilingual crisis detection |
-| 5.4 Ethics Considerations | ✅ Draft | 2026-06-15 | 6 principles; classifier bias note updated |
-| 5.5 Suggestions for Future Work | ✅ Draft | 2026-06-15 | 8 directions; QLoRA citation added |
-| 5.6 Limitations | ✅ Draft | 2026-06-15 | 5 acknowledged limitations |
+| 5.4 Ethics Considerations | ✅ Draft | 2026-06-15 | 8 principles; added privacy-by-design edge detection + service continuity ethics |
+| 5.5 Suggestions for Future Work | ✅ Draft | 2026-06-15 | 12 directions; added Cloudflare, cert pinning, mTLS, biometrics |
+| 5.6 Limitations | ✅ Draft | 2026-06-15 | 9 acknowledged limitations; added on-device + visual scanner + anti-tamper limitations |
 | Acknowledgements | ✅ Draft | 2026-06-13 | Dr. Sahar Ghanem + team + families + open source |
 | Supervisor review | ⬜ | | |
 | Final revision | ⬜ | | |
@@ -122,6 +124,7 @@
 | Add §4.5 Testing + §3.13 Data Models | ✅ | 2026-06-15 | 35 test files documented; 25 tables + ER diagram |
 | Fix content consistency | ✅ | 2026-06-15 | Classifier claims, API route, simulated-data disclaimer |
 | Add real test data to Ch4 | ✅ | 2026-06-15 | Simulated data retained with explicit disclaimer |
-| Review all references | ✅ | 2026-06-15 | 30/30 references cited; 0 orphans |
+| Expand security architecture | ✅ | 2026-06-15 | ZTA, data classification, on-device + visual detection, service continuity, AI pipeline security |
+| Review all references | ✅ | 2026-06-15 | 35/35 references cited; 0 orphans |
 | Final formatting pass | ✅ | 2026-06-15 | Cross-refs verified, style guide check passed |
 | Supervisor sign-off | ⬜ | | |

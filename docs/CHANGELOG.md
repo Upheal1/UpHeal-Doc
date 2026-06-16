@@ -102,3 +102,37 @@ This file tracks all major changes to the thesis documentation. Use the format:
 - `docs/PROGRESS.md`
 - `docs/CHANGELOG.md`
 - `chapters/03-methodology_files/figure-pdf/` (9 new generated figures)
+
+---
+
+## 2026-06-16 — OpenCode (Security Architecture Expansion)
+
+### Changed
+- Expanded §3.9 Security Architecture from 3 subsections to 11 subsections
+- Added Zero Trust Architecture (ZTA) principle and data asset classification table
+- Added detailed cryptographic identity design: OTP engine, PBKDF2 key derivation, constant-time comparison, 3-tier JWT (HS256/ES256/RS256)
+- Added on-device harmful content detection layer (AccessibilityService, EdgeThreatDetector, bilingual keyword detection, TFLite toxicity classifier)
+- Added visual content safety scanner (periodic screenshots, TFLite image classification, 70% threshold)
+- Added service continuity protection (GuardService, BootReceiver, WakeLock, device admin, anti-tampering)
+- Expanded clinical safety audit algorithm with input sanitization step
+- Added network-level content filtering and AI pipeline security subsections
+- Added quantitative security comparison table (baseline vs. hardened)
+- Updated §1 Introduction Pillar 4 to reflect multi-layered security architecture
+- Updated §3.2 NFR-03 with expanded security targets
+- Updated §5.4 Ethics with privacy-by-design edge processing and service continuity ethics
+- Updated §5.5 Future Work with Cloudflare WAF, certificate pinning, mTLS, biometric authentication
+- Updated §5.6 Limitations with on-device detection, visual scanner overhead, and anti-tampering limitations
+- Added 5 new references: NIST SP 800-207 (ZTA), NIST SP 800-38D (GCM), RFC 2898 (PBKDF2), Android AccessibilityService, TensorFlow Lite
+
+### Why
+- Three PDFs (Book.pdf, Security Presentation, upheal_security_report.pdf) described a substantially richer security architecture than the thesis contained
+- The thesis needed to accurately reflect implemented security features while reframing "parental control" concepts for a mental health application
+- Academic integrity required citing standards (NIST, RFC) for cryptographic claims
+
+### Affected Files
+- `chapters/01-introduction.qmd`
+- `chapters/03-methodology.qmd`
+- `chapters/05-conclusions.qmd`
+- `references.bib`
+- `docs/PROGRESS.md`
+- `docs/CHANGELOG.md`

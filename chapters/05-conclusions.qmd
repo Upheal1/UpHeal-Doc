@@ -24,11 +24,15 @@ The deployment of an AI-powered mental health companion raises significant ethic
 
 **Data Privacy and Confidentiality.** The system collects sensitive mental health data including chat messages, emotion labels, assessment scores, and journal entries. All data is encrypted in transit (TLS 1.3) and at rest (AES-256 via Supabase). Row-Level Security (RLS) policies enforce strict user-level data isolation: no user can access another user's data, and even system administrators cannot view message content without explicit user consent for research purposes. Data retention follows a 90-day automatic purge policy for chat messages and a 365-day policy for assessment results, after which only anonymized aggregates are retained.
 
+**Privacy by Design for On-Device Detection.** The on-device harmful content detection and visual content safety scanner operate under a strict privacy-by-design model. Raw text and screenshots are processed locally on the user's device and immediately discarded after analysis. Only metadata alerts — such as a timestamp and threat category — are dispatched to the Flutter UI through a thread-safe event bus. No raw user text or image data leaves the device, ensuring that the expanded detection capability does not compromise user privacy.
+
 **Informed Consent.** Users provide explicit informed consent during onboarding, which covers: (a) the nature of AI-generated responses, (b) the limitations of the emotion classifier, (c) data collection scope and purpose, (d) the right to export and delete all personal data, and (e) crisis detection and escalation procedures. Consent can be withdrawn at any time through the profile settings, triggering immediate data deletion.
 
 **Algorithmic Bias and Fairness.** The designed BERT-based emotion classifier would be trained primarily on English-language datasets, while the current keyword-based implementation relies on English keyword lists; both introduce bias against dialectal variations and code-switching common in MENA populations. The system mitigates this by flagging low-confidence classifications (below 60%) and defaulting to a neutral therapeutic response rather than a potentially biased emotion-adaptive one. The community feature employs content moderation through user reporting, but automated bias detection in community recommendations is not yet implemented and remains a limitation.
 
 **Crisis Intervention Ethics.** The bilingual crisis auditor detects life-threatening keywords in English and Arabic, but it is not infallible. When a crisis is detected (RED status), the system blocks the AI response and displays localized crisis hotline information. The system never withholds human help: users are always presented with the option to contact emergency services, regardless of the auditor's classification. A false negative (missed crisis) is the most serious risk; the system addresses this by over-detecting potential crises and routing flagged conversations to the clinical auditor for secondary review.
+
+**Service Continuity Ethics.** The service continuity protection mechanism — which resists casual uninstallation or force-stopping of the application — introduces a tension between user autonomy and safety. During acute crisis, users may impulsively remove safety tools that are essential for their protection. The mechanism is designed with transparency: users are informed during onboarding that the protection exists to preserve access to crisis resources, and a capacity-based opt-out process is available for users who can demonstrate informed decision-making. The protection does not defend against a determined technical adversary with ADB access; it is intended solely to prevent impulsive disabling during moments of vulnerability.
 
 **Therapeutic Boundaries.** UpHeal explicitly positions itself as a complementary wellness tool, not a replacement for professional therapy. The onboarding flow and settings screen display a persistent disclaimer: "UpHeal is not a substitute for professional mental health care. If you are in crisis, contact emergency services immediately." The gamification system is designed to encourage engagement, not to incentivize dependency; streak multipliers decay after 48 hours of inactivity, and no feature is locked behind XP thresholds that could pressure vulnerable users.
 
@@ -54,6 +58,14 @@ The following directions are prioritized based on feasibility, impact, and depen
 
 8.  **Multi-agent conversation architecture.** Future iterations could employ a multi-agent system where separate specialized agents handle crisis detection, therapeutic intervention, gamification coaching, and assessment delivery, coordinated by a routing agent. This modular design would improve safety isolation and enable independent scaling of each agent.
 
+9.  **Cloudflare edge protection for production.** Deploying Cloudflare WAF, DDoS mitigation, bot management, and Turnstile attestation at the DNS edge would harden the platform against automated attacks and credential stuffing before traffic reaches the origin servers.
+
+10. **Certificate pinning for mobile clients.** Pinning the backend TLS certificate inside the Flutter application would eliminate certain man-in-the-middle attack vectors on untrusted networks, complementing TLS 1.3 and perfect forward secrecy.
+
+11. **mTLS for inter-service communication.** If the architecture evolves from the current in-process gateway to distributed microservices, mutual TLS should be enforced for all internal service-to-service calls to maintain Zero Trust verification between components.
+
+12. **Biometric authentication.** Integrating fingerprint or face recognition as a second authentication factor would strengthen account security while preserving usability, particularly for users who may forget passwords during periods of cognitive distress.
+
 ## 5.6 Limitations
 
 The current implementation has several limitations that should be acknowledged:
@@ -69,6 +81,12 @@ The current implementation has several limitations that should be acknowledged:
 5.  **No clinical validation.** The system has not undergone clinical trials and should not be considered a replacement for professional mental health care. It is designed as a complementary tool.
 
 6.  **Community moderation.** The community feature relies on user reports for content moderation; automated content detection is not yet implemented.
+
+7.  **On-device detection accuracy.** The on-device harmful content detector relies on keyword matching and a pre-trained TensorFlow Lite toxicity model. Fine-tuning on mental health-specific content datasets would improve accuracy and reduce false positives for clinical language.
+
+8.  **Visual scanner overhead.** The visual content safety scanner processes screenshots every four seconds, which introduces CPU and battery overhead. Adaptive interval strategies that scale with user risk state should be explored.
+
+9.  **Anti-tampering limitations.** The service continuity mechanism prevents casual uninstallation and force-stopping, but it does not protect against a determined technical user with ADB access or custom recovery tools.
 
 ## 5.7 Conclusion
 
