@@ -6,9 +6,9 @@ The complete source code is available at the following GitHub repositories under
 
 | Repository | Description | URL |
 |-----------|-------------|-----|
-| UpHeal-Doc | Thesis documentation and Quarto project | <https://github.com/Upheal1/UpHeal-Doc> |
-| UpHeal-Backend | Python FastAPI backend and AI pipeline | <https://github.com/Upheal1/UpHeal-Backend> |
-| UpHeal-Frontend | Flutter mobile application | <https://github.com/Upheal1/UpHeal-Frontend> |
+| UpHeal-Doc | Thesis documentation and Quarto project | https://github.com/Upheal1/UpHeal-Doc |
+| UpHeal-Backend | Python FastAPI backend and AI pipeline | https://github.com/Upheal1/UpHeal-Backend |
+| UpHeal-Frontend | Flutter mobile application | https://github.com/Upheal1/UpHeal-Frontend |
 
 ## A.2 Publications
 

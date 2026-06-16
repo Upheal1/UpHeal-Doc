@@ -89,6 +89,12 @@ format:
 
         % === SCALE ALL FIGURES TO FIT TEXT WIDTH WITHOUT CLIPPING ===
         \setkeys{Gin}{width=0.95\linewidth,keepaspectratio}
+
+        % === FIT LONG TABLES TO PAGE WIDTH ===
+        \usepackage{etoolbox}
+        \BeforeBeginEnvironment{longtable}{\begingroup\small\setlength{\tabcolsep}{4pt}}
+        \AfterEndEnvironment{longtable}{\endgroup}
+        \setlength{\LTcapwidth}{\textwidth}
     include-before-body:
       text: |
         % Outer cover: Title + University Logo + Academic Year only
