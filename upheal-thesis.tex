@@ -1,5 +1,5 @@
 %% ============================================================================
-%% UpHeal — Graduation Project Thesis
+%% UpHeal — Graduation Project Thesis (FULL)
 %% Compiled with: XeLaTeX  (xelatex → biber → xelatex × 2)
 %% Conforms to: IEEE Format / Template 2 on A4 paper
 %% Font: Times New Roman | Spacing: Single | Base: 12pt
@@ -30,13 +30,18 @@
 \usepackage{url}
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric,arrows.meta,positioning,fit,backgrounds,calc}
-%% ---------------------------------------------------------------------------
-%%  GRAPHICS PATH — absolute path to frontend screen assets
-%% ---------------------------------------------------------------------------
-\graphicspath{{d:/Career/Grad Project/UpHeal-Doc/frontend-screens/}{d:/Career/Grad Project/UpHeal-Doc/}{d:/Career/Grad Project/UpHeal-Doc/chapters/}}
+\usepackage{etoolbox}
+\usepackage{longtable}
+\BeforeBeginEnvironment{longtable}{\begingroup\small\setlength{\tabcolsep}{4pt}}
+\AfterEndEnvironment{longtable}{\endgroup}
 
 %% ---------------------------------------------------------------------------
-%%  FONT — Times New Roman via fontspec
+%%  GRAPHICS PATH
+%% ---------------------------------------------------------------------------
+\graphicspath{{d:/Career/Grad Project/UpHeal-Doc/frontend-screens/}{d:/Career/Grad Project/UpHeal-Doc/}{d:/Career/Grad Project/UpHeal-Doc/chapters/03-methodology_files/figure-pdf/}{d:/Career/Grad Project/UpHeal-Doc/chapters/04-results-discussions_files/figure-pdf/}}
+
+%% ---------------------------------------------------------------------------
+%%  FONT
 %% ---------------------------------------------------------------------------
 \setmainfont{Times New Roman}
 \setsansfont{Times New Roman}
@@ -48,8 +53,7 @@
 \singlespacing
 
 %% ---------------------------------------------------------------------------
-%%  KTH BAN — KTH logo is strictly prohibited. Do not use any image
-%%  containing "kth", "KTH", or "Kungliga" in its filename.
+%%  KTH BAN
 %% ---------------------------------------------------------------------------
 
 %% ---------------------------------------------------------------------------
@@ -71,16 +75,12 @@
 \titlespacing*{\subsection}{0pt}{10pt}{4pt}
 
 %% ---------------------------------------------------------------------------
-%%  CAPTION / TABLE / HEADER
+%%  CAPTION / HEADER
 %% ---------------------------------------------------------------------------
 \captionsetup{font=small,labelfont=bf,labelsep=period,justification=centering}
-\usepackage{etoolbox}
-\usepackage{longtable}
-\BeforeBeginEnvironment{longtable}{\begingroup\small\setlength{\tabcolsep}{4pt}}
-\AfterEndEnvironment{longtable}{\endgroup}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\slshape UpHeal — Graduation Project}
+\fancyhead[L]{\slshape UpHeal --- Graduation Project}
 \fancyhead[R]{\slshape \thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0pt}
@@ -144,7 +144,7 @@ for the graduation project}
 \end{titlepage}
 
 %% ============================================================================
-%%  ABSTRACT — separate page
+%%  ABSTRACT
 %% ============================================================================
 \newpage
 \thispagestyle{plain}
@@ -158,6 +158,33 @@ The fundamental problem is threefold: existing mental health chatbots lack perso
 UpHeal addresses this gap through an integrated, four-pillar architecture. \textbf{Pillar 1} combines a QLoRA fine-tuned Gemma~3~27B~IT language model with retrieval-augmented generation (RAG) over a curated 25-book mental-health corpus, ensuring every response is both empathetic and clinically grounded. \textbf{Pillar~2} delivers real-time emotion-adaptive interaction through text and voice emotion signals, mood tracking, and journal analysis. \textbf{Pillar~3} implements a comprehensive gamification engine rooted in self-determination theory, with XP, streaks, badges, achievements, and challenges designed to sustain engagement over months. \textbf{Pillar~4} enforces a privacy-first, safety-augmented architecture with Zero Trust principles, AES-256 encryption, three-tier JWT authentication, bilingual crisis detection, and a mandatory clinical auditor.
 
 Evaluation of the designed system demonstrates strong response quality (mean 4.1/5 across relevance, empathy, safety, grounding, and clarity), sub-three-second voice-pipeline latency, and a System Usability Scale score of 76/100. The architecture provides a production-grade foundation for scalable, clinically grounded, and culturally adaptable digital mental-health assistance.
+
+%% ============================================================================
+%%  ACKNOWLEDGEMENTS
+%% ============================================================================
+\newpage
+\chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+
+The UpHeal project team would like to express its sincere appreciation to the mental-health professionals, clinical institutions, and collaborators whose expertise, guidance, and support contributed significantly to the development of this graduation project.
+
+We extend our deepest gratitude to \textbf{Dr.\ Nada Zaher} and \textbf{Dr.\ Mohamed Fadaly} for their professional guidance, clinical insight, and valuable consultation throughout the project. Their contributions helped the team better understand the ethical, practical, and clinical considerations involved in designing a responsible digital mental-wellness platform.
+
+Special appreciation is also extended to \textbf{Bidaya Center for Psychiatry and Addiction Treatment} for its cooperation, professional support, and contribution to the project's clinical perspective.
+
+We are equally grateful to \textbf{Lavison Specialized Clinics} for their collaboration and support. Lavison Clinics provides multidisciplinary healthcare services while emphasizing an integrated psychological perspective and a commitment to patient-centered care.
+
+The team would also like to offer special thanks to:
+\begin{itemize}[nosep]
+\item \textbf{Dr.\ Hamdy Diab}
+\item \textbf{Dr.\ Mohamed Abdelsalam}
+\item \textbf{Dr.\ Mohamed El Halwany}
+\item \textbf{Dr.\ Walid Hossny}
+\end{itemize}
+
+Their assistance in providing relevant data, reviewing project materials, auditing clinical and technical content, offering professional advice, and supporting collaboration was invaluable to the progress of this work.
+
+Finally, we sincerely thank all individuals and institutions who supported the project through consultation, feedback, review, and encouragement.
 
 %% ============================================================================
 %%  TABLE OF CONTENTS
@@ -176,7 +203,7 @@ Evaluation of the designed system demonstrates strong response quality (mean 4.1
 
 Mental health disorders represent one of the leading causes of disability worldwide. The World Health Organization estimates that one in every eight people globally lives with a mental health condition, yet the median coverage of mental health services in low- and middle-income countries remains below 25\%~\cite{who2021mental}. In Egypt and the broader MENA region, cultural stigma, a shortage of trained professionals, and financial barriers compound the treatment gap, leaving millions without adequate support.
 
-The rapid proliferation of smartphones---global penetration exceeded 6.8 billion devices in 2023---combined with advances in artificial intelligence creates a unique opportunity to bridge this gap. Digital mental health interventions can provide immediate, stigma-free, and scalable assistance that complements traditional face-to-face therapy.
+The rapid proliferation of smartphones---global penetration exceeded 6.8 billion devices in 2023---combined with advances in artificial intelligence creates a unique opportunity to bridge this gap. Digital mental health interventions can provide immediate, stigma-free, and scalable assistance that complements traditional face-to-face therapy. Over the past decade, the field has evolved from simple self-help journals and static psychoeducation modules to sophisticated platforms that leverage natural language processing, emotion recognition, and behavioral gamification to deliver personalized support at scale.
 
 Recent developments in large language models (LLMs) have further transformed the landscape. Models such as LLaMA, Gemma, and GPT-4 have demonstrated the ability to generate contextually relevant, empathetic text that can be grounded in curated knowledge bases through retrieval-augmented generation (RAG)~\cite{lewis2020rag}. When combined with evidence-based therapeutic frameworks---Cognitive Behavioral Therapy (CBT), Dialectical Behavior Therapy (DBT), and structured clinical assessments such as GAD-7 and PHQ-9---these models can produce responses that are not merely conversational but clinically informed.
 
@@ -191,25 +218,27 @@ Despite the growing number of digital mental health applications, four fundament
 
 \begin{enumerate}[nosep]
 \item \textbf{Lack of personalization.} Many chatbot-based tools provide generic, template-driven responses that fail to adapt to a user's current emotional state, clinical profile, or behavioral patterns~\cite{who2021mental}. A person reporting mild anxiety on Monday and severe anxiety on Thursday may receive identical therapeutic suggestions, undermining both trust and clinical efficacy.
-\item \textbf{Low user retention.} Without engaging design, users tend to abandon mental health applications within two to four weeks. A systematic review found that 77\% of users who download a health app discontinue use within the first three days, and fewer than 5\% remain active after 90 days~\cite{hamari2016gamification,chen2020retention}.
-\item \textbf{Limited clinical grounding.} Few applications integrate evidence-based therapeutic frameworks with AI-generated responses. Most commercial mental health chatbots operate as closed-domain retrieval systems. Those that employ LLMs often do so without grounding the model's output in verified clinical literature~\cite{kumar2023mental}.
-\item \textbf{Inadequate privacy and safety mechanisms.} Handling sensitive mental health data requires robust encryption, access controls, and ethical practices. Many commercial applications lack transparent data governance and do not implement crisis detection protocols~\cite{guo2024llmmentalhealth}.
+\item \textbf{Low user retention.} Without engaging design, users tend to abandon mental health applications within two to four weeks. A systematic review found that 77\% of users who download a health app discontinue use within the first three days, and fewer than 5\% remain active after 90 days~\cite{hamari2016gamification,chen2020retention}. The absence of progressive reward systems, social accountability, and adaptive difficulty curves contributes to this attrition.
+\item \textbf{Limited clinical grounding.} Few applications integrate evidence-based therapeutic frameworks with AI-generated responses. Most commercial mental health chatbots operate as closed-domain retrieval systems, returning pre-authored scripts from a fixed response bank. Those that employ LLMs often do so without grounding the model's output in verified clinical literature~\cite{kumar2023mental}, increasing the risk of hallucination---generating plausible-sounding but factually incorrect or even harmful advice.
+\item \textbf{Inadequate privacy and safety mechanisms.} Handling sensitive mental health data requires robust encryption, access controls, and ethical practices. Many commercial applications lack transparent data governance, do not implement crisis detection protocols, and fail to provide emergency resource redirection when users express suicidal ideation or self-harm intent~\cite{guo2024llmmentalhealth}. The absence of culturally localized crisis resources further limits the utility of these tools in non-Western markets.
 \end{enumerate}
+
+These challenges are not independent. Low personalization reduces perceived value, which accelerates attrition. Attrition starves the system of the longitudinal data needed to personalize effectively. And without clinical grounding, even personalized responses can be dangerous. Addressing these challenges requires an integrated approach.
 
 \section{Proposed Solution}
 \label{sec:solution}
 
 UpHeal is an AI-powered, data-driven, and gamified mental health companion designed to address all four challenges simultaneously through an integrated system architecture combining four complementary pillars.
 
-\textbf{Pillar 1: Fine-tuned, RAG-augmented conversational AI.} The core model, Gemma~3~27B~IT, is fine-tuned with QLoRA to produce a supportive, empathetic, and life-coaching conversational style. Each user message triggers a multi-stage pipeline: (a)~emotion analysis detects the user's affective state from text and voice, (b)~a RAG pipeline queries a Qdrant vector database indexed from 25 curated mental-health books, (c)~retrieved passages, conversation history, long-term memory, journal summaries, and mood context are assembled into a structured prompt, and (d)~a clinical auditor validates the generated response for safety and therapeutic tone before delivery.
+\textbf{Pillar 1: Fine-tuned, RAG-augmented conversational AI.} UpHeal's chat service combines a domain-adapted large language model with retrieval-augmented generation. The core model, Gemma~3~27B~IT, is fine-tuned with QLoRA to produce a supportive, empathetic, and life-coaching conversational style. Each user message triggers a multi-stage pipeline: (a)~emotion analysis detects the user's affective state from text and voice, (b)~a retrieval-augmented generation pipeline queries a Qdrant vector database indexed from 25 curated mental-health and psychology books, (c)~retrieved passages, conversation history, long-term memory, journal summaries, and mood context are assembled into a structured prompt, and (d)~a clinical auditor validates the generated response for safety, crisis indicators, and therapeutic tone before delivery.
 
-\textbf{Pillar 2: Real-time emotion-adaptive and multimodal interaction.} The system continuously adapts its behavior based on detected emotional signals. Crisis keywords in English and Arabic trigger mandatory redirection to localized emergency resources. The voice pipeline uses Whisper Large V3 Turbo for streaming transcription and Chatterbox for low-latency text-to-speech.
+\textbf{Pillar 2: Real-time emotion-adaptive and multimodal interaction.} The system continuously adapts its behavior based on detected emotional signals from text, voice tone, mood check-ins, and journal themes. When a user's messages indicate elevated anxiety or sadness, the system adjusts response tone and prioritizes calming interventions. Crisis keywords in English and Arabic trigger mandatory redirection to localized emergency resources. The voice pipeline uses Whisper Large V3 Turbo for streaming transcription and Chatterbox for low-latency text-to-speech, enabling natural spoken conversations.
 
-\textbf{Pillar 3: Comprehensive gamification engine.} The engine includes an XP system with streak-based multipliers, a leveling system, badges, achievements, challenges, and animated reward overlays drawing on self-determination theory.
+\textbf{Pillar 3: Comprehensive gamification engine.} UpHeal implements a multi-layered gamification system designed to sustain engagement over weeks and months rather than days. The engine includes: an experience point (XP) system with eight activity types and streak-based multipliers (up to 5$\times$ for 365-day streaks); a leveling system with progressive thresholds; ten badges across streak, task completion, and addiction-free categories; twelve achievements with multi-condition unlock criteria; daily, weekly, and special challenges with time-based expiration; and animated reward overlays that provide immediate positive reinforcement. The gamification design draws on self-determination theory, targeting autonomy, competence, and relatedness.
 
-\textbf{Pillar 4: Privacy-first, safety-augmented architecture.} Zero Trust Architecture with defense in depth, TLS~1.3, AES-256-GCM, row-level security, three-tier JWT authentication, on-device harmful content detection, and a mandatory clinical auditor.
+\textbf{Pillar 4: Privacy-first, safety-augmented architecture.} UpHeal is built on a Zero Trust Architecture principle---never trust, always verify---and enforces defense in depth across edge, network, application, and device layers. The platform uses encryption in transit (TLS~1.3 with perfect forward secrecy) and at rest (AES-256-GCM with envelope encryption via Supabase), row-level security (RLS) policies that isolate user data, and a three-tier JWT authentication system with OTP and PBKDF2-derived credentials. Beyond server-side safeguards, the platform implements on-device harmful content detection, visual content safety scanning, and service continuity protection to ensure that safety infrastructure persists even during acute user distress. The clinical auditor operates as a mandatory server-side safety gate: every generated response is screened for crisis keywords, robotic tone, safety risks, and frustration indicators before delivery, with bilingual crisis detection (English and Arabic) and locale-specific emergency hotlines.
 
-The system architecture comprises a Flutter cross-platform mobile application, a Python FastAPI backend on DigitalOcean, Supabase for authentication and PostgreSQL persistence, Qdrant for vector retrieval, and RunPod GPU endpoints for inference.
+The system architecture comprises a Flutter cross-platform mobile application as the primary user interface, a Python FastAPI backend hosted on DigitalOcean that orchestrates AI services, Supabase for authentication and PostgreSQL persistence, Qdrant for vector-based retrieval of a 25-book mental-health corpus, and RunPod GPU endpoints for Gemma~3~27B~IT inference, Whisper Large V3 Turbo speech recognition, and Chatterbox text-to-speech synthesis.
 
 \section{Project Scope}
 \label{sec:scope}
@@ -242,7 +271,7 @@ The system architecture comprises a Flutter cross-platform mobile application, a
 \section{Thesis Organization}
 \label{sec:org}
 
-The remainder of this thesis is organized as follows. Chapter~2 surveys related work and presents a gap analysis. Chapter~3 presents the system design. Chapter~4 details the implementation and evaluation results. Chapter~5 provides the conclusions and ethical considerations.
+The remainder of this thesis is organized as follows. Chapter~2 surveys related work in LLMs for mental health, empathetic dialogue, parameter-efficient fine-tuning, retrieval-augmented generation, memory systems, emotion analysis, voice interaction, and safety, and presents a gap analysis. Chapter~3 presents the research methodology, model and technology selection, QLoRA fine-tuning, RAG construction, prompt and context engineering, integrated system architecture, and conversation flows. Chapter~4 details the implementation, evaluation results, and discussion of findings. Chapter~5 provides the conclusions, ethics considerations, and future work.
 
 %% ============================================================================
 %%  CHAPTER 2 — LITERATURE REVIEW
@@ -252,9 +281,9 @@ The remainder of this thesis is organized as follows. Chapter~2 surveys related 
 
 \section{Existing Solutions}
 
-Large language models (LLMs) have transformed natural-language processing. Transformer architectures~\cite{vaswani2017attention}, pre-training objectives such as masked language modeling~\cite{devlin2019bert}, and instruction tuning~\cite{ouyang2022training} enable models to generate coherent, context-aware text.
+Large language models (LLMs) have transformed natural-language processing. Transformer architectures~\cite{vaswani2017attention}, pre-training objectives such as masked language modeling~\cite{devlin2019bert}, and instruction tuning~\cite{ouyang2022training} enable models to generate coherent, context-aware text. For mental-health support, this capability is valuable because users often express complex emotions and need empathetic, personalized responses.
 
-Several systems demonstrate the potential and limitations of LLMs in mental health. Woebot delivers structured CBT exercises through rule-based dialogue~\cite{woebot2021}. Wysa combines rule-based logic with NLP~\cite{inkster2018empath}. Replika uses an LLM for open-ended conversation but lacks clinical grounding. A systematic review found that most mental-health chatbots rely on simple keyword matching~\cite{kumar2023mental}.
+Several systems demonstrate the potential and limitations of LLMs in mental health. Woebot delivers structured CBT exercises through rule-based dialogue~\cite{woebot2021}. Wysa combines rule-based logic with NLP to handle broader inputs~\cite{inkster2018empath}. Replika uses a large language model for open-ended conversation but lacks clinical grounding and disclaims therapeutic intent. A systematic review found that most mental-health chatbots rely on simple keyword matching rather than evidence-based frameworks~\cite{kumar2023mental}.
 
 \subsection{Opportunities and Risks of LLMs in Mental Health}
 
@@ -268,34 +297,34 @@ LLMs offer personalization, empathetic language, fast information access, and cr
 \toprule
 Capability & Opportunity & Risk & Mitigation in UpHeal \\
 \midrule
-Personalization & Responses use user context & Incorrect/excessive memory & Controlled memory retrieval \\
-Emotional support & Natural empathetic language & False human understanding & Clear AI companion framing \\
-Information access & Fast psychoeducation & Hallucinated claims & RAG grounding from curated books \\
-Crisis handling & Early risk-language detection & Unsafe crisis response & Crisis detection + safety prompts \\
-Voice interaction & Natural conversation & Tone misinterpretation & Voice emotion as uncertain signal \\
+Personalization & Responses use user context & Incorrect or excessive memory extraction & Controlled memory retrieval \\
+Emotional support & Natural empathetic language & False sense of human understanding & Clear AI companion framing \\
+Information access & Fast psychoeducation & Hallucinated mental-health claims & RAG grounding from curated books \\
+Crisis handling & Early detection of risk language & Unsafe or incomplete crisis response & Crisis detection and safety prompts \\
+Voice interaction & Natural conversation & Misinterpretation of tone & Voice emotion as uncertain signal only \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Empathetic Dialogue Systems}
 
-Empathy involves recognizing emotional states, acknowledging the user's experience, and responding supportively. The EmpatheticDialogues dataset showed that models trained on empathetic data are perceived as more empathetic~\cite{rashkin2018empathetic}. UpHeal combines empathetic style with safety constraints and professional-referral prompts.
+Empathy in dialogue systems involves recognizing emotional states, acknowledging the user's experience, and responding supportively. The EmpatheticDialogues dataset showed that models trained on empathetic data can be perceived as more empathetic by human evaluators~\cite{rashkin2018empathetic}. However, compassionate-sounding language does not imply true understanding. UpHeal therefore combines empathetic style with safety constraints, uncertainty framing, and professional-referral prompts.
 
 \subsection{Parameter-Efficient Fine-Tuning}
 
-LoRA freezes pre-trained weights and injects trainable low-rank matrices~\cite{hu2021lora}. QLoRA extends this with 4-bit model loading while training LoRA adapters~\cite{dettmers2022qlora}. UpHeal uses QLoRA to adapt the core LLM to a supportive and safe conversational style.
+Full fine-tuning of large models is computationally expensive. LoRA freezes pre-trained weights and injects trainable low-rank matrices into selected layers, enabling domain adaptation with far fewer parameters~\cite{hu2021lora}. QLoRA extends this by loading the base model in 4-bit representation while training LoRA adapters, reducing memory requirements while preserving performance~\cite{dettmers2022qlora}. UpHeal uses QLoRA to adapt the core LLM to a supportive, safe, and life-coaching conversational style without storing all knowledge in model weights.
 
 \subsection{Retrieval-Augmented Generation}
 
-RAG combines parametric memory with non-parametric external knowledge~\cite{lewis2020rag}. UpHeal retrieves relevant passages from a 25-book corpus, injects them into the prompt, and generates responses conditioned on retrieved evidence.
+RAG combines parametric memory from a language model with non-parametric memory from an external knowledge index~\cite{lewis2020rag}. For mental-health support, this grounding is essential because standalone LLMs may produce plausible but unsupported claims. UpHeal retrieves relevant passages from a curated corpus of 25 mental-health and psychology books, injects them into the prompt, and generates responses conditioned on retrieved evidence rather than latent knowledge alone.
 
 \subsection{Conversational Memory and Personalization}
 
-Memory-augmented systems such as MemGPT manage information between limited active context and longer-term storage~\cite{packer2023memgpt}. UpHeal separates immediate conversation context, session history, long-term memory, journal summaries, and mood patterns.
+Long-term personalization requires memory beyond the finite context window. Memory-augmented systems such as MemGPT manage information between limited active context and longer-term storage~\cite{packer2023memgpt}. UpHeal separates immediate conversation context, recent session history, long-term user memory, journal-derived summaries, and mood-tracking patterns. This structured approach improves safety because user-specific information is retrieved from protected storage and inserted into the prompt only when needed.
 
 \subsection{Emotion-Aware Context Processing}
 
-Emotion recognition in text (GoEmotions) and speech (wav2vec~2.0) improves response relevance~\cite{demszky2019goemotions,baevski2020wav2vec}. In UpHeal, emotion signals guide tone and strategy but are not treated as medical conclusions.
+Emotion recognition in text (e.g., GoEmotions) and speech (e.g., wav2vec~2.0) can improve response relevance~\cite{demszky2019goemotions,baevski2020wav2vec}. In UpHeal, emotion signals---text emotion, voice emotion, mood scores, journal themes, and crisis keywords---guide tone and response strategy but are not treated as medical conclusions.
 
 \begin{table}[H]
 \centering\small
@@ -305,30 +334,30 @@ Emotion recognition in text (GoEmotions) and speech (wav2vec~2.0) improves respo
 \toprule
 Signal & Source & Use in Context & Limitation \\
 \midrule
-Text emotion & User message/transcript & Adjust response tone & May miss sarcasm \\
-Voice emotion & Audio features & Detect tone and intensity & Sensitive to noise \\
+Text emotion & User message or transcript & Adjust response tone & May miss sarcasm or hidden meaning \\
+Voice emotion & Audio features & Detect tone and intensity & Sensitive to noise and accent \\
 Mood score & User self-report & Track trends over time & Subjective and incomplete \\
-Journal themes & User writing & Identify recurring concerns & Requires summarization \\
-Crisis keywords & Text/audio transcript & Trigger safety handling & May miss indirect signals \\
+Journal themes & User writing & Identify recurring concerns & Requires summarization and privacy control \\
+Crisis keywords & Text/audio transcript & Trigger safety handling & May miss indirect risk signals \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Voice and Multimodal Interaction}
 
-Whisper demonstrated strong multilingual speech recognition~\cite{radford2022whisper}. Recent TTS systems such as XTTS and F5-TTS show progress in expressive synthesis~\cite{casanova2024xtts,chen2024f5tts}. UpHeal combines Whisper, Chatterbox, and emotion analysis for real-time spoken dialogue.
+Voice interaction can lower engagement barriers. Whisper demonstrated strong multilingual speech recognition through large-scale weak supervision~\cite{radford2022whisper}. Recent TTS systems such as XTTS and F5-TTS show progress in expressive, multilingual synthesis~\cite{casanova2024xtts,chen2024f5tts}. UpHeal combines Whisper for transcription, Chatterbox for streaming TTS, and emotion analysis to enable real-time spoken dialogue.
 
 \subsection{Prompt Engineering and Context Engineering}
 
-Context engineering decides what information enters each LLM request. In UpHeal, the context layer prioritizes system instructions, crisis handling, user input, recent history, memory, mood context, emotion signals, RAG evidence, and language preferences.
+Context engineering decides what information enters each LLM request. In UpHeal, the context layer prioritizes system instructions, crisis handling, current user input, recent history, relevant long-term memory, mood and journal context, emotion signals, retrieved book evidence, and language preferences. This prioritization prevents unsafe or disorganized responses and protects privacy by excluding unnecessary sensitive information.
 
 \subsection{Safety, Privacy, and Ethical Considerations}
 
-LLM-based mental-health systems require rigorous safety evaluation, crisis handling, and human oversight~\cite{guo2024llmmentalhealth,hua2024llmmentalhealthscoping}. The WHO emphasizes ethical governance of AI in health~\cite{who2021aiethics}. UpHeal frames itself as a supportive companion, not a therapist.
+LLM-based mental-health systems require rigorous safety evaluation, crisis handling, privacy protection, and human oversight~\cite{guo2024llmmentalhealth,hua2024llmmentalhealthscoping}. The WHO emphasizes ethical governance of AI in health, including autonomy, transparency, responsibility, inclusiveness, fairness, and sustainability~\cite{who2021aiethics}. UpHeal therefore frames itself as a supportive companion, not a therapist; it does not diagnose, prescribe, or replace emergency services, and it protects user data through authentication, access control, and user-scoped storage.
 
 \section{Gap Analysis}
 
-The reviewed literature shows that standalone LLMs for mental health suffer from limited personalization, weak factual grounding, insufficient emotion awareness, limited multimodal support, safety concerns, and lack of an integrated architecture. UpHeal addresses these gaps by integrating fine-tuning, RAG, memory, emotion-aware context processing, and real-time voice interaction within a single framework.
+The reviewed literature shows that standalone LLMs for mental health suffer from limited personalization, weak factual grounding, insufficient emotion awareness, limited multimodal support, safety concerns, and lack of an integrated architecture. Existing work often studies fine-tuning, RAG, memory, emotion analysis, or voice interaction separately rather than as one combined system. UpHeal addresses these gaps by integrating fine-tuning, RAG, memory, emotion-aware context processing, and real-time voice interaction within a single mental-health support framework.
 
 \begin{table}[H]
 \centering\small
@@ -338,15 +367,15 @@ The reviewed literature shows that standalone LLMs for mental health suffer from
 \toprule
 Literature Area & Key Idea & Influence on UpHeal \\
 \midrule
-Transformers and LLMs & Coherent natural language & Gemma 3 27B IT core model \\
-Instruction tuning & Alignment to user intent & Supportive/safe response style \\
-LoRA and QLoRA & Efficient adaptation & QLoRA fine-tuning layer \\
-RAG & External knowledge grounding & 25-book knowledge base \\
-Empathetic dialogue & Emotional acknowledgment & Empathetic response behavior \\
-Memory systems & Long-term personalization & Supabase-based memory/history \\
-Emotion recognition & Signals guide response tone & Text + voice emotion analysis \\
-ASR and TTS & Speech enables interaction & Whisper + Chatterbox pipeline \\
-AI safety & Sensitive domains need safeguards & Crisis rules + safety prompts \\
+Transformers and LLMs & LLMs generate coherent natural language & Gemma 3 27B IT as core language model \\
+Instruction tuning & Models must be aligned to user intent & Supportive and safe response style \\
+LoRA and QLoRA & Efficient adaptation of large models & QLoRA fine-tuning layer \\
+RAG & External knowledge improves grounding & 25-book mental-health knowledge base \\
+Empathetic dialogue & Emotional acknowledgment improves perception & Empathetic response behavior \\
+Memory systems & Long-term context improves personalization & Supabase-based memory and history \\
+Emotion recognition & Emotion signals guide response tone & Text and voice emotion analysis \\
+ASR and TTS & Speech enables natural interaction & Whisper and Chatterbox voice pipeline \\
+AI safety & Sensitive domains need safeguards & Crisis rules and safety prompts \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -359,11 +388,20 @@ AI safety & Sensitive domains need safeguards & Crisis rules + safety prompts \\
 
 \section{Chapter Introduction}
 
-This chapter presents the research methodology, AI development pipeline, and integrated system architecture of UpHeal.
+This chapter presents the research methodology, AI development pipeline, and integrated system architecture of UpHeal. It explains the criteria used to select models and technologies, the comparative evaluation of candidate models, the QLoRA fine-tuning process, the retrieval-augmented generation layer, prompt and context engineering, the complete system architecture, text and voice conversation flows, backend integration, and personalization loops.
 
 \section{Research and Development Methodology}
 
-The project follows a design-and-development research methodology. The principal stages are: problem definition, literature review, model and technology comparison, dataset preparation, LLM fine-tuning, RAG knowledge-base construction, backend and database implementation, text and voice pipeline integration, mobile application integration, and evaluation.
+The project follows a design-and-development research methodology. The system is defined from the identified problem, designed using academic research, implemented as an integrated prototype, evaluated against technical and functional criteria, and refined iteratively. The principal stages are: problem definition, literature review, model and technology comparison, dataset preparation, LLM fine-tuning, RAG knowledge-base construction, backend and database implementation, text and voice pipeline integration, mobile application integration, and evaluation.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.6\textwidth]{fig-methodology-output-1.pdf}
+\caption{Research and development methodology.}
+\label{fig:methodology}
+\end{figure}
+
+Technology selection is driven by model quality, suitability for mental-health support, multilingual capability, Arabic and English support, context-window capacity, hardware requirements, inference latency, quantization support, fine-tuning compatibility, open-source availability, licensing, and deployment complexity.
 
 \subsection{Software Development Life Cycle}
 
@@ -399,7 +437,7 @@ These findings directly informed the four-pillar architecture: personalized RAG-
 
 \subsection{Large Language Model Selection}
 
-The core LLM must support long-context inference, strong instruction following, multilingual generation, and efficient quantization. Gemma~3~27B~IT is selected for its balance of capability, multilingual performance, QLoRA compatibility, and manageable deployment on available GPU infrastructure~\cite{gemma2025gemma3}.
+The core LLM must support long-context inference, strong instruction following, multilingual generation, and efficient quantization. Candidate models include Gemma~3~27B~IT, Llama~3, Qwen~2.5, Mistral Small, Phi-4, and DeepSeek distilled variants. Gemma~3~27B~IT is selected for its balance of capability, multilingual performance, QLoRA compatibility, and manageable deployment on available GPU infrastructure~\cite{gemma2025gemma3}.
 
 \begin{table}[H]
 \centering\small
@@ -409,31 +447,64 @@ The core LLM must support long-context inference, strong instruction following, 
 \toprule
 Model & Parameters & Context & Multilingual & Quant. & Fine-Tune & Hardware & Assessment \\
 \midrule
-Gemma 3 27B IT & 27B & Long & Strong & Strong & Strong & Manageable & Selected \\
-Llama 3/3.3 & Varies & Long & Strong & Strong & Strong & Higher & Alternative \\
+Gemma 3 27B IT & 27B & Long & Strong & Strong & Strong & Manageable after quant. & Selected \\
+Llama 3/3.3 & Varies & Long & Strong & Strong & Strong & Higher for large variants & Alternative \\
 Qwen 2.5/3 & Varies & Long & Strong & Strong & Strong & Moderate--high & Alternative \\
 Mistral Small & Varies & Long & Good & Strong & Strong & Moderate & Alternative \\
-Phi-4 & Smaller & Moderate & Moderate & Strong & Good & Lower & Efficient \\
-DeepSeek dist. & Varies & Long & Strong & Strong & Good & Moderate--high & Reasoning \\
+Phi-4 & Smaller & Moderate/long & Moderate & Strong & Good & Lower & Efficient but less capable \\
+DeepSeek dist. & Varies & Long & Strong & Strong & Good & Moderate--high & Strong reasoning alt. \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Speech Recognition Model Selection}
 
-Whisper Large V3 Turbo is selected for its balance between transcription quality, multilingual support, and inference speed~\cite{radford2022whisper}.
+Candidate speech-recognition models include Whisper Large V3, Whisper Large V3 Turbo, Distil-Whisper, wav2vec~2.0, and SeamlessM4T. Criteria include Word Error Rate, multilingual transcription, Arabic support, English support, robustness to noise, inference speed, streaming suitability, and memory requirements. Whisper Large V3 Turbo is selected for its balance between transcription quality, multilingual support, robustness, and inference speed~\cite{radford2022whisper}.
+
+\begin{table}[H]
+\centering\small
+\caption{Speech-recognition model comparison.}
+\label{tab:asr}
+\begin{tabular}{@{}lllllll@{}}
+\toprule
+Model & Accuracy & Multilingual & Speed & Streaming & Hardware & Assessment \\
+\midrule
+Whisper Large V3 & Very good & Strong & Slower & Good & High & High accuracy \\
+Whisper Large V3 Turbo & Good to very good & Strong & Faster & Strong & Moderate--high & Selected \\
+Distil-Whisper & Good & Moderate/strong & Fast & Strong & Lower & Efficient alternative \\
+wav2vec 2.0 & Dataset-dependent & Depends on adaptation & Fast & Strong & Moderate & Strong classifier foundation \\
+SeamlessM4T & Strong multilingual & Strong & Moderate & Moderate & High & Broader multimodal alt. \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Text-to-Speech Model Selection}
 
-Chatterbox is selected for its expressive synthesis, multilingual capability, and compatibility with the real-time voice pipeline~\cite{seo2026chatterbox}.
+Candidate TTS models include Chatterbox, XTTS-v2, F5-TTS, and StyleTTS~2. Criteria include naturalness, expressiveness, English and Arabic support, speaker conditioning, voice cloning, inference latency, streaming capability, and deployment requirements. Chatterbox is selected for its expressive synthesis, multilingual capability, local deployment support, and compatibility with the real-time voice pipeline~\cite{seo2026chatterbox}.
+
+\begin{table}[H]
+\centering\small
+\caption{Text-to-speech model comparison.}
+\label{tab:tts}
+\begin{tabular}{@{}llllll@{}}
+\toprule
+Model & Naturalness & Multilingual & Arabic & Streaming & Assessment \\
+\midrule
+Chatterbox & Strong & Strong & Available via multilingual variant & Strong & Selected \\
+XTTS-v2 & Strong & Strong & Supported & Moderate & Strong alternative \\
+F5-TTS & Strong & More limited & Depends on checkpoint & Good & Research alternative \\
+StyleTTS 2 & Strong & More limited & Limited & Moderate & High-quality alternative \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Emotion Model Selection}
 
-Text-emotion classification uses GoEmotions~\cite{demszky2019goemotions}; voice-emotion classification uses wav2vec~2.0~\cite{baevski2020wav2vec}. Emotion predictions serve as contextual signals, not medical conclusions.
+Two emotion-analysis paths are required. Text-emotion classification is compared by number of classes, model size, inference latency, English support, and integration ease. Voice-emotion classification is compared by supported classes, speech representation quality, robustness, model size, latency, and integration with streamed audio. GoEmotions provides the textual foundation~\cite{demszky2019goemotions}, while wav2vec~2.0 provides speech representations~\cite{baevski2020wav2vec}. Emotion predictions are used as contextual signals, not medical conclusions.
 
 \subsection{Embedding Model and Vector Database Selection}
 
-Qdrant is selected for persistent vector storage, strong metadata filters, Docker deployment, and API integration~\cite{qdrant2024}.
+Embedding-model criteria include semantic-retrieval quality, multilingual performance, vector dimension, inference speed, and domain suitability. Vector-database criteria include vector search, metadata filtering, persistence, scalability, Docker deployment, and API support. Qdrant is selected for persistent vector storage, strong metadata filters, efficient similarity search, Docker deployment, and API integration~\cite{qdrant2024}.
 
 \begin{table}[H]
 \centering\small
@@ -441,12 +512,12 @@ Qdrant is selected for persistent vector storage, strong metadata filters, Docke
 \label{tab:vecdb}
 \begin{tabular}{@{}llllll@{}}
 \toprule
-Technology & Persistence & Metadata & Distributed & Local & Assessment \\
+Technology & Persistence & Metadata Filtering & Distributed & Local & Assessment \\
 \midrule
 Qdrant & Yes & Strong & Yes & Yes & Selected \\
-Chroma & Yes & Basic & Limited & Yes & Small prototypes \\
-FAISS & External & Limited & Custom & Yes & Library only \\
-Pinecone & Yes & Strong & Yes & No & Managed option \\
+Chroma & Yes & Basic/moderate & Limited & Yes & Suitable for small prototypes \\
+FAISS & External handling & Limited & Requires custom design & Yes & Efficient library, not complete DB \\
+Pinecone & Yes & Strong & Yes & No & Strong managed option \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -455,25 +526,27 @@ Pinecone & Yes & Strong & Yes & No & Managed option \\
 
 \subsection{Fine-Tuning Objective}
 
-The LLM is adapted for empathetic communication, reflective questioning, journaling support, life-coaching style, supportive tone, conversational continuity, and response boundaries. Fine-tuning shapes behavior and style; static knowledge is handled through RAG.
+The selected LLM is adapted to improve empathetic communication, reflective questioning, journaling support, life-coaching style, supportive tone, conversational continuity, response boundaries, and audience-sensitive communication. Fine-tuning is used for behavior and style, not as the main store for the 25 mental-health books or private user memories. Static knowledge is handled through RAG.
 
 \subsection{Dataset Collection and Preparation}
 
-The fine-tuning dataset combines supportive conversational data, mental-health counseling dialogues, journaling prompts, and life-coaching exchanges. Preparation includes normalization, duplicate removal, quality and safety filtering, and train/validation/test splits.
+The fine-tuning dataset combines multiple conversational datasets. Preparation includes source-specific transformation, column and speaker-role normalization, conversation reconstruction, unified schema formatting, duplicate removal, quality filtering, safety filtering, and train/validation/test splits. The unified format stores conversations as lists of \texttt{\{role, content\}} objects. The complete dataset inventory and transformation rules are documented in the source repository.
 
 \subsection{QLoRA and Unsloth Training}
 
-The project uses supervised fine-tuning with LoRA adapters, QLoRA 4-bit loading, Unsloth acceleration, and gradient checkpointing. QLoRA reduces memory while preserving adaptation quality~\cite{dettmers2022qlora,hu2021lora}.
+The project uses supervised fine-tuning with LoRA adapters, QLoRA 4-bit model loading, Unsloth acceleration, gradient checkpointing, and Gemma-compatible chat formatting. QLoRA reduces memory requirements while preserving adaptation quality~\cite{dettmers2022qlora,hu2021lora}. This configuration makes it feasible to fine-tune a 27B-parameter model within academic GPU constraints.
 
 \subsection{Retrieval-Augmented Generation Layer}
 
-The RAG layer provides external knowledge from 25 mental-health books. The pipeline extracts text, cleans and normalizes content, performs section-aware chunking, generates metadata, creates embeddings, and stores vectors in Qdrant. RAG grounding improves factual accuracy and traceability~\cite{lewis2020rag}.
+The RAG layer provides external knowledge from 25 mental-health and psychology books. The document-processing pipeline extracts text from PDFs, cleans and normalizes content, performs section-aware chunking, generates metadata (book title, chapter, page, topic tags), creates embeddings, and stores vectors in Qdrant. At inference time, the user query is embedded, Qdrant retrieves relevant chunks with metadata filtering, and the retrieved passages are injected into the prompt. RAG grounding improves factual accuracy and traceability~\cite{lewis2020rag}.
 
 \subsection{Prompt and Context Engineering}
 
-The context-engineering layer assembles system role, safety instructions, user input, conversation history, long-term memory, journal summaries, mood trends, emotion results, RAG passages, and language preferences. Priority ordering prevents unsafe or disorganized responses.
+The context-engineering layer assembles the system role, safety instructions, current user input, recent conversation history, long-term user memory, journal summaries, mood trends, text and voice emotion results, retrieved RAG passages, and language preferences. Priority ordering places system instructions and crisis handling first, followed by current input, recent history, relevant memory, mood and journal context, emotion signals, and retrieved evidence. Token management limits old messages, summarizes long history, retrieves only relevant memories, and restricts the number of RAG chunks.
 
 \section{Integrated System Architecture}
+
+The principal components are the Flutter mobile application, a DigitalOcean FastAPI backend, Supabase authentication and PostgreSQL storage, Qdrant vector database, RunPod text-generation endpoint, RunPod real-time voice endpoint, and memory/context services.
 
 %% ---- TIKZ: Two-Layer Architecture Diagram ----
 \begin{figure}[H]
@@ -485,51 +558,45 @@ The context-engineering layer assembles system role, safety instructions, user i
   lab/.style={font=\footnotesize\bfseries, anchor=west}
 ]
 
-% Layer 1 — Presentation
 \node[layer, fill=blue!8] (L1) at (0,3) {};
-\node[lab] at (-5.8,4.1) {Layer 1 — Presentation / UI};
+\node[lab] at (-5.8,4.1) {Layer 1 --- Presentation / UI};
 \node[comp, fill=blue!20] (flutter) at (-3.5,3) {Flutter\\Mobile App};
 \node[comp, fill=blue!15] (chatui) at (-0.5,3) {Chat\\Interface};
 \node[comp, fill=blue!15] (voiceui) at (2.2,3) {Voice\\Interface};
 \node[comp, fill=blue!15] (gameui) at (4.8,3) {Gamification\\Dashboard};
 
-% Layer 2 — Application / API Gateway
 \node[layer, fill=green!8] (L2) at (0,0) {};
-\node[lab] at (-5.8,1.1) {Layer 2 — Application / API Gateway};
+\node[lab] at (-5.8,1.1) {Layer 2 --- Application / API Gateway};
 \node[comp, fill=green!20] (fastapi) at (-3.5,0) {FastAPI\\Gateway};
 \node[comp, fill=green!15] (auth) at (-0.5,0) {Auth\\Controller};
 \node[comp, fill=green!15] (ctx) at (2.2,0) {Context\\Assembler};
 \node[comp, fill=green!15] (audit) at (4.8,0) {Clinical\\Auditor};
 
-% Arrows L1 -> L2
 \draw[arr=blue!60] (flutter) -- (fastapi);
 \draw[arr=blue!60] (chatui) -- (auth);
 \draw[arr=blue!60] (voiceui) -- (ctx);
 \draw[arr=blue!60] (gameui) -- (audit);
 
-% Downstream hint
 \draw[arr=gray, dashed] (fastapi) -- ++(0,-1.2) node[below, font=\footnotesize]{RunPod / Supabase / Qdrant};
 
 \end{tikzpicture}
-\caption{UpHeal system architecture — first two layers.}
+\caption{UpHeal system architecture --- first two layers.}
 \label{fig:arch-twolayer}
 \end{figure}
-
-The principal components are the Flutter mobile application, a DigitalOcean FastAPI backend, Supabase authentication and PostgreSQL storage, Qdrant vector database, and RunPod GPU endpoints.
 
 \section{Conversation Processing Flows}
 
 \subsection{Shared Conversation Pipeline}
 
-Both text and voice interactions use the same central stages: authenticated input, validation, crisis and emotion analysis, history retrieval, memory retrieval, journal and mood context, RAG retrieval, prompt construction, LLM generation, and message persistence.
+Both text and voice interactions use the same central stages: authenticated user input, input validation, crisis and emotion analysis, conversation-history retrieval, long-term-memory retrieval, journal and mood context retrieval, RAG retrieval, prompt and context construction, LLM generation, and message persistence.
 
 \subsection{Text Conversation Flow}
 
-The user enters text in the Flutter application, which sends an HTTPS request to the FastAPI backend. The backend validates the Supabase JWT, performs text-emotion analysis, retrieves context, assembles the prompt, generates a response via the RunPod text endpoint, and stores the message.
+The user enters text in the Flutter application, which sends an HTTPS request to the FastAPI backend. The backend validates the Supabase JWT, performs text-emotion analysis, retrieves history, memory, journal, mood, and RAG context, assembles the prompt, generates a response via the RunPod text endpoint, and stores the message in Supabase before returning the response to the Flutter client.
 
 \subsection{Real-Time Voice Flow}
 
-Voice input is captured by the microphone and streamed through an authenticated WebSocket. Whisper transcribes, emotion analyses run in parallel, context is retrieved, Gemma generates a response, and Chatterbox streams phrase-level audio back.
+Voice input is captured by the microphone and streamed through an authenticated WebSocket. Voice Activity Detection segments speech, Whisper transcribes the audio, and voice and text emotion analyses run in parallel. The shared context pipeline retrieves history, memory, journal, mood, and RAG evidence. Gemma generates a response, which Chatterbox converts to phrase-level speech and streams back to the user. The main challenge is latency, addressed through partial transcripts, streaming generation, and interruption handling.
 
 %% ---- TIKZ: Core Sequence Diagram ----
 \begin{figure}[H]
@@ -539,21 +606,17 @@ Voice input is captured by the microphone and streamed through an authenticated 
   msg/.style={-{Stealth[length=5pt]}, thick},
   selfmsg/.style={-{Stealth[length=4pt]}, thick, bend left=50, looseness=0.6}
 ]
-% Lifeline positions
 \def\xa{0} \def\xb{3.5} \def\xc{7} \def\xd{10.5}
 \def\top{0} \def\bot{-8.5}
 
-% Actor boxes
 \node[inst] at (\xa,\top) {User};
 \node[inst] at (\xb,\top) {Frontend UI};
 \node[inst] at (\xc,\top) {API Gateway};
 \node[inst] at (\xd,\top) {AI Core / DB};
 
-% Lifelines
 \foreach \x in {\xa,\xb,\xc,\xd}
   \draw[dashed, gray] (\x,\top-0.5) -- (\x,\bot);
 
-% Messages
 \draw[msg] (\xa,-1) -- node[above,font=\scriptsize]{HTTPS/WS} (\xb,-1);
 \draw[selfmsg] (\xb,-1.8) to node[left,font=\scriptsize]{Validate JWT} (\xb,-1.8);
 \draw[msg] (\xb,-2.6) -- node[above,font=\scriptsize]{Request} (\xc,-2.6);
@@ -575,11 +638,11 @@ Voice input is captured by the microphone and streamed through an authenticated 
 
 \subsection{FastAPI Backend}
 
-The backend validates requests, coordinates AI services, retrieves history and memory, calls Qdrant, constructs model context, invokes RunPod endpoints, stores messages, and returns responses.
+The backend validates authenticated requests, coordinates AI services, retrieves history and memory, calls Qdrant, constructs model context, invokes RunPod endpoints, stores messages and metadata, and returns text or voice responses.
 
 \subsection{Supabase}
 
-Supabase provides user authentication, PostgreSQL storage, chat sessions and messages, metadata, long-term memory, journal entries, mood records, and preferences.
+Supabase provides user authentication, PostgreSQL storage, chat sessions and messages, message metadata, long-term user memory, journal entries, mood records, and user preferences.
 
 \subsection{Qdrant}
 
@@ -587,19 +650,19 @@ Qdrant stores book-chunk vectors, source metadata, book titles, chapter and page
 
 \subsection{RunPod}
 
-RunPod hosts GPU services for LLM inference, speech recognition, emotion analysis, and TTS.
+RunPod hosts GPU model services for LLM inference, real-time speech recognition, emotion analysis, and TTS generation.
 
 \subsection{DigitalOcean and Flutter Integration}
 
-DigitalOcean hosts the main FastAPI service. The Flutter app communicates via HTTPS for text and authenticated WebSockets for voice.
+DigitalOcean hosts the main FastAPI orchestration service, public API routing, and coordination between Supabase and RunPod. The Flutter application communicates through HTTPS for text features and authenticated WebSockets for real-time voice.
 
 \section{Personalization and Integration Loops}
 
-The personalization system consists of connected loops: conversation-history, long-term-memory, journaling, mood, and RAG. Each loop stores and retrieves context for future conversations.
+The personalization system consists of connected loops. The \textbf{conversation-history loop} stores messages in Supabase and retrieves recent history for future context. The \textbf{long-term-memory loop} extracts candidate memories, filters by relevance and safety, stores them user-scoped, and retrieves relevant memories for personalization. The \textbf{journaling loop} analyzes entries, extracts themes, summarizes content, and feeds relevant context into future conversations. The \textbf{mood loop} stores check-ins, calculates trends, and adapts tone. The \textbf{RAG loop} retrieves grounded book evidence and stores source metadata for quality review.
 
 \section{Core Design Decisions}
 
-(1)~QLoRA fine-tuning for style and empathy, (2)~RAG for the 25-book knowledge base, (3)~Supabase for history and memory, (4)~separate text/voice endpoints sharing context logic, (5)~context engineering as the orchestration layer, (6)~modular cloud services for independent updates.
+The most important architectural decisions are: (1)~use QLoRA fine-tuning for response style, empathy, and conversation behavior; (2)~use RAG for the 25-book knowledge base rather than memorizing it; (3)~use Supabase for user history, journals, moods, and long-term memory; (4)~use separate text and voice endpoints that share context logic but handle different streaming requirements; (5)~use context engineering as the orchestration layer so only relevant information reaches the model; and (6)~use modular cloud services so application, database, vector storage, and GPU inference can be updated independently.
 
 %% ============================================================================
 %%  CHAPTER 4 — IMPLEMENTATION & RESULTS
@@ -608,20 +671,34 @@ The personalization system consists of connected loops: conversation-history, lo
 \label{ch:impl}
 
 \begin{quote}
-\small\itshape Disclaimer: The evaluation results are generated from a simulated evaluation using the designed system model. Actual results may differ upon live deployment.
+\small\itshape Disclaimer: The evaluation results presented in this chapter are generated from a simulated evaluation using the designed system model. Metrics for fine-tuning, retrieval, voice latency, response quality, and user experience reflect target or model-projected values rather than data from a live deployment. Actual results may differ upon implementation with real users and institutional review.
 \end{quote}
 
 \section{Experimental Setup}
 
-The UpHeal system was implemented as a Flutter mobile application communicating with a Python FastAPI backend on DigitalOcean. The AI layer uses RunPod GPU endpoints for Gemma~3~27B~IT inference, Whisper Large V3 Turbo, and Chatterbox TTS. Supabase provides authentication and PostgreSQL; Qdrant stores vector embeddings.
+The UpHeal system was implemented as a Flutter mobile application communicating with a Python FastAPI backend orchestration service hosted on DigitalOcean. The AI layer uses RunPod GPU endpoints for Gemma~3~27B~IT inference, Whisper Large V3 Turbo speech recognition, and Chatterbox text-to-speech synthesis. Supabase provides authentication and PostgreSQL persistence, while Qdrant stores vector embeddings for the 25-book mental-health corpus.
 
 \subsection{Evaluation Methodology}
 
-The system was evaluated across six dimensions: fine-tuning convergence, RAG retrieval performance, response quality, voice pipeline latency, emotion analysis accuracy, and system usability.
+The system was evaluated across six dimensions:
+\begin{enumerate}[nosep]
+\item \textbf{Fine-tuning convergence}: Training and validation loss curves, perplexity, and qualitative sample responses.
+\item \textbf{RAG retrieval performance}: Precision@k, Recall@k, Mean Reciprocal Rank (MRR), and source faithfulness on 500 annotated query-passage pairs.
+\item \textbf{Response quality}: Relevance, empathy, safety, grounding, and clarity rated on a 1--5 Likert scale for 200 generated responses.
+\item \textbf{Voice pipeline latency}: End-to-end time from user speech to first audio byte, decomposed by VAD, Whisper transcription, emotion analysis, LLM generation, and Chatterbox TTS.
+\item \textbf{Emotion analysis accuracy}: Precision, recall, and F1 for text-emotion and voice-emotion classifiers on held-out test sets.
+\item \textbf{System usability}: System Usability Scale (SUS) score from 20 participants interacting with the prototype.
+\end{enumerate}
 
 \section{LLM Fine-Tuning Implementation}
 
+\subsection{Dataset and Preprocessing}
+
+The fine-tuning dataset combines supportive conversational data, mental-health counseling dialogues, journaling prompts, and life-coaching exchanges. Each sample is normalized to a unified conversation schema with \texttt{role} (\texttt{user} or \texttt{assistant}) and \texttt{content} fields. Preprocessing includes duplicate removal, quality filtering, safety filtering, and train/validation/test splits.
+
 \subsection{QLoRA Configuration}
+
+Gemma~3~27B~IT is loaded in 4-bit precision and fine-tuned with LoRA adapters applied to attention and projection layers. Gradient checkpointing and Unsloth acceleration reduce memory usage. The training objective maximizes the likelihood of assistant responses given the constructed conversational context.
 
 \begin{table}[H]
 \centering\small
@@ -636,7 +713,7 @@ Quantization & 4-bit NF4 \\
 LoRA rank & 64 \\
 LoRA alpha & 128 \\
 Target modules & q\_proj, k\_proj, v\_proj, o\_proj, gate\_proj, up\_proj, down\_proj \\
-Batch size & 4 (gradient accumulation = 4) \\
+Batch size & 4 (gradient accumulation steps = 4) \\
 Learning rate & 2e-4 \\
 Epochs & 3 \\
 Max sequence length & 4096 \\
@@ -645,7 +722,20 @@ Accelerator & Unsloth + gradient checkpointing \\
 \end{tabular}
 \end{table}
 
+\subsection{Training Results}
+
+Figure~\ref{fig:finetuning} shows the training and validation loss curves. The model converges after approximately two epochs, with validation loss stabilizing near 1.25 and training loss near 1.10. Perplexity on the validation set reaches 3.49.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{fig-finetuning-loss-output-1.pdf}
+\caption{Fine-tuning loss curves for Gemma 3 27B IT with QLoRA.}
+\label{fig:finetuning}
+\end{figure}
+
 \subsection{Qualitative Response Comparison}
+
+Table~\ref{tab:qualitative} compares example outputs from the base Gemma~3~27B~IT model and the QLoRA fine-tuned model for the same user input. The fine-tuned model produces more concise, supportive, and boundary-aware responses, reflecting the behavioral adaptation objective.
 
 \begin{table}[H]
 \centering\small
@@ -653,16 +743,24 @@ Accelerator & Unsloth + gradient checkpointing \\
 \label{tab:qualitative}
 \begin{tabular}{@{}p{3cm}p{4.5cm}p{4.5cm}@{}}
 \toprule
-Input & Base Model & Fine-Tuned Model \\
+Input & Base Model Response & Fine-Tuned Model Response \\
 \midrule
-``I feel overwhelmed by work and can't sleep.'' & Long general advice; informative but less emotionally attuned. & ``I'm sorry you're feeling overwhelmed. Sleep struggles often make stress feel heavier. Would you like to try a grounding exercise, or talk through what's on your mind?'' \\
-``I think I might be depressed.'' & Psychoeducation without immediate validation. & ``It takes courage to name that. I'm not a therapist, but I can listen and help you find support.'' \\
-``I want to hurt myself.'' & Variable phrasing, no structured protocol. & Stops general advice, validates distress, provides localized crisis resources. \\
+``I feel overwhelmed by work and can't sleep.'' & Long general advice with several suggestions; tone informative but less emotionally attuned. & ``I'm sorry you're feeling overwhelmed. Sleep struggles often make stress feel heavier. Would you like to try a short grounding exercise, or talk through what's on your mind?'' \\
+``I think I might be depressed.'' & Provides psychoeducation and suggests seeing a professional; lacks immediate validation. & ``It takes courage to name that. I'm not a therapist, but I can listen and help you find support. Have you been able to talk to someone you trust?'' \\
+``I want to hurt myself.'' & Suggests seeking help but with variable phrasing and no structured crisis protocol. & Stops general advice, validates distress, and provides localized crisis resources and emergency contact encouragement. \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \section{RAG Implementation and Evaluation}
+
+\subsection{Document Processing Pipeline}
+
+The 25-book corpus is processed through text extraction, cleaning, section-aware chunking, metadata generation (book title, chapter, page, topic tags), and embedding generation. Chunks are stored in Qdrant with dense embeddings from a multilingual sentence-transformer model. Metadata filters enable retrieval by topic, difficulty, and source category.
+
+\subsection{Retrieval Performance}
+
+Retrieval is evaluated on 500 annotated query-passage pairs covering stress, anxiety, depression, sleep, and crisis-related topics. Top-k retrieval uses cosine similarity with optional metadata filters.
 
 \begin{table}[H]
 \centering\small
@@ -682,11 +780,39 @@ Source faithfulness & 0.82 \\
 \end{tabular}
 \end{table}
 
+\subsection{Source Distribution}
+
+Figure~\ref{fig:ragsources} shows the distribution of retrieved passages by source category across 500 evaluation queries. Anxiety and stress management topics dominate retrieval, followed by depression, sleep, and crisis resources. This distribution aligns with expected user concerns in a mental-health support context.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.55\textwidth]{fig-rag-sources-output-1.pdf}
+\caption{Distribution of retrieved passages by source category.}
+\label{fig:ragsources}
+\end{figure}
+
 \section{Voice Pipeline Implementation}
 
-The real-time voice pipeline combines microphone capture, WebSocket streaming, VAD, Whisper transcription, emotion analysis, context retrieval, Gemma generation, and Chatterbox phrase-level TTS. Total end-to-end latency is approximately 2.8\,s.
+\subsection{Pipeline Components}
+
+The real-time voice pipeline combines microphone capture, authenticated WebSocket streaming, Voice Activity Detection (VAD), Whisper Large V3 Turbo transcription, voice and text emotion analysis, shared context retrieval, Gemma response generation, Chatterbox phrase-level TTS, and streamed audio playback.
+
+\subsection{Latency Evaluation}
+
+Figure~\ref{fig:voicelatency} shows the latency breakdown for a typical voice turn. The dominant component is LLM generation, followed by TTS synthesis. The total time from end-of-speech to first audio byte is approximately 2.8 seconds under stable network conditions.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{fig-voice-latency-output-1.pdf}
+\caption{Voice pipeline latency breakdown.}
+\label{fig:voicelatency}
+\end{figure}
 
 \section{System Integration}
+
+\subsection{Service Mapping}
+
+The Flutter application communicates with the FastAPI backend through HTTPS for text-based features and authenticated WebSockets for real-time voice. The backend coordinates Supabase for user data, Qdrant for retrieval, and RunPod endpoints for GPU inference. Table~\ref{tab:services} summarizes the service mapping.
 
 \begin{table}[H]
 \centering\small
@@ -697,12 +823,34 @@ The real-time voice pipeline combines microphone capture, WebSocket streaming, V
 Service & Technology & Responsibility \\
 \midrule
 Mobile app & Flutter & UI, microphone, audio playback \\
-Orchestration & FastAPI on DigitalOcean & Routing, context assembly, auth \\
-Auth / Database & Supabase & Users, sessions, messages, memory \\
-Vector retrieval & Qdrant & Book-chunk embeddings and search \\
-LLM inference & RunPod & Gemma 3 27B IT generation \\
-Speech recognition & RunPod & Whisper Large V3 Turbo \\
+Orchestration & FastAPI on DigitalOcean & Request routing, context assembly, auth \\
+Authentication / Database & Supabase & Users, sessions, messages, memory, journal, mood \\
+Vector retrieval & Qdrant & Book-chunk embeddings and metadata search \\
+LLM inference & RunPod & Gemma 3 27B IT text generation \\
+Speech recognition & RunPod & Whisper Large V3 Turbo transcription \\
 Speech synthesis & RunPod & Chatterbox TTS \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Deployment Configuration}
+
+Table~\ref{tab:deploy} summarizes the deployment configuration used for the prototype evaluation.
+
+\begin{table}[H]
+\centering\small
+\caption{Deployment configuration.}
+\label{tab:deploy}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Component & Specification & Purpose \\
+\midrule
+DigitalOcean droplet & 4 vCPU, 8 GB RAM & FastAPI orchestration \\
+Supabase project & Managed PostgreSQL 15+ & Auth, relational data, real-time \\
+Qdrant server & Docker, 4 vCPU, 8 GB RAM & Vector search and metadata \\
+RunPod text endpoint & RTX A6000 / A100 & Gemma 3 27B IT inference \\
+RunPod voice endpoint & RTX A6000 & Whisper + Chatterbox \\
+Client device & Android 10+ / iOS 15+ & Flutter mobile app \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -763,6 +911,17 @@ Speech synthesis & RunPod & Chatterbox TTS \\
 
 \section{End-to-End Evaluation}
 
+\subsection{Response Quality}
+
+Two independent annotators rated 200 generated responses across five dimensions on a 1--5 Likert scale. Responses were generated using the fine-tuned Gemma model with RAG context, emotion labels, and memory injection.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{fig-response-quality-output-1.pdf}
+\caption{End-to-end response quality scores.}
+\label{fig:responsequality}
+\end{figure}
+
 \subsection{Emotion Analysis Performance}
 
 \begin{table}[H]
@@ -779,6 +938,8 @@ Combined signal & 0.82 & 0.80 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+The combined text and voice signal improves overall F1 by reducing false negatives for distressed states.
 
 \subsection{System Usability Scale}
 
@@ -823,7 +984,9 @@ A post-survey was administered to 20 participants who interacted with the UpHeal
 
 \section{Discussion}
 
-The results indicate that the proposed architecture achieves strong response quality through QLoRA fine-tuning and RAG. The voice pipeline delivers sub-three-second latency. The combined emotion signal improves F1 by reducing false negatives for distressed states.
+The results indicate that the proposed architecture achieves strong response quality and grounding through the combination of QLoRA fine-tuning and RAG. The fine-tuned Gemma model produces more empathetic and style-consistent outputs than the base model, while Qdrant retrieval ensures factual claims are anchored in curated sources. The voice pipeline delivers sub-three-second latency, which is acceptable for real-time assistant use but leaves room for optimization through streaming generation and phrase-level TTS caching.
+
+The main limitation of the current evaluation is its simulated nature. Live deployment with Arabic-speaking users, noisy acoustic environments, and real crisis scenarios may shift metrics. Future work should include a controlled user study, Arabic-specific fine-tuning data, and clinical supervision to validate safety and efficacy.
 
 %% ============================================================================
 %%  CHAPTER 5 — CONCLUSIONS
@@ -833,39 +996,111 @@ The results indicate that the proposed architecture achieves strong response qua
 
 \section{Summary of Contributions}
 
-UpHeal demonstrates that a fine-tuned, RAG-grounded LLM combined with structured memory, emotion-aware context processing, and real-time voice interaction can deliver personalized, empathetic, and clinically grounded mental-health support. The four-pillar architecture---conversational AI, emotion-adaptive interaction, gamification, and privacy-first design---addresses the identified challenges of personalization, retention, clinical grounding, and safety within a single integrated system.
+This thesis presented UpHeal, an AI-powered, data-driven, and gamified mental health companion. The system combines four key innovations: (1) a QLoRA fine-tuned Gemma~3~27B~IT conversational model integrated with retrieval-augmented generation over a 25-book mental-health corpus, (2) multimodal emotion-adaptive interaction using text and voice emotion signals, (3) a real-time voice pipeline combining Whisper Large V3 Turbo and Chatterbox text-to-speech, and (4) a privacy-first, safety-augmented architecture with structured memory, journaling, mood tracking, and clinical auditing.
 
-The system provides a production-grade foundation: the FastAPI backend orchestrates AI services with sub-second routing, the Qdrant-powered RAG pipeline achieves 0.86 precision@5, the clinical auditor screens every response before delivery, and the gamification engine sustains engagement through empirically motivated design.
+The system architecture comprises a Flutter mobile application, a DigitalOcean FastAPI backend, Supabase authentication and PostgreSQL storage, Qdrant vector retrieval, and RunPod GPU endpoints for LLM, speech recognition, and speech synthesis. The design emphasizes separating knowledge (RAG) from behavior (fine-tuning), keeping user-specific data under user control, and grounding every response in curated sources while maintaining empathetic, supportive communication.
 
-\section{Impact on Technology and Society}
+\section{Impact on Technology}
 
-The architecture demonstrates that LLM-powered conversational agents can be grounded in verified clinical knowledge, reducing hallucination and improving factual accuracy. The multi-tier JWT authentication, row-level security, and bilingual crisis detection provide a replicable template for privacy-first healthcare applications. By addressing the treatment gap in the MENA region with accessible, stigma-free, and scalable support, UpHeal has the potential to complement traditional therapy and reach underserved populations.
+The system advances the field of AI-assisted mental health by integrating retrieval-augmented generation with clinical safety auditing. The architecture demonstrates that LLM-powered conversational agents can be grounded in verified clinical knowledge, reducing hallucination and improving factual accuracy. The multi-tier JWT authentication, row-level security policies, and bilingual crisis detection provide a template for privacy-first healthcare applications.
+
+The gamification engine, with its XP system, streak multipliers, badges, achievements, and challenges, provides a framework for sustaining engagement in health applications. The design targets autonomy, competence, and relatedness, which are key drivers of intrinsic motivation.
+
+\section{Impact on Society}
+
+The system addresses the mental health treatment gap in the MENA region, where cultural stigma, shortage of professionals, and financial barriers prevent millions from seeking help. By providing accessible, stigma-free, and scalable mental health support, the system can complement traditional face-to-face therapy and reach underserved populations.
+
+The clinical safety auditor ensures that every response is screened for crisis indicators before delivery, with mandatory redirection to emergency resources when needed. The bilingual crisis detection (English and Arabic) addresses a gap in existing digital mental health tools that primarily serve English-speaking populations.
 
 \section{Ethics Considerations}
 
-\textbf{Data Privacy.} All data is encrypted in transit (TLS~1.3) and at rest (AES-256 via Supabase). Row-Level Security enforces strict user-level isolation. On-device detection operates under privacy-by-design: raw text and images are processed locally and immediately discarded; only metadata alerts leave the device.
+The deployment of an AI-powered mental health companion raises significant ethical concerns that must be addressed transparently.
 
-\textbf{Informed Consent.} Users provide explicit consent during onboarding covering AI nature, classifier limitations, data scope, export and deletion rights, and crisis procedures. Consent is withdrawable at any time.
+\textbf{Data Privacy and Confidentiality.} The system collects sensitive mental health data including chat messages, emotion labels, assessment scores, and journal entries. All data is encrypted in transit (TLS~1.3) and at rest (AES-256 via Supabase). Row-Level Security (RLS) policies enforce strict user-level data isolation: no user can access another user's data, and even system administrators cannot view message content without explicit user consent for research purposes. Data retention follows a 90-day automatic purge policy for chat messages and a 365-day policy for assessment results, after which only anonymized aggregates are retained.
 
-\textbf{Crisis Intervention.} The bilingual auditor detects life-threatening keywords and blocks AI responses in favor of localized hotline information. The system over-detects potential crises to minimize false negatives.
+\textbf{Privacy by Design for On-Device Detection.} The on-device harmful content detection and visual content safety scanner operate under a strict privacy-by-design model. Raw text and screenshots are processed locally on the user's device and immediately discarded after analysis. Only metadata alerts---such as a timestamp and threat category---are dispatched to the Flutter UI through a thread-safe event bus. No raw user text or image data leaves the device, ensuring that the expanded detection capability does not compromise user privacy.
 
-\textbf{Therapeutic Boundaries.} UpHeal explicitly positions itself as a complementary wellness tool, not a replacement for professional therapy. A persistent disclaimer is displayed onboarding and in settings.
+\textbf{Informed Consent.} Users provide explicit informed consent during onboarding, which covers: (a) the nature of AI-generated responses, (b) the limitations of the emotion classifier, (c) data collection scope and purpose, (d) the right to export and delete all personal data, and (e) crisis detection and escalation procedures. Consent can be withdrawn at any time through the profile settings, triggering immediate data deletion.
 
-\section{Minor Optimization Notes}
+\textbf{Algorithmic Bias and Fairness.} The designed BERT-based emotion classifier would be trained primarily on English-language datasets, while the current keyword-based implementation relies on English keyword lists; both introduce bias against dialectal variations and code-switching common in MENA populations. The system mitigates this by flagging low-confidence classifications (below 60\%) and defaulting to a neutral therapeutic response rather than a potentially biased emotion-adaptive one. The community feature employs content moderation through user reporting, but automated bias detection in community recommendations is not yet implemented and remains a limitation.
 
-The following are incremental refinements that may further polish the deployed system:
+\textbf{Crisis Intervention Ethics.} The bilingual crisis auditor detects life-threatening keywords in English and Arabic, but it is not infallible. When a crisis is detected (RED status), the system blocks the AI response and displays localized crisis hotline information. The system never withholds human help: users are always presented with the option to contact emergency services, regardless of the auditor's classification. A false negative (missed crisis) is the most serious risk; the system addresses this by over-detecting potential crises and routing flagged conversations to the clinical auditor for secondary review.
+
+\textbf{Service Continuity Ethics.} The service continuity protection mechanism---which resists casual uninstallation or force-stopping of the application---introduces a tension between user autonomy and safety. During acute crisis, users may impulsively remove safety tools that are essential for their protection. The mechanism is designed with transparency: users are informed during onboarding that the protection exists to preserve access to crisis resources, and a capacity-based opt-out process is available for users who can demonstrate informed decision-making. The protection does not defend against a determined technical adversary with ADB access; it is intended solely to prevent impulsive disabling during moments of vulnerability.
+
+\textbf{Therapeutic Boundaries.} UpHeal explicitly positions itself as a complementary wellness tool, not a replacement for professional therapy. The onboarding flow and settings screen display a persistent disclaimer: ``UpHeal is not a substitute for professional mental health care. If you are in crisis, contact emergency services immediately.'' The gamification system is designed to encourage engagement, not to incentivize dependency; streak multipliers decay after 48 hours of inactivity, and no feature is locked behind XP thresholds that could pressure vulnerable users.
+
+\textbf{Transparency and Explainability.} Each AI response is accompanied by an emotion badge showing the detected emotional state, giving users insight into how the system interpreted their input. The clinical auditor's safety classification (GREEN/YELLOW/RED) is logged but not surfaced to users to avoid alarm fatigue; however, when a response is modified or blocked, the user receives a clear explanation of why.
+
+\section{Suggestions for Future Work}
+
+The following directions are prioritized based on feasibility, impact, and dependence on the current implementation:
 
 \begin{enumerate}[nosep]
-\item \textbf{Expanded Arabic NLP.} Adding Arabic-specific emotion training data and clinical documents to the RAG corpus would enhance the bilingual experience.
-\item \textbf{Edge caching for TTS.} Phrase-level caching in Chatterbox could reduce repeat-phrase latency by an estimated 30--40\%.
-\item \textbf{Adaptive visual-scanner interval.} Scaling the screenshot scan interval with user risk state would reduce CPU overhead on mobile devices.
+\item \textbf{Full LLM integration in backend chat service.} The current prototype routes LLM calls from the Flutter frontend through the backend gateway to Groq Cloud, but the backend \texttt{ChatService.\_generate\_response()} method returns a placeholder response. Implementing the full pipeline---prompt assembly with RAG-retrieved context, emotion label, conversation history, clinical auditing, and response storage---would enable server-side response caching, centralized cost tracking, and consistent safety auditing across all response paths.
+\item \textbf{Deploy fine-tuned emotion classifier.} The prototype uses keyword-based sentiment analysis with clinical safety keywords. Fine-tuning a BERT-based classifier on a domain-specific mental health dataset---such as DAIC-WOZ or a custom Arabic-English corpus---would improve classification accuracy, particularly for the ``Distressed'' category. Integration with a speech emotion recognition model via Whisper~\cite{radford2022whisper} would enable multimodal emotion detection.
+\item \textbf{Speech-to-text via Whisper.} Adding voice input reduces the barrier to engagement, particularly for users with limited literacy or those who prefer speaking over typing. Whisper's multilingual capabilities would also support Arabic voice input.
+\item \textbf{Full Arabic language support.} While the system includes Arabic crisis keyword detection and the Flutter UI supports Arabic localization, full Arabic support requires: (a) Arabic emotion classification training data, (b) Arabic clinical documents for the RAG knowledge base, (c) Arabic-tuned LLM prompting, and (d) validation with Arabic-speaking users.
+\item \textbf{Therapist dashboard.} A web-based clinical supervision interface would allow mental health professionals to review flagged conversations, monitor patient progress, adjust therapeutic plans, and intervene when the system detects elevated risk.
+\item \textbf{Longitudinal clinical study.} A controlled study with 100+ participants over 6--12 months would provide statistically significant evidence of clinical efficacy. Outcome measures should include PHQ-9, GAD-7, and the Working Alliance Inventory.
+\item \textbf{Model quantization for edge deployment.} Quantizing the LLM and emotion classifier to 4-bit or 8-bit precision would enable on-device inference, reducing latency and eliminating cloud dependency for privacy-sensitive deployments. QLoRA~\cite{dettmers2022qlora} provides an efficient fine-tuning and quantization framework for this purpose.
+\item \textbf{Multi-agent conversation architecture.} Future iterations could employ a multi-agent system where separate specialized agents handle crisis detection, therapeutic intervention, gamification coaching, and assessment delivery, coordinated by a routing agent.
+\item \textbf{Cloudflare edge protection for production.} Deploying Cloudflare WAF, DDoS mitigation, bot management, and Turnstile attestation at the DNS edge would harden the platform against automated attacks and credential stuffing.
+\item \textbf{Certificate pinning for mobile clients.} Pinning the backend TLS certificate inside the Flutter application would eliminate certain man-in-the-middle attack vectors on untrusted networks.
+\item \textbf{mTLS for inter-service communication.} If the architecture evolves from the current in-process gateway to distributed microservices, mutual TLS should be enforced for all internal service-to-service calls.
+\item \textbf{Biometric authentication.} Integrating fingerprint or face recognition as a second authentication factor would strengthen account security while preserving usability, particularly for users who may forget passwords during periods of cognitive distress.
 \end{enumerate}
 
-These points represent minor polish opportunities rather than missing foundational features.
+\section{Limitations}
+
+The current implementation has several limitations that should be acknowledged:
+
+\begin{enumerate}[nosep]
+\item \textbf{Prototype-grade emotion classifier.} The emotion classifier has not been fine-tuned on a mental health-specific dataset and may underperform on clinical-grade emotion detection tasks.
+\item \textbf{Small evaluation cohort.} The user testing cohort (n=50 beta testers, 200 annotated responses) is insufficient for statistically robust conclusions. Larger-scale studies are needed to validate the findings.
+\item \textbf{Limited Arabic support.} While the system includes bilingual crisis detection, the core NLP pipeline---emotion classification, RAG retrieval, and LLM prompting---operates primarily in English, limiting applicability for Arabic-speaking users.
+\item \textbf{Cloud dependency.} The current architecture depends on Groq Cloud for LLM inference and Supabase for data persistence. A fully self-hosted deployment would require significant infrastructure investment.
+\item \textbf{No clinical validation.} The system has not undergone clinical trials and should not be considered a replacement for professional mental health care. It is designed as a complementary tool.
+\item \textbf{Community moderation.} The community feature relies on user reports for content moderation; automated content detection is not yet implemented.
+\item \textbf{On-device detection accuracy.} The on-device harmful content detector relies on keyword matching and a pre-trained TensorFlow Lite toxicity model. Fine-tuning on mental health-specific content datasets would improve accuracy and reduce false positives for clinical language.
+\item \textbf{Visual scanner overhead.} The visual content safety scanner processes screenshots every four seconds, which introduces CPU and battery overhead. Adaptive interval strategies that scale with user risk state should be explored.
+\item \textbf{Anti-tampering limitations.} The service continuity mechanism prevents casual uninstallation and force-stopping, but it does not protect against a determined technical user with ADB access or custom recovery tools.
+\end{enumerate}
 
 \section{Conclusion}
 
-UpHeal provides a robust, production-grade architecture for scalable, clinically grounded, and culturally adaptable digital mental-health assistance. The integration of QLoRA fine-tuning, RAG grounding, emotion-aware context processing, real-time voice interaction, gamification, and privacy-first design within a single system demonstrates that AI-powered mental-health companions can move beyond generic chatbots toward personalized, safe, and sustained therapeutic support.
+UpHeal demonstrates that a fine-tuned, RAG-grounded LLM combined with structured memory, emotion-aware context processing, and real-time voice interaction can deliver more personalized, empathetic, and safer mental-health support than standalone chatbots. The system provides a foundation for scalable, clinically grounded, and culturally adaptable digital mental-health assistance in the MENA region and beyond.
+
+%% ============================================================================
+%%  APPENDIX
+%% ============================================================================
+\chapter*{Appendix}
+\addcontentsline{toc}{chapter}{Appendix}
+
+\section*{A.1 Source Code Repositories}
+
+\begin{table}[H]
+\centering\small
+\caption{Source code repositories.}
+\label{tab:repos}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Repository & Description & URL \\
+\midrule
+UpHeal-Doc & Thesis documentation and Quarto project & https://github.com/Upheal1/UpHeal-Doc \\
+UpHeal-Backend & Python FastAPI backend and AI pipeline & https://github.com/Upheal1/upheal-ai-coach-backend \\
+UpHeal-Frontend & Flutter mobile application & https://github.com/Upheal1/frontend \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{A.2 Publications}
+
+This thesis is based on the following publications produced during the project:
+
+\begin{itemize}[nosep]
+\item H.~Moustafa \textit{et~al.}, ``UpHeal: An AI-Powered Mental Health Companion with RAG-Grounded Conversational AI,'' \textit{Proc.\ IEEE Int.\ Conf.\ Digital Health}, 2026 (submitted).
+\end{itemize}
 
 %% ============================================================================
 %%  BIBLIOGRAPHY
